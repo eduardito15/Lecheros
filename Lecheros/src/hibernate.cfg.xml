@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE hibernate-configuration PUBLIC "-//Hibernate/Hibernate Configuration DTD 3.0//EN" "http://hibernate.sourceforge.net/hibernate-configuration-3.0.dtd">
+<hibernate-configuration>
+  <session-factory>
+    <property name="hibernate.dialect">org.hibernate.dialect.MySQLDialect</property>
+    <property name="hibernate.connection.driver_class">com.mysql.jdbc.Driver</property>
+    <property name="hibernate.connection.url">jdbc:mysql://localhost:3306/LecherosGiamo?zeroDateTimeBehavior=convertToNull</property>
+    <property name="hibernate.connection.username">root</property>
+    <property name="hibernate.show_sql">false</property>
+    <property name="hibernate.hbm2ddl.auto">update</property>
+    <mapping class="dominio.Chofer"/>
+    <mapping class="dominio.Iva"/>
+    <mapping class="dominio.ObjetoPersistente"/>
+    <mapping class="dominio.FamiliaDeProducto"/>
+    <mapping class="dominio.Articulo"/>
+    <mapping class="dominio.Precio"/>
+    <mapping class="dominio.DocumentoDeCompra"/>
+    <mapping class="dominio.Compra"/>
+    <mapping class="dominio.CompraRenglon"/>
+    <mapping class="dominio.DestinatarioConaproleReparto"/>
+    <mapping class="dominio.Reparto"/>
+    <mapping class="dominio.Inventario"/>
+    <mapping class="dominio.InventarioRenglon"/>
+    <mapping class="dominio.RubroGasto"/>
+    <mapping class="dominio.Gasto"/>
+    <mapping class="dominio.GastoRenglon"/>
+    <mapping class="dominio.Cliente"/>
+    <mapping class="dominio.GrupoCliente"/>
+    <mapping class="dominio.ConfiguracionLiquidacion"/>
+    <mapping class="dominio.Liquidacion"/>
+    <mapping class="dominio.Comision"/>
+    <mapping class="dominio.FiadoChofer"/>
+    <mapping class="dominio.FiadoChoferRenglon"/>
+    <mapping class="dominio.Factura"/>
+    <mapping class="dominio.FacturaRenglon"/>
+    <mapping class="dominio.Inau"/>
+    <mapping class="dominio.Anep"/>
+    <mapping class="dominio.Camion"/>
+    <mapping class="dominio.Cheque"/>
+    <mapping class="dominio.Retencion"/>
+    <mapping class="dominio.ProductoClienteProrrateo"/>
+    <mapping class="dominio.ConfiguracionGeneral"/>
+    <mapping class="dominio.DocumentoDeVenta"/>
+    <mapping class="dominio.ConfiguracionFacturacion"/>
+    <mapping class="dominio.usuarios.Actividad"/>
+    <mapping class="dominio.usuarios.Rol"/>
+    <mapping class="dominio.usuarios.Usuario"/>
+    <mapping class="dominio.usuarios.LogDeOperacion"/>
+    <mapping class="excepciones.LogDeExcepciones"/>
+    <mapping class="dominio.RepartoCompuesto"/>
+    <mapping class="dominio.GrupoDeArticulos"/>
+    <mapping class="dominio.InventarioGiamo"/>
+    <mapping class="dominio.InventarioGiamoRenglon"/>
+    <mapping class="dominio.Jornales"/>
+    <mapping class="dominio.JornalRenglon"/>
+    <mapping class="dominio.CoeficienteUtilidadCompras"/>
+  </session-factory>
+</hibernate-configuration>
