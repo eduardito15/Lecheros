@@ -10,6 +10,7 @@ import java.awt.event.WindowEvent;
 import java.io.IOException;
 import javax.swing.JOptionPane;
 import javax.swing.SwingUtilities;
+import lecheros.Lecheros;
 import sistema.SistemaUsuarios;
 import ui.MenuPrincipal;
 
@@ -24,6 +25,7 @@ public class Login extends javax.swing.JFrame {
      */
     public Login() {
         initComponents();
+        jLabelVersion.setText(Lecheros.nombreEmpresa + " Versión 3.0");
         jLabelEspera.setVisible(false);
         jTextFieldNombre.requestFocus();
         jTextFieldNombre.selectAll();
@@ -79,6 +81,7 @@ public class Login extends javax.swing.JFrame {
         jButtonIngresar = new javax.swing.JButton();
         jButtonSalir = new javax.swing.JButton();
         jLabelEspera = new javax.swing.JLabel();
+        jLabelVersion = new javax.swing.JLabel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setTitle("Ingresar");
@@ -134,6 +137,10 @@ public class Login extends javax.swing.JFrame {
 
         jLabelEspera.setIcon(new javax.swing.ImageIcon(getClass().getResource("/ui/wait_progress.gif"))); // NOI18N
 
+        jLabelVersion.setFont(new java.awt.Font("Lucida Grande", 0, 14)); // NOI18N
+        jLabelVersion.setForeground(new java.awt.Color(0, 0, 255));
+        jLabelVersion.setText("Versión");
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
@@ -145,6 +152,7 @@ public class Login extends javax.swing.JFrame {
                     .addComponent(jLabel1))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(jLabelVersion)
                     .addComponent(jLabelTitulo)
                     .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                         .addComponent(jTextFieldNombre)
@@ -177,7 +185,9 @@ public class Login extends javax.swing.JFrame {
                         .addComponent(jButtonIngresar)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(jButtonSalir)))
-                .addContainerGap(16, Short.MAX_VALUE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(jLabelVersion)
+                .addContainerGap(12, Short.MAX_VALUE))
         );
 
         pack();
@@ -289,6 +299,7 @@ public class Login extends javax.swing.JFrame {
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabelEspera;
     private javax.swing.JLabel jLabelTitulo;
+    private javax.swing.JLabel jLabelVersion;
     private javax.swing.JPasswordField jPasswordField;
     private javax.swing.JTextField jTextFieldNombre;
     // End of variables declaration//GEN-END:variables

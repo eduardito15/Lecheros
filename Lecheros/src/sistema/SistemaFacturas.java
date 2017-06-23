@@ -4222,6 +4222,7 @@ public class SistemaFacturas {
 
     public String[][] detalleArticulosVerificarFacturacion(Date fechaDesde, Date fechaHasta, Reparto r) throws Exception {
         int cantidadArticulos = 0;
+        ConfiguracionFacturacion configFact = SistemaMantenimiento.getInstance().devolverConfiguracionFacturacion();
         HashMap<Articulo, Object> resumenPorArticulo = new HashMap<>();
         //HashMap<Articulo, Object> facturadosPorArticulo = new HashMap<>();
         List<Compra> compras;
@@ -4263,9 +4264,39 @@ public class SistemaFacturas {
                                 aux[3] = Double.toString(Double.parseDouble(aux[3]) + cr.getCantidad());
                                 resumenPorArticulo.replace(cr.getArticulo(), aux);
                             } else {
-                                cantidadArticulos++;
-                                String[] aux = {Double.toString(cr.getCantidad()), "0", "0", Double.toString(cr.getCantidad())};
-                                resumenPorArticulo.put(cr.getArticulo(), aux);
+                                if(!configFact.isDetalladoPorGrupoDeArticulo()) {
+                                    cantidadArticulos++;
+                                    String[] aux = {Double.toString(cr.getCantidad()), "0", "0", Double.toString(cr.getCantidad())};
+                                    resumenPorArticulo.put(cr.getArticulo(), aux);
+                                } else {
+                                    //Es detallada por grupo de articulo, me fijo si en el resumen hay algun producto del grupo.
+                                    GrupoDeArticulos ga = SistemaMantenimientoArticulos.getInstance().devolverGrupoDeArticuloPorArticulo(cr.getArticulo());
+                                    if (ga != null) {
+                                        boolean encontroAlgunArticuloDelGrupo = false;
+                                        for (Articulo a : ga.getArticulos()) {
+                                            if (resumenPorArticulo.containsKey(a)) {
+                                                //if(!configFact.isDetalladoPorGrupoDeArticulo()) {
+                                                encontroAlgunArticuloDelGrupo = true;
+                                                String[] aux = (String[]) resumenPorArticulo.get(a);
+                                                aux[0] = Double.toString(Double.parseDouble(aux[0]) + cr.getCantidad());
+                                                aux[3] = Double.toString(Double.parseDouble(aux[3]) + cr.getCantidad());
+                                                resumenPorArticulo.replace(a, aux);
+                                                break;
+                                                //}
+                                            }
+                                        }
+                                        if (!encontroAlgunArticuloDelGrupo) {
+                                            cantidadArticulos++;
+                                            String[] aux = {Double.toString(cr.getCantidad()), "0", "0", Double.toString(cr.getCantidad())};
+                                            resumenPorArticulo.put(cr.getArticulo(), aux);
+
+                                        }
+                                    } else {
+                                        cantidadArticulos++;
+                                        String[] aux = {Double.toString(cr.getCantidad()), "0", "0", Double.toString(cr.getCantidad())};
+                                        resumenPorArticulo.put(cr.getArticulo(), aux);
+                                    }
+                                }
                             }
                         }
                     }
@@ -4287,9 +4318,39 @@ public class SistemaFacturas {
                                 aux[3] = Double.toString(Double.parseDouble(aux[3]) - cr.getCantidad());
                                 resumenPorArticulo.replace(cr.getArticulo(), aux);
                             } else {
-                                cantidadArticulos++;
-                                String[] aux = {"-" + Double.toString(cr.getCantidad()), "0", "0", "-" + Double.toString(cr.getCantidad())};
-                                resumenPorArticulo.put(cr.getArticulo(), aux);
+                                if(!configFact.isDetalladoPorGrupoDeArticulo()) {
+                                    cantidadArticulos++;
+                                    String[] aux = {"-" + Double.toString(cr.getCantidad()), "0", "0", "-" + Double.toString(cr.getCantidad())};
+                                    resumenPorArticulo.put(cr.getArticulo(), aux);
+                                } else {
+                                    //Es detallada por grupo de articulo, me fijo si en el resumen hay algun producto del grupo.
+                                    GrupoDeArticulos ga = SistemaMantenimientoArticulos.getInstance().devolverGrupoDeArticuloPorArticulo(cr.getArticulo());
+                                    if (ga != null) {
+                                        boolean encontroAlgunArticuloDelGrupo = false;
+                                        for (Articulo a : ga.getArticulos()) {
+                                            if (resumenPorArticulo.containsKey(a)) {
+                                                //if(!configFact.isDetalladoPorGrupoDeArticulo()) {
+                                                encontroAlgunArticuloDelGrupo = true;
+                                                String[] aux = (String[]) resumenPorArticulo.get(a);
+                                                aux[0] = Double.toString(Double.parseDouble(aux[0]) - cr.getCantidad());
+                                                aux[3] = Double.toString(Double.parseDouble(aux[3]) - cr.getCantidad());
+                                                resumenPorArticulo.replace(a, aux);
+                                                break;
+                                                //}
+                                            }
+                                        }
+                                        if (!encontroAlgunArticuloDelGrupo) {
+                                            cantidadArticulos++;
+                                            String[] aux = {"-" + Double.toString(cr.getCantidad()), "0", "0", "-" + Double.toString(cr.getCantidad())};
+                                            resumenPorArticulo.put(cr.getArticulo(), aux);
+
+                                        }
+                                    } else {
+                                        cantidadArticulos++;
+                                        String[] aux = {"-" + Double.toString(cr.getCantidad()), "0", "0", "-" + Double.toString(cr.getCantidad())};
+                                        resumenPorArticulo.put(cr.getArticulo(), aux);
+                                    }
+                                }
                             }
                         }
                     }
@@ -4373,9 +4434,39 @@ public class SistemaFacturas {
                         aux[3] = Double.toString(Double.parseDouble(aux[3]) + ir.getCantidad());
                         resumenPorArticulo.replace(ir.getArticulo(), aux);
                     } else {
-                        cantidadArticulos++;
-                        String[] aux = {Double.toString(ir.getCantidad()), "0", "0", Double.toString(ir.getCantidad())};
-                        resumenPorArticulo.put(ir.getArticulo(), aux);
+                        if(!configFact.isDetalladoPorGrupoDeArticulo()) {
+                            cantidadArticulos++;
+                            String[] aux = {Double.toString(ir.getCantidad()), "0", "0", Double.toString(ir.getCantidad())};
+                            resumenPorArticulo.put(ir.getArticulo(), aux);
+                        } else {
+                            //Es detallada por grupo de articulo, me fijo si en el resumen hay algun producto del grupo.
+                            GrupoDeArticulos ga = SistemaMantenimientoArticulos.getInstance().devolverGrupoDeArticuloPorArticulo(ir.getArticulo());
+                            if (ga != null) {
+                                boolean encontroAlgunArticuloDelGrupo = false;
+                                for (Articulo a : ga.getArticulos()) {
+                                    if (resumenPorArticulo.containsKey(a)) {
+                                        //if(!configFact.isDetalladoPorGrupoDeArticulo()) {
+                                        encontroAlgunArticuloDelGrupo = true;
+                                        String[] aux = (String[]) resumenPorArticulo.get(a);
+                                        aux[0] = Double.toString(Double.parseDouble(aux[0]) + ir.getCantidad());
+                                        aux[3] = Double.toString(Double.parseDouble(aux[3]) + ir.getCantidad());
+                                        resumenPorArticulo.replace(a, aux);
+                                        break;
+                                        //}
+                                    }
+                                }
+                                if (!encontroAlgunArticuloDelGrupo) {
+                                    cantidadArticulos++;
+                                    String[] aux = {Double.toString(ir.getCantidad()), "0", "0", Double.toString(ir.getCantidad())};
+                                    resumenPorArticulo.put(ir.getArticulo(), aux);
+
+                                }
+                            } else {
+                                cantidadArticulos++;
+                                String[] aux = {Double.toString(ir.getCantidad()), "0", "0", Double.toString(ir.getCantidad())};
+                                resumenPorArticulo.put(ir.getArticulo(), aux);
+                            }
+                        }
                     }
                 }
             }
@@ -4415,9 +4506,39 @@ public class SistemaFacturas {
                         aux[3] = Double.toString(Double.parseDouble(aux[3]) - ir.getCantidad());
                         resumenPorArticulo.replace(ir.getArticulo(), aux);
                     } else {
-                        cantidadArticulos++;
-                        String[] aux = {"-" + Double.toString(ir.getCantidad()), "0", "0", "-" + Double.toString(ir.getCantidad())};
-                        resumenPorArticulo.put(ir.getArticulo(), aux);
+                        if(!configFact.isDetalladoPorGrupoDeArticulo()) {
+                            cantidadArticulos++;
+                            String[] aux = {"-" + Double.toString(ir.getCantidad()), "0", "0", "-" + Double.toString(ir.getCantidad())};
+                            resumenPorArticulo.put(ir.getArticulo(), aux);
+                        } else {
+                            //Es detallada por grupo de articulo, me fijo si en el resumen hay algun producto del grupo.
+                            GrupoDeArticulos ga = SistemaMantenimientoArticulos.getInstance().devolverGrupoDeArticuloPorArticulo(ir.getArticulo());
+                            if (ga != null) {
+                                boolean encontroAlgunArticuloDelGrupo = false;
+                                for (Articulo a : ga.getArticulos()) {
+                                    if (resumenPorArticulo.containsKey(a)) {
+                                        //if(!configFact.isDetalladoPorGrupoDeArticulo()) {
+                                        encontroAlgunArticuloDelGrupo = true;
+                                        String[] aux = (String[]) resumenPorArticulo.get(a);
+                                        aux[0] = Double.toString(Double.parseDouble(aux[0]) - ir.getCantidad());
+                                        aux[3] = Double.toString(Double.parseDouble(aux[3]) - ir.getCantidad());
+                                        resumenPorArticulo.replace(a, aux);
+                                        break;
+                                        //}
+                                    }
+                                }
+                                if (!encontroAlgunArticuloDelGrupo) {
+                                    cantidadArticulos++;
+                                    String[] aux = {"-" + Double.toString(ir.getCantidad()), "0", "0", "-" + Double.toString(ir.getCantidad())};
+                                    resumenPorArticulo.put(ir.getArticulo(), aux);
+
+                                }
+                            } else {
+                                cantidadArticulos++;
+                                String[] aux = {"-" + Double.toString(ir.getCantidad()), "0", "0", "-" + Double.toString(ir.getCantidad())};
+                                resumenPorArticulo.put(ir.getArticulo(), aux);
+                            }
+                        }
                     }
                 }
             }
@@ -4492,12 +4613,42 @@ public class SistemaFacturas {
                         if (resumenPorArticulo.containsKey(ir.getArticulo())) {
                             String[] aux = (String[]) resumenPorArticulo.get(ir.getArticulo());
                             aux[0] = Double.toString(Double.parseDouble(aux[0]) + ir.getCantidad());
-                            aux[3] = Double.toString(Double.parseDouble(aux[2]) + ir.getCantidad());
+                            aux[3] = Double.toString(Double.parseDouble(aux[3]) + ir.getCantidad());
                             resumenPorArticulo.replace(ir.getArticulo(), aux);
                         } else {
-                            cantidadArticulos++;
-                            String[] aux = {Double.toString(ir.getCantidad()), "0", "0", Double.toString(ir.getCantidad())};
-                            resumenPorArticulo.put(ir.getArticulo(), aux);
+                            if(!configFact.isDetalladoPorGrupoDeArticulo()) {
+                                cantidadArticulos++;
+                                String[] aux = {Double.toString(ir.getCantidad()), "0", "0", Double.toString(ir.getCantidad())};
+                                resumenPorArticulo.put(ir.getArticulo(), aux);
+                            } else {
+                                //Es detallada por grupo de articulo, me fijo si en el resumen hay algun producto del grupo.
+                                GrupoDeArticulos ga = SistemaMantenimientoArticulos.getInstance().devolverGrupoDeArticuloPorArticulo(ir.getArticulo());
+                                if (ga != null) {
+                                    boolean encontroAlgunArticuloDelGrupo = false;
+                                    for (Articulo a : ga.getArticulos()) {
+                                        if (resumenPorArticulo.containsKey(a)) {
+                                            //if(!configFact.isDetalladoPorGrupoDeArticulo()) {
+                                            encontroAlgunArticuloDelGrupo = true;
+                                            String[] aux = (String[]) resumenPorArticulo.get(a);
+                                            aux[0] = Double.toString(Double.parseDouble(aux[0]) + ir.getCantidad());
+                                            aux[3] = Double.toString(Double.parseDouble(aux[3]) + ir.getCantidad());
+                                            resumenPorArticulo.replace(a, aux);
+                                            break;
+                                            //}
+                                        }
+                                    }
+                                    if (!encontroAlgunArticuloDelGrupo) {
+                                        cantidadArticulos++;
+                                        String[] aux = {Double.toString(ir.getCantidad()), "0", "0", Double.toString(ir.getCantidad())};
+                                        resumenPorArticulo.put(ir.getArticulo(), aux);
+
+                                    }
+                                } else {
+                                    cantidadArticulos++;
+                                    String[] aux = {Double.toString(ir.getCantidad()), "0", "0", Double.toString(ir.getCantidad())};
+                                    resumenPorArticulo.put(ir.getArticulo(), aux);
+                                }
+                            }
                         }
                     }
                 }
@@ -4534,12 +4685,42 @@ public class SistemaFacturas {
                         if (resumenPorArticulo.containsKey(ir.getArticulo())) {
                             String[] aux = (String[]) resumenPorArticulo.get(ir.getArticulo());
                             aux[0] = Double.toString(Double.parseDouble(aux[0]) - ir.getCantidad());
-                            aux[3] = Double.toString(Double.parseDouble(aux[2]) - ir.getCantidad());
+                            aux[3] = Double.toString(Double.parseDouble(aux[3]) - ir.getCantidad());
                             resumenPorArticulo.replace(ir.getArticulo(), aux);
                         } else {
-                            cantidadArticulos++;
-                            String[] aux = {"-" + Double.toString(ir.getCantidad()), "0", "0", "-" + Double.toString(ir.getCantidad())};
-                            resumenPorArticulo.put(ir.getArticulo(), aux);
+                            if(!configFact.isDetalladoPorGrupoDeArticulo()) {
+                                cantidadArticulos++;
+                                String[] aux = {"-" + Double.toString(ir.getCantidad()), "0", "0", "-" + Double.toString(ir.getCantidad())};
+                                resumenPorArticulo.put(ir.getArticulo(), aux);
+                            } else {
+                                //Es detallada por grupo de articulo, me fijo si en el resumen hay algun producto del grupo.
+                                GrupoDeArticulos ga = SistemaMantenimientoArticulos.getInstance().devolverGrupoDeArticuloPorArticulo(ir.getArticulo());
+                                if (ga != null) {
+                                    boolean encontroAlgunArticuloDelGrupo = false;
+                                    for (Articulo a : ga.getArticulos()) {
+                                        if (resumenPorArticulo.containsKey(a)) {
+                                            //if(!configFact.isDetalladoPorGrupoDeArticulo()) {
+                                            encontroAlgunArticuloDelGrupo = true;
+                                            String[] aux = (String[]) resumenPorArticulo.get(a);
+                                            aux[0] = Double.toString(Double.parseDouble(aux[0]) - ir.getCantidad());
+                                            aux[3] = Double.toString(Double.parseDouble(aux[3]) - ir.getCantidad());
+                                            resumenPorArticulo.replace(a, aux);
+                                            break;
+                                            //}
+                                        }
+                                    }
+                                    if (!encontroAlgunArticuloDelGrupo) {
+                                        cantidadArticulos++;
+                                        String[] aux = {"-" + Double.toString(ir.getCantidad()), "0", "0", "-" + Double.toString(ir.getCantidad())};
+                                        resumenPorArticulo.put(ir.getArticulo(), aux);
+
+                                    }
+                                } else {
+                                    cantidadArticulos++;
+                                    String[] aux = {"-" + Double.toString(ir.getCantidad()), "0", "0", "-" + Double.toString(ir.getCantidad())};
+                                    resumenPorArticulo.put(ir.getArticulo(), aux);
+                                }
+                            }
                         }
                     }
                 }
@@ -4577,9 +4758,39 @@ public class SistemaFacturas {
                                 aux[3] = Double.toString(Double.parseDouble(aux[3]) - fr.getCantidad());
                                 resumenPorArticulo.replace(fr.getArticulo(), aux);
                             } else {
-                                cantidadArticulos++;
-                                String[] aux = {"0", Double.toString(fr.getCantidad()), "0", "-" + fr.getCantidad()};
-                                resumenPorArticulo.put(fr.getArticulo(), aux);
+                                if(!configFact.isDetalladoPorGrupoDeArticulo()) {
+                                    cantidadArticulos++;
+                                    String[] aux = {"0", Double.toString(fr.getCantidad()), "0", "-" + fr.getCantidad()};
+                                    resumenPorArticulo.put(fr.getArticulo(), aux);
+                                } else {
+                                    //Es detallada por grupo de articulo, me fijo si en el resumen hay algun producto del grupo.
+                                    GrupoDeArticulos ga = SistemaMantenimientoArticulos.getInstance().devolverGrupoDeArticuloPorArticulo(fr.getArticulo());
+                                    if (ga != null) {
+                                        boolean encontroAlgunArticuloDelGrupo = false;
+                                        for (Articulo a : ga.getArticulos()) {
+                                            if (resumenPorArticulo.containsKey(a)) {
+                                                //if(!configFact.isDetalladoPorGrupoDeArticulo()) {
+                                                encontroAlgunArticuloDelGrupo = true;
+                                                String[] aux = (String[]) resumenPorArticulo.get(a);
+                                                aux[1] = Double.toString(Double.parseDouble(aux[1]) + fr.getCantidad());
+                                                aux[3] = Double.toString(Double.parseDouble(aux[3]) - fr.getCantidad());
+                                                resumenPorArticulo.replace(a, aux);
+                                                break;
+                                                //}
+                                            }
+                                        }
+                                        if (!encontroAlgunArticuloDelGrupo) {
+                                            cantidadArticulos++;
+                                            String[] aux = {"0", Double.toString(fr.getCantidad()), "0", "-" + fr.getCantidad()};
+                                            resumenPorArticulo.put(fr.getArticulo(), aux);
+
+                                        }
+                                    } else {
+                                        cantidadArticulos++;
+                                        String[] aux = {"0", Double.toString(fr.getCantidad()), "0", "-" + fr.getCantidad()};
+                                        resumenPorArticulo.put(fr.getArticulo(), aux);
+                                    }
+                                }
                             }
                         }
                     }
@@ -4601,9 +4812,39 @@ public class SistemaFacturas {
                                 aux[3] = Double.toString(Double.parseDouble(aux[3]) + fr.getCantidad());
                                 resumenPorArticulo.replace(fr.getArticulo(), aux);
                             } else {
-                                cantidadArticulos++;
-                                String[] aux = {"0", "-" + Double.toString(fr.getCantidad()), "0", Double.toString(fr.getCantidad())};
-                                resumenPorArticulo.put(fr.getArticulo(), aux);
+                                if(!configFact.isDetalladoPorGrupoDeArticulo()) {
+                                    cantidadArticulos++;
+                                    String[] aux = {"0", "-" + Double.toString(fr.getCantidad()), "0", Double.toString(fr.getCantidad())};
+                                    resumenPorArticulo.put(fr.getArticulo(), aux);
+                                } else {
+                                    //Es detallada por grupo de articulo, me fijo si en el resumen hay algun producto del grupo.
+                                    GrupoDeArticulos ga = SistemaMantenimientoArticulos.getInstance().devolverGrupoDeArticuloPorArticulo(fr.getArticulo());
+                                    if (ga != null) {
+                                        boolean encontroAlgunArticuloDelGrupo = false;
+                                        for (Articulo a : ga.getArticulos()) {
+                                            if (resumenPorArticulo.containsKey(a)) {
+                                                //if(!configFact.isDetalladoPorGrupoDeArticulo()) {
+                                                encontroAlgunArticuloDelGrupo = true;
+                                                String[] aux = (String[]) resumenPorArticulo.get(a);
+                                                aux[1] = Double.toString(Double.parseDouble(aux[1]) - fr.getCantidad());
+                                                aux[3] = Double.toString(Double.parseDouble(aux[3]) + fr.getCantidad());
+                                                resumenPorArticulo.replace(a, aux);
+                                                break;
+                                                //}
+                                            }
+                                        }
+                                        if (!encontroAlgunArticuloDelGrupo) {
+                                            cantidadArticulos++;
+                                            String[] aux = {"0", "-" + Double.toString(fr.getCantidad()), "0", Double.toString(fr.getCantidad())};
+                                            resumenPorArticulo.put(fr.getArticulo(), aux);
+
+                                        }
+                                    } else {
+                                        cantidadArticulos++;
+                                        String[] aux = {"0", "-" + Double.toString(fr.getCantidad()), "0", Double.toString(fr.getCantidad())};
+                                        resumenPorArticulo.put(fr.getArticulo(), aux);
+                                    }
+                                }
                             }
                         }
                     }
@@ -4627,9 +4868,39 @@ public class SistemaFacturas {
                                 aux[3] = Double.toString(Double.parseDouble(aux[3]) - fr.getCantidad());
                                 resumenPorArticulo.replace(fr.getArticulo(), aux);
                             } else {
-                                cantidadArticulos++;
-                                String[] aux = {"0", "0", Double.toString(fr.getCantidad()), "-" + Double.toString(fr.getCantidad())};
-                                resumenPorArticulo.put(fr.getArticulo(), aux);
+                                if(!configFact.isDetalladoPorGrupoDeArticulo()) {
+                                    cantidadArticulos++;
+                                    String[] aux = {"0", "0", Double.toString(fr.getCantidad()), "-" + Double.toString(fr.getCantidad())};
+                                    resumenPorArticulo.put(fr.getArticulo(), aux);
+                                } else {
+                                    //Es detallada por grupo de articulo, me fijo si en el resumen hay algun producto del grupo.
+                                    GrupoDeArticulos ga = SistemaMantenimientoArticulos.getInstance().devolverGrupoDeArticuloPorArticulo(fr.getArticulo());
+                                    if (ga != null) {
+                                        boolean encontroAlgunArticuloDelGrupo = false;
+                                        for (Articulo a : ga.getArticulos()) {
+                                            if (resumenPorArticulo.containsKey(a)) {
+                                                //if(!configFact.isDetalladoPorGrupoDeArticulo()) {
+                                                encontroAlgunArticuloDelGrupo = true;
+                                                String[] aux = (String[]) resumenPorArticulo.get(a);
+                                                aux[2] = Double.toString(Double.parseDouble(aux[2]) + fr.getCantidad());
+                                                aux[3] = Double.toString(Double.parseDouble(aux[3]) - fr.getCantidad());
+                                                resumenPorArticulo.replace(a, aux);
+                                                break;
+                                                //}
+                                            }
+                                        }
+                                        if (!encontroAlgunArticuloDelGrupo) {
+                                            cantidadArticulos++;
+                                            String[] aux = {"0", "0", Double.toString(fr.getCantidad()), "-" + Double.toString(fr.getCantidad())};
+                                            resumenPorArticulo.put(fr.getArticulo(), aux);
+
+                                        }
+                                    } else {
+                                        cantidadArticulos++;
+                                        String[] aux = {"0", "0", Double.toString(fr.getCantidad()), "-" + Double.toString(fr.getCantidad())};
+                                        resumenPorArticulo.put(fr.getArticulo(), aux);
+                                    }
+                                }
                             }
                         }
                     }
@@ -4651,9 +4922,39 @@ public class SistemaFacturas {
                                 aux[3] = Double.toString(Double.parseDouble(aux[3]) + fr.getCantidad());
                                 resumenPorArticulo.replace(fr.getArticulo(), aux);
                             } else {
-                                cantidadArticulos++;
-                                String[] aux = {"0", "0", "-" + Double.toString(fr.getCantidad()), Double.toString(fr.getCantidad())};
-                                resumenPorArticulo.put(fr.getArticulo(), aux);
+                                if(!configFact.isDetalladoPorGrupoDeArticulo()) {
+                                    cantidadArticulos++;
+                                    String[] aux = {"0", "0", "-" + Double.toString(fr.getCantidad()), Double.toString(fr.getCantidad())};
+                                    resumenPorArticulo.put(fr.getArticulo(), aux);
+                                } else {
+                                    //Es detallada por grupo de articulo, me fijo si en el resumen hay algun producto del grupo.
+                                    GrupoDeArticulos ga = SistemaMantenimientoArticulos.getInstance().devolverGrupoDeArticuloPorArticulo(fr.getArticulo());
+                                    if (ga != null) {
+                                        boolean encontroAlgunArticuloDelGrupo = false;
+                                        for (Articulo a : ga.getArticulos()) {
+                                            if (resumenPorArticulo.containsKey(a)) {
+                                                //if(!configFact.isDetalladoPorGrupoDeArticulo()) {
+                                                encontroAlgunArticuloDelGrupo = true;
+                                                String[] aux = (String[]) resumenPorArticulo.get(a);
+                                                aux[2] = Double.toString(Double.parseDouble(aux[2]) - fr.getCantidad());
+                                                aux[3] = Double.toString(Double.parseDouble(aux[3]) + fr.getCantidad());
+                                                resumenPorArticulo.replace(a, aux);
+                                                break;
+                                                //}
+                                            }
+                                        }
+                                        if (!encontroAlgunArticuloDelGrupo) {
+                                            cantidadArticulos++;
+                                            String[] aux = {"0", "0", "-" + Double.toString(fr.getCantidad()), Double.toString(fr.getCantidad())};
+                                            resumenPorArticulo.put(fr.getArticulo(), aux);
+
+                                        }
+                                    } else {
+                                        cantidadArticulos++;
+                                        String[] aux = {"0", "0", "-" + Double.toString(fr.getCantidad()), Double.toString(fr.getCantidad())};
+                                        resumenPorArticulo.put(fr.getArticulo(), aux);
+                                    }
+                                }
                             }
                         }
                     }
@@ -5019,7 +5320,7 @@ public class SistemaFacturas {
         Writer writer = null;
         try {
             writer = new BufferedWriter(new OutputStreamWriter(
-                    new FileOutputStream(new File(SistemaMantenimiento.getInstance().devolverConfiguracionGeneral().getRutaInforme() + "/" + "InterfacePowerStreetDesde" + formatter.format(desdeFecha).replace("-", "") + "Hasta" + formatter.format(hastaFecha).replace("-", "") + ".txt")), "utf-8"));
+                    new FileOutputStream(new File(SistemaMantenimiento.getInstance().devolverConfiguracionGeneral().getRutaInforme() + "/" + "InterfacePowerStreetDesde" + formatter.format(desdeFecha).replace("-", "") + "Hasta" + formatter.format(hastaFecha).replace("-", "") + r!=null?r.getNombre():"" + ".txt")), "utf-8"));
 
             for (Factura f : facturas) {
                 for (FacturaRenglon fr : f.getRenglones()) {
@@ -5034,7 +5335,11 @@ public class SistemaFacturas {
                     }
                     SimpleDateFormat formatterPS = new SimpleDateFormat("dd/MM/yyyy");
                     writer.write(formatterPS.format(fr.getFactura().getFecha()) + "	");
-                    writer.write("FCD" + "	");
+                    if(f.getTipoDocumento().isSuma()) {
+                        writer.write("FCD" + "	");
+                    } else {
+                        writer.write("FDD" + "	");
+                    }
                     writer.write(fr.getFactura().getNumero() + "	");
                     /*if("Relece".equals(Lecheros.nombreEmpresa)){
                         if(fr.getArticulo().getCodigo() == 110 || fr.getArticulo().getCodigo() == 112 || fr.getArticulo().getCodigo() == 113 || fr.getArticulo().getCodigo() == 114 || fr.getArticulo().getCodigo() == 115 || fr.getArticulo().getCodigo() == 116 || fr.getArticulo().getCodigo() == 122 || fr.getArticulo().getCodigo() == 123 || fr.getArticulo().getCodigo() == 128 || fr.getArticulo().getCodigo() == 131 || fr.getArticulo().getCodigo() == 132 || fr.getArticulo().getCodigo() == 133 || fr.getArticulo().getCodigo() == 134 || fr.getArticulo().getCodigo() == 119 || fr.getArticulo().getCodigo() == 1337 || fr.getArticulo().getCodigo() == 1338) {
@@ -5043,7 +5348,7 @@ public class SistemaFacturas {
                             writer.write("1273" + "	");
                         }
                     }*/
-                    writer.write(fr.getFactura().getReparto().getNumeroVendedorPS());
+                    writer.write(fr.getFactura().getReparto().getNumeroVendedorPS() + "	");
                     writer.write(fr.getFactura().getCliente().getCodigoPS() + "	");
                     writer.write(fr.getArticulo().getCodigo() + "	");
                     writer.write(df.format(fr.getCantidad()).replace(',', '.') + "	");
