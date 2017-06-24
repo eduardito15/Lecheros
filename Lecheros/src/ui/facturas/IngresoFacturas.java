@@ -955,7 +955,7 @@ public class IngresoFacturas extends javax.swing.JFrame {
                 try {
                     if (factura == null) {
                         //Si la factura manual en null seguro que es una factura manual nueva, entonces si o si verifico que el numero sea valido
-                        if (sisFacturas.numeroDeFacturaManualValido(Long.parseLong(jTextFieldNumero.getText().trim()))) {
+                        if (sisFacturas.numeroDeFacturaManualValido(Long.parseLong(jTextFieldNumero.getText().trim()), tipoDoc)) {
                             habilitarCampos();
                             jComboBoxReparto.requestFocus();
                         } else {
@@ -966,7 +966,7 @@ public class IngresoFacturas extends javax.swing.JFrame {
                     } else {//Si la compra no es null es por que es una mofificacion. Entonces solo verifico que sea valido si modifico el numero
                         Long numCampo = Long.parseLong(jTextFieldNumero.getText());
                         if (factura.getNumero() != numCampo) {
-                            if (sisFacturas.numeroDeFacturaManualValido(Long.parseLong(jTextFieldNumero.getText().trim()))) {
+                            if (sisFacturas.numeroDeFacturaManualValido(Long.parseLong(jTextFieldNumero.getText().trim()), tipoDoc)) {
                                 habilitarCampos();
                                 jComboBoxReparto.requestFocus();
                             } else {

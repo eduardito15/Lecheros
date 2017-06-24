@@ -47,8 +47,6 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Optional;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import java.util.stream.Collectors;
 import lecheros.Lecheros;
 import org.apache.poi.ss.usermodel.Cell;
@@ -112,12 +110,13 @@ public class SistemaFacturas {
      * encabezado dice factura manual. 
      *
      */
-    public boolean numeroDeFacturaManualValido(long numero) throws Exception {
+    public boolean numeroDeFacturaManualValido(long numero, DocumentoDeVenta tipoDoc) throws Exception {
         boolean retorno = true;
         Factura fact;
         Session session = GenericDAO.getGenericDAO().getSessionFactory().openSession();
         session.beginTransaction();
-        Query consulta = session.createQuery("FROM Factura WHERE numero = " + numero);
+        Query consulta = session.createQuery("FROM Factura WHERE numero = " + numero + " and tipoDocumento = :tipo");
+        consulta.setEntity("tipo", tipoDoc);
         fact = (Factura) consulta.uniqueResult();
         if (fact != null) {
             retorno = false;
@@ -132,14 +131,20 @@ public class SistemaFacturas {
      * boeltas marcadas como manuales. Aunque el encabezado dice movil. Es por
      * que las boletas manuales son las que se hacen con el aparato de PS
      *
+     * @param numero
+     * @param tipoDocVenta
+     * @return 
+     * @throws java.lang.Exception
      */
-    public boolean numeroDeFacturaMovilValido(long numero) throws Exception {
+    public boolean numeroDeFacturaMovilValido(long numero, DocumentoDeVenta tipoDocVenta) throws Exception {
+        System.out.println("Numero:" + numero);
         boolean retorno = true;
         Factura fact;
         Session session = GenericDAO.getGenericDAO().getSessionFactory().openSession();
         session.beginTransaction();
-        Query consulta = session.createQuery("FROM Factura WHERE numero = " + numero + " and esManual = :man");
+        Query consulta = session.createQuery("FROM Factura WHERE numero = " + numero + " and esManual = :man and tipoDocumento = :tipo");
         consulta.setBoolean("man", true);
+        consulta.setEntity("tipo", tipoDocVenta);
         fact = (Factura) consulta.uniqueResult();
         if (fact != null) {
             retorno = false;
@@ -293,6 +298,19 @@ public class SistemaFacturas {
         session.close();
         return retorno;
     }
+    
+    public Factura devolverFacturaPorNumeroTipoDeDocumentoDeVentaYTipo(long numero, DocumentoDeVenta tipoDoc, boolean esManual) throws Exception {
+        Factura retorno = null;
+        Session session = GenericDAO.getGenericDAO().getSessionFactory().openSession();
+        session.beginTransaction();
+        Query consulta = session.createQuery("FROM Factura WHERE numero = " + numero + " and esManual = :man and tipoDocumento = :tipo");
+        consulta.setBoolean("man", esManual);
+        consulta.setEntity("tipo", tipoDoc);
+        retorno = (Factura)consulta.uniqueResult();
+        session.getTransaction().commit();
+        session.close();
+        return retorno;
+    }
 
     public List<Factura> devolverFacturasEntreFechas(Date fechaDesde, Date fechaHasta, boolean esManual) throws Exception {
 
@@ -415,7 +433,101 @@ public class SistemaFacturas {
                             retornoPorFactura[5] = "El número de factura debe ser un número.";
                             throw new Exception(retornoPorFactura[5]);
                         }
-                        Factura f = this.devolverFacturaPorNumeroYTipo(numeroFactura, true);
+                        
+                        DocumentoDeVenta tipoDocumento = null;
+
+                        switch (Documento) {
+                            case "CONTADO.": {
+                                tipoDocumento = SistemaMantenimiento.getInstance().devolverDocumentoDeVentaPorNombre("Contado");
+                                if (Lecheros.nombreEmpresa.equals(Constantes.nombreEmpresaRelece)) {
+                                    tipoDocumento = SistemaMantenimiento.getInstance().devolverDocumentoDeVentaPorNombre("Contado Cerram");
+                                }
+                                if (tipoDocumento == null) {
+                                    retornoPorFactura[5] = "No existe el tipo de documento.";
+                                    throw new Exception(retornoPorFactura[5]);
+                                }
+                                break;
+                            }
+                            case "CONTADO": {
+                                tipoDocumento = SistemaMantenimiento.getInstance().devolverDocumentoDeVentaPorNombre("Contado");
+                                if (Lecheros.nombreEmpresa.equals(Constantes.nombreEmpresaRelece)) {
+                                    tipoDocumento = SistemaMantenimiento.getInstance().devolverDocumentoDeVentaPorNombre("Contado Cerram");
+                                }
+                                if (tipoDocumento == null) {
+                                    retornoPorFactura[5] = "No existe el tipo de documento.";
+                                    throw new Exception(retornoPorFactura[5]);
+                                }
+                                break;
+                            }
+                            case "CREDITO.": {
+                                tipoDocumento = SistemaMantenimiento.getInstance().devolverDocumentoDeVentaPorNombre("Credito");
+                                if (Lecheros.nombreEmpresa.equals(Constantes.nombreEmpresaRelece)) {
+                                    tipoDocumento = SistemaMantenimiento.getInstance().devolverDocumentoDeVentaPorNombre("Credito Cerram");
+                                }
+                                if (tipoDocumento == null) {
+                                    retornoPorFactura[5] = "No existe el tipo de documento.";
+                                    throw new Exception(retornoPorFactura[5]);
+                                }
+                                break;
+                            }
+                            case "CREDITO": {
+                                tipoDocumento = SistemaMantenimiento.getInstance().devolverDocumentoDeVentaPorNombre("Credito");
+                                if (Lecheros.nombreEmpresa.equals(Constantes.nombreEmpresaRelece)) {
+                                    tipoDocumento = SistemaMantenimiento.getInstance().devolverDocumentoDeVentaPorNombre("Credito Cerram");
+                                }
+                                if (tipoDocumento == null) {
+                                    retornoPorFactura[5] = "No existe el tipo de documento.";
+                                    throw new Exception(retornoPorFactura[5]);
+                                }
+                                break;
+                            }
+                            case "NOTA DE DEVOLUCION": {
+                                tipoDocumento = SistemaMantenimiento.getInstance().devolverDocumentoDeVentaPorNombre("Nota de Devolución");
+                                if (Lecheros.nombreEmpresa.equals(Constantes.nombreEmpresaRelece)) {
+                                    tipoDocumento = SistemaMantenimiento.getInstance().devolverDocumentoDeVentaPorNombre("Nota de Devolución Cerram");
+                                }
+                                if (tipoDocumento == null) {
+                                    retornoPorFactura[5] = "No existe el tipo de documento.";
+                                    throw new Exception(retornoPorFactura[5]);
+                                }
+                                break;
+                            }
+                            case "NOTA DE DEVOLUCION.": {
+                                tipoDocumento = SistemaMantenimiento.getInstance().devolverDocumentoDeVentaPorNombre("Nota de Devolución");
+                                if (Lecheros.nombreEmpresa.equals(Constantes.nombreEmpresaRelece)) {
+                                    tipoDocumento = SistemaMantenimiento.getInstance().devolverDocumentoDeVentaPorNombre("Nota de Devolución Cerram");
+                                }
+                                if (tipoDocumento == null) {
+                                    retornoPorFactura[5] = "No existe el tipo de documento.";
+                                    throw new Exception(retornoPorFactura[5]);
+                                }
+                                break;
+                            }
+                            case "NOTA DE CREDITO": {
+                                tipoDocumento = SistemaMantenimiento.getInstance().devolverDocumentoDeVentaPorNombre("Nota de Credito");
+                                if (Lecheros.nombreEmpresa.equals(Constantes.nombreEmpresaRelece)) {
+                                    tipoDocumento = SistemaMantenimiento.getInstance().devolverDocumentoDeVentaPorNombre("Nota de Credito Cerram");
+                                }
+                                if (tipoDocumento == null) {
+                                    retornoPorFactura[5] = "No existe el tipo de documento.";
+                                    throw new Exception(retornoPorFactura[5]);
+                                }
+                                break;
+                            }
+                            case "NOTA DE CREDITO.": {
+                                tipoDocumento = SistemaMantenimiento.getInstance().devolverDocumentoDeVentaPorNombre("Nota de Credito");
+                                if (Lecheros.nombreEmpresa.equals(Constantes.nombreEmpresaRelece)) {
+                                    tipoDocumento = SistemaMantenimiento.getInstance().devolverDocumentoDeVentaPorNombre("Nota de Credito Cerram");
+                                }
+                                if (tipoDocumento == null) {
+                                    retornoPorFactura[5] = "No existe el tipo de documento.";
+                                    throw new Exception(retornoPorFactura[5]);
+                                }
+                                break;
+                            }
+                        }
+                        
+                        Factura f = this.devolverFacturaPorNumeroTipoDeDocumentoDeVentaYTipo(numeroFactura, tipoDocumento, true);
                         if(f == null) {
                             //No es valida la boleta continuo
                         } else {
@@ -663,7 +775,7 @@ public class SistemaFacturas {
 
                         //Verifico si existe una boleta manual con ese numero. 
                         
-                        if (this.numeroDeFacturaMovilValido(numeroFactura)) {
+                        if (this.numeroDeFacturaMovilValido(numeroFactura, tipoDocumento)) {
                             Cliente c;
 
                             try {
@@ -890,7 +1002,77 @@ public class SistemaFacturas {
                             retornoPorFactura[5] = "El número de factura debe ser un número.";
                             throw new Exception(retornoPorFactura[5]);
                         }
-                        Factura f = this.devolverFacturaPorNumeroYTipo(numeroFactura, true);
+                        
+                        DocumentoDeVenta tipoDocumento = null;
+
+                        switch (Documento) {
+                            case "CONTADO.": {
+                                tipoDocumento = SistemaMantenimiento.getInstance().devolverDocumentoDeVentaPorNombre("Contado Relece");
+                                if (tipoDocumento == null) {
+                                    retornoPorFactura[5] = "No existe el tipo de documento.";
+                                    throw new Exception(retornoPorFactura[5]);
+                                }
+                                break;
+                            }
+                            case "CONTADO": {
+                                tipoDocumento = SistemaMantenimiento.getInstance().devolverDocumentoDeVentaPorNombre("Contado Relece");
+                                if (tipoDocumento == null) {
+                                    retornoPorFactura[5] = "No existe el tipo de documento.";
+                                    throw new Exception(retornoPorFactura[5]);
+                                }
+                                break;
+                            }
+                            case "CREDITO.": {
+                                tipoDocumento = SistemaMantenimiento.getInstance().devolverDocumentoDeVentaPorNombre("Credito Relece");
+                                if (tipoDocumento == null) {
+                                    retornoPorFactura[5] = "No existe el tipo de documento.";
+                                    throw new Exception(retornoPorFactura[5]);
+                                }
+                                break;
+                            }
+                            case "CREDITO": {
+                                tipoDocumento = SistemaMantenimiento.getInstance().devolverDocumentoDeVentaPorNombre("Credito Relece");
+                                if (tipoDocumento == null) {
+                                    retornoPorFactura[5] = "No existe el tipo de documento.";
+                                    throw new Exception(retornoPorFactura[5]);
+                                }
+                                break;
+                            }
+                            case "NOTA DE DEVOLUCION": {
+                                tipoDocumento = SistemaMantenimiento.getInstance().devolverDocumentoDeVentaPorNombre("Nota de Devolución Relece");
+                                if (tipoDocumento == null) {
+                                    retornoPorFactura[5] = "No existe el tipo de documento.";
+                                    throw new Exception(retornoPorFactura[5]);
+                                }
+                                break;
+                            }
+                            case "NOTA DE DEVOLUCION.": {
+                                tipoDocumento = SistemaMantenimiento.getInstance().devolverDocumentoDeVentaPorNombre("Nota de Devolución Relece");
+                                if (tipoDocumento == null) {
+                                    retornoPorFactura[5] = "No existe el tipo de documento.";
+                                    throw new Exception(retornoPorFactura[5]);
+                                }
+                                break;
+                            }
+                            case "NOTA DE CREDITO": {
+                                tipoDocumento = SistemaMantenimiento.getInstance().devolverDocumentoDeVentaPorNombre("Nota de Credito Relece");
+                                if (tipoDocumento == null) {
+                                    retornoPorFactura[5] = "No existe el tipo de documento.";
+                                    throw new Exception(retornoPorFactura[5]);
+                                }
+                                break;
+                            }
+                            case "NOTA DE CREDITO.": {
+                                tipoDocumento = SistemaMantenimiento.getInstance().devolverDocumentoDeVentaPorNombre("Nota de Credito Relece");
+                                if (tipoDocumento == null) {
+                                    retornoPorFactura[5] = "No existe el tipo de documento.";
+                                    throw new Exception(retornoPorFactura[5]);
+                                }
+                                break;
+                            }
+                        }
+                        
+                        Factura f = this.devolverFacturaPorNumeroTipoDeDocumentoDeVentaYTipo(numeroFactura, tipoDocumento, true);
                         if(f == null) {
                             //No es valida la boleta continuo
                         } else {
@@ -1114,7 +1296,7 @@ public class SistemaFacturas {
 
                         //Verifico si existe una boleta manual con ese numero. 
                         
-                        if (this.numeroDeFacturaMovilValido(numeroFactura)) {
+                        if (this.numeroDeFacturaMovilValido(numeroFactura, tipoDocumento)) {
                             Cliente c;
 
                             try {
@@ -5320,7 +5502,7 @@ public class SistemaFacturas {
         Writer writer = null;
         try {
             writer = new BufferedWriter(new OutputStreamWriter(
-                    new FileOutputStream(new File(SistemaMantenimiento.getInstance().devolverConfiguracionGeneral().getRutaInforme() + "/" + "InterfacePowerStreetDesde" + formatter.format(desdeFecha).replace("-", "") + "Hasta" + formatter.format(hastaFecha).replace("-", "") + r!=null?r.getNombre():"" + ".txt")), "utf-8"));
+                    new FileOutputStream(new File(SistemaMantenimiento.getInstance().devolverConfiguracionGeneral().getRutaInforme() + "/" + "InterfacePowerStreetDesde" + formatter.format(desdeFecha).replace("-", "") + "Hasta" + formatter.format(hastaFecha).replace("-", "") +  ".txt")), "utf-8"));
 
             for (Factura f : facturas) {
                 for (FacturaRenglon fr : f.getRenglones()) {

@@ -420,9 +420,10 @@ public class IngresarFacturaManualGiamo extends javax.swing.JFrame {
         if (evt.getKeyCode() == KeyEvent.VK_ENTER) {
             if (!"".equals(jTextFieldNumero.getText().trim())) {
                 try {
+                    DocumentoDeVenta tipoDocumento = SistemaMantenimiento.getInstance().devolverDocumentoDeVentaPorNombre("Contado");
                     if (factura == null) {
                         //Si la factura manual en null seguro que es una factura manual nueva, entonces si o si verifico que el numero sea valido
-                        if (sisFacturas.numeroDeFacturaManualValido(Long.parseLong(jTextFieldNumero.getText().trim()))) {
+                        if (sisFacturas.numeroDeFacturaManualValido(Long.parseLong(jTextFieldNumero.getText().trim()), tipoDocumento)) {
                             //habilitarCampos();
                             factura = new Factura();
                             factura.setRenglones(new ArrayList<>());
@@ -436,7 +437,7 @@ public class IngresarFacturaManualGiamo extends javax.swing.JFrame {
                     } else {//Si la compra no es null es por que es una mofificacion. Entonces solo verifico que sea valido si modifico el numero
                         Long numCampo = Long.parseLong(jTextFieldNumero.getText());
                         if (factura.getNumero() != numCampo) {
-                            if (sisFacturas.numeroDeFacturaManualValido(Long.parseLong(jTextFieldNumero.getText().trim()))) {
+                            if (sisFacturas.numeroDeFacturaManualValido(Long.parseLong(jTextFieldNumero.getText().trim()), tipoDocumento)) {
                                 //habilitarCampos();
                                 jComboBoxReparto.requestFocus();
                             } else {
