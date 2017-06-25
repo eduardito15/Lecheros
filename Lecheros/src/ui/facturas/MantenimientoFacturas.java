@@ -266,6 +266,7 @@ public class MantenimientoFacturas extends javax.swing.JFrame {
                 return false;
             }
         };
+        modelo.addColumn("Tipo Documento");
         modelo.addColumn("Cliente");
         modelo.addColumn("Numero");
         modelo.addColumn("Fecha");
@@ -276,9 +277,9 @@ public class MantenimientoFacturas extends javax.swing.JFrame {
         modelo.addColumn("Total");
         jTableFacturas.setModel(modelo);
         TableColumn column = null;
-        for (int i = 0; i < 5; i++) {
+        for (int i = 0; i < 9; i++) {
             column = jTableFacturas.getColumnModel().getColumn(i);
-            if (i == 0 || i == 3) {
+            if (i == 0 || i == 1 || i == 4) {
                 column.setPreferredWidth(120);
             } else {
                 column.setPreferredWidth(50);
@@ -502,17 +503,17 @@ public class MantenimientoFacturas extends javax.swing.JFrame {
 
         jTableFacturas.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
-                {null, null, null, null, null, null, null, null},
-                {null, null, null, null, null, null, null, null},
-                {null, null, null, null, null, null, null, null},
-                {null, null, null, null, null, null, null, null}
+                {null, null, null, null, null, null, null, null, null},
+                {null, null, null, null, null, null, null, null, null},
+                {null, null, null, null, null, null, null, null, null},
+                {null, null, null, null, null, null, null, null, null}
             },
             new String [] {
-                "Cliente", "Numero", "Fecha", "Reparto", "SubTotal", "Iva Minimo", "Iva Basico", "Total"
+                "Tipo Documento", "Cliente", "Numero", "Fecha", "Reparto", "SubTotal", "Iva Minimo", "Iva Basico", "Total"
             }
         ) {
             boolean[] canEdit = new boolean [] {
-                false, false, false, false, true, true, true, false
+                false, false, false, false, false, false, false, false, false
             };
 
             public boolean isCellEditable(int rowIndex, int columnIndex) {
@@ -564,7 +565,7 @@ public class MantenimientoFacturas extends javax.swing.JFrame {
                                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                                     .addComponent(jLabelFechaIncorrecta)
                                     .addComponent(jLabelHastaFechaIncorrecta))))
-                        .addGap(0, 74, Short.MAX_VALUE))
+                        .addGap(0, 187, Short.MAX_VALUE))
                     .addGroup(layout.createSequentialGroup()
                         .addGap(332, 332, 332)
                         .addComponent(jLabelTitulo)
@@ -917,17 +918,18 @@ public class MantenimientoFacturas extends javax.swing.JFrame {
     }//GEN-LAST:event_jRadioButtonProrrateoKeyPressed
 
     public void cargarFacturaEnTabla(Factura f) {
-        Object[] object = new Object[8];
-        object[0] = f.getCliente();
-        object[1] = f.getNumero();
+        Object[] object = new Object[9];
+        object[0] = f.getTipoDocumento();
+        object[1] = f.getCliente();
+        object[2] = f.getNumero();
         SimpleDateFormat formatter;
         formatter = new SimpleDateFormat("dd-MM-yyyy");
-        object[2] = formatter.format(f.getFecha());
-        object[3] = f.getReparto();
-        object[4] = df.format(f.getSubtotal()).replace(',', '.');
-        object[5] = df.format(f.getTotalMinimo()).replace(',', '.');
-        object[6] = df.format(f.getTotalBasico()).replace(',', '.');
-        object[7] = df.format(f.getTotal()).replace(',', '.');
+        object[3] = formatter.format(f.getFecha());
+        object[4] = f.getReparto();
+        object[5] = df.format(f.getSubtotal()).replace(',', '.');
+        object[6] = df.format(f.getTotalMinimo()).replace(',', '.');
+        object[7] = df.format(f.getTotalBasico()).replace(',', '.');
+        object[8] = df.format(f.getTotal()).replace(',', '.');
         modelo.addRow(object);
     }
 
