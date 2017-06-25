@@ -279,10 +279,14 @@ public class MantenimientoFacturas extends javax.swing.JFrame {
         TableColumn column = null;
         for (int i = 0; i < 9; i++) {
             column = jTableFacturas.getColumnModel().getColumn(i);
-            if (i == 0 || i == 1 || i == 4) {
+            if (i == 1 || i == 4) {
                 column.setPreferredWidth(120);
             } else {
-                column.setPreferredWidth(50);
+                if(i == 0) {
+                    column.setPreferredWidth(70);
+                } else {
+                    column.setPreferredWidth(50);
+                }
             }
         }
         final JPopupMenu popupMenu = new JPopupMenu();
