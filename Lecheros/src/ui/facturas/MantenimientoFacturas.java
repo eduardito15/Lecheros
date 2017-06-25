@@ -30,6 +30,7 @@ import javax.swing.JTextField;
 import javax.swing.SwingUtilities;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableColumn;
+import lecheros.Lecheros;
 import org.hibernate.HibernateException;
 import sistema.SistemaFacturas;
 import sistema.SistemaMantenimiento;
@@ -381,6 +382,20 @@ public class MantenimientoFacturas extends javax.swing.JFrame {
 
         });
         popupMenu.add(imprimirItem);
+        if(Lecheros.nombreEmpresa.equals(Constantes.nombreEmpresaRelece)) {
+            JMenuItem cambiarTipoDocItem = new JMenuItem("Cambiar Tipo de Documento");
+            cambiarTipoDocItem.addActionListener(new ActionListener() {
+                @Override
+                public void actionPerformed(ActionEvent e) {
+                    //Que hacer cuando da ver en el menu con click derecho sobre la fila de la tabla
+                    VentanaCambiarTipoDeDocumentoFacturas vif = new VentanaCambiarTipoDeDocumentoFacturas(MantenimientoFacturas.this, false);
+                    Factura f = facturas.get(jTableFacturas.getSelectedRow());
+                    vif.setFactura(f);
+                    vif.setVisible(true);
+                }
+            });
+            popupMenu.add(cambiarTipoDocItem);
+        }
         jTableFacturas.setComponentPopupMenu(popupMenu);
     }
 
