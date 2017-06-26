@@ -1,6 +1,12 @@
 # Compiled class file
 *.class
 
+#Archivos de la carpeta build
+Lecheros/build
+Lecheros/build.xml
+Lecheros/manifest.mf
+Lecheros/dist/*
+
 # Log file
 *.log
 
