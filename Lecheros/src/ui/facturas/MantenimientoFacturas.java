@@ -343,7 +343,7 @@ public class MantenimientoFacturas extends javax.swing.JFrame {
                             try {
                                 if (sisFacturas.eliminarFactura(f)) {
                                     JOptionPane.showMessageDialog(MantenimientoFacturas.this, "La factura se elimino correctamente", "Información", JOptionPane.INFORMATION_MESSAGE);
-                                    jButtonBuscar.doClick();
+                                    //jButtonBuscar.doClick();
                                 }
                             } catch (HibernateException he) {
                                 JOptionPane.showMessageDialog(MantenimientoFacturas.this, "Error al eliminar la factura." + "\n\n" + he.toString(), "Error", JOptionPane.ERROR_MESSAGE);
@@ -433,6 +433,11 @@ public class MantenimientoFacturas extends javax.swing.JFrame {
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
         setTitle("Mantenimiento Facturas");
+        addWindowListener(new java.awt.event.WindowAdapter() {
+            public void windowActivated(java.awt.event.WindowEvent evt) {
+                formWindowActivated(evt);
+            }
+        });
 
         jLabelTitulo.setFont(new java.awt.Font("Lucida Grande", 1, 18)); // NOI18N
         jLabelTitulo.setForeground(new java.awt.Color(0, 0, 255));
@@ -935,6 +940,13 @@ public class MantenimientoFacturas extends javax.swing.JFrame {
             jButtonBuscar.doClick();
         }
     }//GEN-LAST:event_jRadioButtonProrrateoKeyPressed
+
+    private void formWindowActivated(java.awt.event.WindowEvent evt) {//GEN-FIRST:event_formWindowActivated
+        // TODO add your handling code here:
+        if(yaBusco) {
+            jButtonBuscar.doClick();
+        }
+    }//GEN-LAST:event_formWindowActivated
 
     public void cargarFacturaEnTabla(Factura f) {
         Object[] object = new Object[9];

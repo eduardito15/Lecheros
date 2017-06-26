@@ -5,9 +5,11 @@
  */
 package ui.facturas;
 
+import dao.GenericDAO;
 import dominio.DocumentoDeVenta;
 import dominio.Factura;
 import java.util.List;
+import javax.swing.JOptionPane;
 import sistema.SistemaFacturas;
 import sistema.SistemaMantenimiento;
 
@@ -57,6 +59,11 @@ public class VentanaCambiarTipoDeDocumentoFacturas extends javax.swing.JDialog {
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
         setTitle("Cambiat Tipo de Documento de Venta");
+        addWindowListener(new java.awt.event.WindowAdapter() {
+            public void windowActivated(java.awt.event.WindowEvent evt) {
+                formWindowActivated(evt);
+            }
+        });
 
         jLabelTitulo.setFont(new java.awt.Font("Lucida Grande", 1, 18)); // NOI18N
         jLabelTitulo.setForeground(new java.awt.Color(0, 0, 255));
@@ -133,13 +140,27 @@ public class VentanaCambiarTipoDeDocumentoFacturas extends javax.swing.JDialog {
 
     private void jButtonCambiarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonCambiarActionPerformed
         // TODO add your handling code here:
-        
+       DocumentoDeVenta dvNuevo = (DocumentoDeVenta)jComboBoxTiposDeDocumentosDeVenta.getSelectedItem();
+        int resp = JOptionPane.showConfirmDialog(this, "Seguro que quieres cambiar el tipo de documento de " + factura.getTipoDocumento().getTipoDocumento() + " a " + dvNuevo.getTipoDocumento()  + " para la factura numero: " + factura.getNumero() + "?", "Información", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE);
+        if(resp == JOptionPane.YES_OPTION) {
+            factura.setTipoDocumento(dvNuevo);
+            GenericDAO.getGenericDAO().actualizar(factura);
+            JOptionPane.showMessageDialog(this, "Tipo de documento guardado correctamente.", "Información", JOptionPane.INFORMATION_MESSAGE);
+            this.dispose();
+        }
     }//GEN-LAST:event_jButtonCambiarActionPerformed
 
     private void jButtonSalirActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonSalirActionPerformed
         // TODO add your handling code here:
         this.dispose();
     }//GEN-LAST:event_jButtonSalirActionPerformed
+
+    private void formWindowActivated(java.awt.event.WindowEvent evt) {//GEN-FIRST:event_formWindowActivated
+        // TODO add your handling code here:
+        if (factura != null) {
+            jLabelTipoDeDocumentoDeVenta.setText(factura.getTipoDocumento().getTipoDocumento());
+        }
+    }//GEN-LAST:event_formWindowActivated
 
     /**
      * @param args the command line arguments

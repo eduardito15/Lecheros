@@ -73,7 +73,7 @@ public class ImprimirFacturaRelece implements ImprimirFactura, Printable, Pageab
                 //index of installed printers on you system
                 //not sure if default-printer is always '0'
                 printJob.print(aset);
-                Thread.sleep(10000);
+                Thread.sleep(5000);
             } catch (PrinterException err) {
                 System.err.println(err);
             } catch (InterruptedException ex) {

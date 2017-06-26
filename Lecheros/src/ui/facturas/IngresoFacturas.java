@@ -332,6 +332,7 @@ public class IngresoFacturas extends javax.swing.JFrame {
         jButtonRefrescar = new javax.swing.JButton();
         jLabel11 = new javax.swing.JLabel();
         jLabelDescuento = new javax.swing.JLabel();
+        jButtonGuardarEImprimir = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
         setTitle("Ingresar Factura Manual");
@@ -498,6 +499,14 @@ public class IngresoFacturas extends javax.swing.JFrame {
 
         jLabelDescuento.setText("0.0");
 
+        jButtonGuardarEImprimir.setText("Guardar e Imprimir (F11)");
+        jButtonGuardarEImprimir.setEnabled(false);
+        jButtonGuardarEImprimir.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButtonGuardarEImprimirActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
@@ -584,6 +593,8 @@ public class IngresoFacturas extends javax.swing.JFrame {
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                             .addComponent(jButtonSalir, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                             .addComponent(jButtonGuardar, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(jButtonGuardarEImprimir)
                         .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))))
         );
         layout.setVerticalGroup(
@@ -594,59 +605,57 @@ public class IngresoFacturas extends javax.swing.JFrame {
                     .addComponent(jLabelTitulo)
                     .addComponent(jButtonRefrescar))
                 .addGap(18, 18, 18)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
                     .addGroup(layout.createSequentialGroup()
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                            .addGroup(layout.createSequentialGroup()
-                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                    .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                                        .addComponent(jLabel2, javax.swing.GroupLayout.PREFERRED_SIZE, 23, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                        .addComponent(jLabel1)
-                                        .addComponent(jComboBoxReparto, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                                    .addComponent(jDateChooserFecha, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                                .addGap(13, 13, 13)
-                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                                    .addComponent(jLabel3)
-                                    .addComponent(jLabel7)
-                                    .addComponent(jTextFieldNumero, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                            .addComponent(jTextFieldCliente, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(jLabelFechaIncorrecta)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(jSeparator2, javax.swing.GroupLayout.PREFERRED_SIZE, 12, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                                .addComponent(jLabel2, javax.swing.GroupLayout.PREFERRED_SIZE, 23, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addComponent(jLabel1)
+                                .addComponent(jComboBoxReparto, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addComponent(jButtonGuardar)
+                                .addComponent(jButtonGuardarEImprimir))
+                            .addComponent(jDateChooserFecha, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addGap(13, 13, 13)
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                            .addComponent(jTextFieldCantidadRenglon, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(jLabel5)
-                            .addComponent(jButtonAgregar)
-                            .addComponent(jLabelDescripcionArt)
-                            .addComponent(jTextFieldCodigoArticulo, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(jLabel4)
-                            .addComponent(jLabel12))
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(jSeparator3, javax.swing.GroupLayout.PREFERRED_SIZE, 12, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(18, 18, 18)
-                        .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 300, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                            .addComponent(jLabel8)
-                            .addComponent(jLabelSubTotal)
-                            .addComponent(jLabel6)
-                            .addComponent(jLabelTotal))
-                        .addGap(18, 18, 18)
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                            .addComponent(jLabelIvaMinimo)
-                            .addComponent(jLabel9)
-                            .addComponent(jLabel11)
-                            .addComponent(jLabelDescuento))
-                        .addGap(18, 18, 18)
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                            .addComponent(jLabel10)
-                            .addComponent(jLabelIvaBasico)))
-                    .addGroup(layout.createSequentialGroup()
-                        .addGap(37, 37, 37)
-                        .addComponent(jButtonSalir))
-                    .addComponent(jButtonGuardar))
+                            .addComponent(jLabel3)
+                            .addComponent(jLabel7)
+                            .addComponent(jTextFieldNumero, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                    .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                        .addComponent(jTextFieldCliente, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addComponent(jButtonSalir)))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(jLabelFechaIncorrecta)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(jSeparator2, javax.swing.GroupLayout.PREFERRED_SIZE, 12, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jTextFieldCantidadRenglon, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jLabel5)
+                    .addComponent(jButtonAgregar)
+                    .addComponent(jLabelDescripcionArt)
+                    .addComponent(jTextFieldCodigoArticulo, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jLabel4)
+                    .addComponent(jLabel12))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(jSeparator3, javax.swing.GroupLayout.PREFERRED_SIZE, 12, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(18, 18, 18)
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 300, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jLabel8)
+                    .addComponent(jLabelSubTotal)
+                    .addComponent(jLabel6)
+                    .addComponent(jLabelTotal))
+                .addGap(18, 18, 18)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jLabelIvaMinimo)
+                    .addComponent(jLabel9)
+                    .addComponent(jLabel11)
+                    .addComponent(jLabelDescuento))
+                .addGap(18, 18, 18)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jLabel10)
+                    .addComponent(jLabelIvaBasico))
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
@@ -856,6 +865,9 @@ public class IngresoFacturas extends javax.swing.JFrame {
         if (evt.getKeyCode() == KeyEvent.VK_F10) {
             jButtonGuardar.doClick();
         }
+        if (evt.getKeyCode() == KeyEvent.VK_F11) {
+            jButtonGuardarEImprimir.doClick();
+        }
         if (evt.getKeyCode() == KeyEvent.VK_UP) {
             if (jTableRenglones.getSelectedRow() >= 1) {
                 jTableRenglones.changeSelection(jTableRenglones.getSelectedRow() - 1, 0, false, false);
@@ -891,7 +903,7 @@ public class IngresoFacturas extends javax.swing.JFrame {
     private void jButtonGuardarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonGuardarActionPerformed
         // TODO add your handling code here:
         try {
-            if (factura.isEsManual()) {
+            //if (factura.isEsManual()) {
                 if ("Modificar".equals(this.getAccion())) {
                     factura.setReparto((Reparto) jComboBoxReparto.getSelectedItem());
                     factura.setNumero(Long.parseLong(jTextFieldNumero.getText().trim()));
@@ -929,7 +941,7 @@ public class IngresoFacturas extends javax.swing.JFrame {
                 } else {
 
                 }
-            }
+            //}
         } catch (Exception e) {
             String stakTrace = util.Util.obtenerStackTraceEnString(e);
             SistemaUsuarios.getInstance().registrarExcepcion(e.toString(), stakTrace);
@@ -1108,6 +1120,7 @@ public class IngresoFacturas extends javax.swing.JFrame {
             jDateChooserFecha.setEnabled(true);
             jComboBoxReparto.setEnabled(true);
             jButtonGuardar.setEnabled(true);
+            jButtonGuardarEImprimir.setEnabled(true);
             jTextFieldCodigoArticulo.setEnabled(false);
             jTextFieldCantidadRenglon.setEnabled(false);
             jButtonAgregar.setEnabled(false);
@@ -1214,6 +1227,9 @@ public class IngresoFacturas extends javax.swing.JFrame {
         if (evt.getKeyCode() == KeyEvent.VK_F10) {
             jButtonGuardar.doClick();
         }
+        if (evt.getKeyCode() == KeyEvent.VK_F11) {
+            jButtonGuardarEImprimir.doClick();
+        }
     }//GEN-LAST:event_jTableRenglonesKeyPressed
 
     private void jButtonRefrescarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonRefrescarActionPerformed
@@ -1224,6 +1240,58 @@ public class IngresoFacturas extends javax.swing.JFrame {
         vif.setVisible(true);
         this.dispose();
     }//GEN-LAST:event_jButtonRefrescarActionPerformed
+
+    private void jButtonGuardarEImprimirActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonGuardarEImprimirActionPerformed
+        // TODO add your handling code here:
+        try {
+            //if (factura.isEsManual()) {
+                if ("Modificar".equals(this.getAccion())) {
+                    factura.setReparto((Reparto) jComboBoxReparto.getSelectedItem());
+                    factura.setNumero(Long.parseLong(jTextFieldNumero.getText().trim()));
+                    
+                    Date fechaFact = jDateChooserFecha.getDate();
+                    this.factura.setFecha(fechaFact);
+                    sisFacturas.actualizarFacturaManual(factura);
+                    try {
+                        SistemaFacturas.getImpresion().imprimirFactura(factura);
+                    } catch (Exception exp) {
+                        String stakTrace = util.Util.obtenerStackTraceEnString(exp);
+                        SistemaUsuarios.getInstance().registrarExcepcion(exp.toString(), stakTrace);
+                        JOptionPane.showMessageDialog(IngresoFacturas.this, Constantes.MensajeDeErrorGenerico, "Error", JOptionPane.ERROR_MESSAGE);
+                    }
+                    this.dispose();
+                } else if (sisFacturas.guardarFacturaManual(factura)) {
+                    //Se guardo bien, habro de nuevo la misma ventana, dejo la fecha, el reparto y aumento 1 en el numero, borro el cliente.
+                    long proximoNumero = this.factura.getNumero() + 1;
+                    try {
+                        SistemaFacturas.getImpresion().imprimirFactura(factura);
+                    } catch (Exception exp) {
+                        String stakTrace = util.Util.obtenerStackTraceEnString(exp);
+                        SistemaUsuarios.getInstance().registrarExcepcion(exp.toString(), stakTrace);
+                        JOptionPane.showMessageDialog(IngresoFacturas.this, Constantes.MensajeDeErrorGenerico, "Error", JOptionPane.ERROR_MESSAGE);
+                    }
+                    IngresoFacturas vif = new IngresoFacturas(null, false);
+                    vif.setAccion("NuevaDesdeFacturaAnterior");
+                    vif.setTipoDoc(factura.getTipoDocumento());
+                    vif.setNumeroDeFactura(proximoNumero);
+                    vif.setVisible(true);
+                    this.dispose();
+                } else {
+
+                }
+            //}
+        } catch (Exception e) {
+            String stakTrace = util.Util.obtenerStackTraceEnString(e);
+            SistemaUsuarios.getInstance().registrarExcepcion(e.toString(), stakTrace);
+
+            JOptionPane.showMessageDialog(this, "Error al guardar la factura. " + "\n" + e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+            IngresoFacturas vinv = new IngresoFacturas(null, false);
+            vinv.setTipoDoc(factura.getTipoDocumento());
+            vinv.setVisible(true);
+            this.dispose();
+
+        }
+    }//GEN-LAST:event_jButtonGuardarEImprimirActionPerformed
 
     private void cargarRenglon(FacturaRenglon fmr) {
         Object[] object = new Object[6];
@@ -1240,12 +1308,14 @@ public class IngresoFacturas extends javax.swing.JFrame {
         jDateChooserFecha.setEnabled(true);
         jComboBoxReparto.setEnabled(true);
         jButtonGuardar.setEnabled(true);
+        jButtonGuardarEImprimir.setEnabled(true);
     }
 
     public void inhabilitarCampos() {
         jDateChooserFecha.setEnabled(false);
         jComboBoxReparto.setEnabled(false);
         jButtonGuardar.setEnabled(false);
+        jButtonGuardarEImprimir.setEnabled(false);
         jTextFieldCodigoArticulo.setEnabled(false);
         jTextFieldCantidadRenglon.setEnabled(false);
         jButtonAgregar.setEnabled(false);
@@ -1307,6 +1377,7 @@ public class IngresoFacturas extends javax.swing.JFrame {
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton jButtonAgregar;
     private javax.swing.JButton jButtonGuardar;
+    private javax.swing.JButton jButtonGuardarEImprimir;
     private javax.swing.JButton jButtonRefrescar;
     private javax.swing.JButton jButtonSalir;
     private javax.swing.JComboBox jComboBoxReparto;
