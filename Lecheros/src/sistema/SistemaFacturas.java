@@ -2671,7 +2671,7 @@ public class SistemaFacturas {
             }
 
             //Si hay que facturar productos agrego los productos
-            if (clientesFacturaProductos.get(c)) {
+            if (clientesFacturaProductos.get(c) != null && clientesFacturaProductos.get(c)) {
                 /*if (f.getTipoDocumento() == null) {
                     DocumentoDeVenta tipoDocVenta = SistemaMantenimiento.getInstance().devolverDocumentoDeVentaPorNombre("Contado");
                     f.setTipoDocumento(tipoDocVenta);
@@ -2890,7 +2890,7 @@ public class SistemaFacturas {
                 GenericDAO.getGenericDAO().guardar(fcf);
             }
         }*/
-        
+        if(facturarProductos) {
         int ultimoIndiceLeido = 0;
         Object[] arts = articuloCantidadParaFacturar.keySet().toArray();
         while(ultimoIndiceLeido < arts.length -1) {
@@ -3011,6 +3011,7 @@ public class SistemaFacturas {
                 GenericDAO.getGenericDAO().guardar(fcf);
             }
         }
+        }
         
         /*HashMap<Articulo, Boolean> articulosFacturadosCF = new HashMap<>();
         while(articuloCantidadParaFacturar.size() != articulosFacturadosCF.size()) {
@@ -3095,7 +3096,7 @@ public class SistemaFacturas {
                 }
             }
         }*/
-        
+        if(facturarProductos) {
         //Notas de Credito por lo valores negativos.
         if(hayCantidadesDeProductosNegativos) {
             Factura f = new Factura();
@@ -3156,6 +3157,7 @@ public class SistemaFacturas {
             if (!f.getRenglones().isEmpty()) {
                 GenericDAO.getGenericDAO().guardar(f);
             }
+        }
         }
         
         GenericDAO.getGenericDAO().actualizar(configFact);
