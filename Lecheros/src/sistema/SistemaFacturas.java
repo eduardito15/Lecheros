@@ -2375,18 +2375,21 @@ public class SistemaFacturas {
                 boolean facturarLecheAlCliente = facturarLechaACliente(c, fecha);
                 clientesFacturaLeche.put(c, facturarLecheAlCliente);
                 if (facturarLecheAlCliente) {
+                    System.out.println("Cliente para facturar leche comun: " + c.getNombre() + " " + c.getRazonSocial() + " " + c.getLitrosComun() + " Litros");
                     totalLitrosComunProrrateo = totalLitrosComunProrrateo + c.getLitrosComun();
                     
                 }
                 boolean facturarLecheUltraAlCliente = facturarLechaUltraACliente(c, fecha);
                 clientesFacturaLecheUltra.put(c, facturarLecheUltraAlCliente);
                 if (facturarLecheUltraAlCliente) {
+                    System.out.println("Cliente para facturar leche ultra: " + c.getNombre() + " " + c.getRazonSocial() + " " + c.getLitrosUltra()+ " Litros");
                     totalLitrosUltraProrrateo = totalLitrosUltraProrrateo + c.getLitrosUltra();
                     
                 }
                 boolean facturarLecheDeslactosadaAlCliente = facturarLechaDeslactosadaACliente(c, fecha);
                 clientesFacturaLecheDeslactosada.put(c, facturarLecheDeslactosadaAlCliente);
                 if (facturarLecheDeslactosadaAlCliente) {
+                    //System.out.println("Cliente para facturar leche deslactosada: " + c.getNombre() + " " + c.getRazonSocial());
                     totalLitrosDeslactosadaProrrateo = totalLitrosDeslactosadaProrrateo + c.getLitrosDeslactosada();
                     
                 }
@@ -2416,6 +2419,8 @@ public class SistemaFacturas {
             }
             
         }
+        
+        //List<Cliente> clientesParaMostrarFacturarLeche = clientesFacturaLeche.keySet().stream().filter(c -> clientesFacturaLeche.get(c)).collect(Collectors.toList());
         
         //Para Etapa de Pruebas
         System.out.println("Cantidad de productos para Facturar : " + articuloCantidadParaFacturar.keySet().size());
