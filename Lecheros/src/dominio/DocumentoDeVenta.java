@@ -17,6 +17,8 @@ public class DocumentoDeVenta extends ObjetoPersistente {
     private String tipoDocumento;
     
     private boolean suma;
+    
+    private boolean activo;
 
     /**
      * @return the nombre
@@ -49,5 +51,19 @@ public class DocumentoDeVenta extends ObjetoPersistente {
     @Override
     public String toString(){
         return this.getTipoDocumento();
+    }
+
+    /**
+     * @return the activo
+     */
+    public boolean isActivo() {
+        return activo;
+    }
+
+    /**
+     * @param activo the activo to set
+     */
+    public void setActivo(boolean activo) {
+        this.activo = activo;
     }
 }

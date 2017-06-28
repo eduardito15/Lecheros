@@ -1811,6 +1811,7 @@ public class MenuPrincipal extends javax.swing.JFrame {
         try {
             List<DocumentoDeVenta> tiposDocs = SistemaMantenimiento.getInstance().devolverDocumentosDeVenta();
             for (DocumentoDeVenta d : tiposDocs) {
+                if(d.isActivo()) {
                 JMenuItem menuItemVent = new javax.swing.JMenuItem();
                 menuItemVent.setText(d.getTipoDocumento());
                 menuItemVent.addActionListener(new java.awt.event.ActionListener() {
@@ -1838,6 +1839,7 @@ public class MenuPrincipal extends javax.swing.JFrame {
                     }
                 });
                 jMenu7.add(menuItemVent);
+                }
             }
         } catch (Exception ex) {
             String stakTrace = util.Util.obtenerStackTraceEnString(ex);

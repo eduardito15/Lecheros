@@ -380,6 +380,7 @@ public class SistemaMantenimiento {
         DocumentoDeVenta dv = new DocumentoDeVenta();
         dv.setTipoDocumento(tipoDoc);
         dv.setSuma(suma);
+        dv.setActivo(true);
         SistemaUsuarios.getInstance().registrarOperacion(Constantes.ActividadMantenimientoDocumentosDeVenta, "Ingreo el documento de venta  :  " + tipoDoc );
         return GenericDAO.getGenericDAO().guardar(dv);
     }
