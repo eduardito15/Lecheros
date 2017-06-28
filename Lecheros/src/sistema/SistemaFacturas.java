@@ -32,6 +32,7 @@ import impresion.Facturas.ImprimirFacturaRelece;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.FileReader;
@@ -47,12 +48,15 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Optional;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import java.util.stream.Collectors;
 import lecheros.Lecheros;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
+import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.hibernate.Query;
 import org.hibernate.Session;
@@ -5748,6 +5752,223 @@ public class SistemaFacturas {
             case 7 : {retorno = "7 Veces por Semana"; break;}
         }
         
+        return retorno;
+    }
+    
+    public List<String[]> ingresarFacturasManualesGiamoDesdeArchivo(int desdeFilaCli, int hastaFilaCli, String rutaArchivoClientes, int desdeFilaFact, int hastaFilaFact, String rutaArchivoFacturas) {
+        List<String[]> retorno = new ArrayList<>();
+        try {
+            //Me cargo en la memoria los clientes manuales para saber a que cliente pertenece la factura manual
+            HashMap<Long, Cliente> clientesFacturaLeche = new HashMap<>();
+            FileInputStream inputStream = null;
+            inputStream = new FileInputStream(new File(rutaArchivoClientes));
+            Workbook workbook = new XSSFWorkbook(inputStream);
+            XSSFSheet hoja = (XSSFSheet) workbook.getSheetAt(0);
+            for (int i = desdeFilaCli; i <= hastaFilaCli; i++) {
+                Row fila = hoja.getRow(i - 1);
+                long oid = (long) fila.getCell(0).getNumericCellValue();
+                String codigo = fila.getCell(1).getStringCellValue();
+                Cliente cli = SistemaMantenimiento.getInstance().devolverClientePorCodigo(codigo);
+                if (cli != null) {
+                    clientesFacturaLeche.put(oid, cli);
+                }
+            }
+
+            inputStream = null;
+            inputStream = new FileInputStream(new File(rutaArchivoFacturas));
+            workbook = new XSSFWorkbook(inputStream);
+            hoja = (XSSFSheet) workbook.getSheetAt(0);
+            for (int i = desdeFilaFact; i <= hastaFilaFact; i++) {
+                Row fila = hoja.getRow(i - 1);
+                
+                String[] retornoFactura = new String[3];
+
+                long numero = (long) fila.getCell(0).getNumericCellValue();
+                Date fecha = fila.getCell(1).getDateCellValue();
+                long oid = (long) fila.getCell(2).getNumericCellValue();
+                Cliente cli = clientesFacturaLeche.get(oid);
+                
+                retornoFactura[0] = formatter.format(fecha);
+                retornoFactura[1] = Long.toString(numero);
+
+                double totalLecheComun = fila.getCell(3).getNumericCellValue();
+                double totalLecheUltra = fila.getCell(4).getNumericCellValue();
+                double totalLecheUltraDiferenciada = fila.getCell(5).getNumericCellValue();
+                double totalLecheDeslactosada = fila.getCell(6).getNumericCellValue();
+                double totalProductosMinimo = fila.getCell(7).getNumericCellValue();
+                double totalProductosBasico = fila.getCell(8).getNumericCellValue();
+
+                GrupoDeArticulos grupoLecheComun = SistemaMantenimientoArticulos.getInstance().devolverGrupoDeArticuloPorNombre("Leche Común");
+
+                GrupoDeArticulos grupoLecheUtra = SistemaMantenimientoArticulos.getInstance().devolverGrupoDeArticuloPorNombre("Leche Ultra");
+
+                GrupoDeArticulos grupoLecheUltraDiferenciada = SistemaMantenimientoArticulos.getInstance().devolverGrupoDeArticuloPorNombre("Leche Ultra Diferenciada");
+
+                GrupoDeArticulos grupoLecheDeslactosada = SistemaMantenimientoArticulos.getInstance().devolverGrupoDeArticuloPorNombre("Leche Deslactosada");
+
+                Articulo lecheComun = null;
+                Precio pLecheComun = null;
+                if (!grupoLecheComun.getArticulos().isEmpty()) {
+                    lecheComun = grupoLecheComun.getArticulos().get(0);
+                    pLecheComun = SistemaMantenimientoArticulos.getInstance().devolverPrecioParaFechaPorArticulo(lecheComun, fecha);
+                }
+
+                Articulo lecheUltra = null;
+                Precio pLecheUltra = null;
+                if (!grupoLecheUtra.getArticulos().isEmpty()) {
+                    lecheUltra = grupoLecheUtra.getArticulos().get(0);
+                    pLecheUltra = SistemaMantenimientoArticulos.getInstance().devolverPrecioParaFechaPorArticulo(lecheUltra, fecha);
+                }
+
+                Articulo lecheUltraDiferenciada = null;
+                Precio pLecheUltraDiferenciada = null;
+                if ((grupoLecheUltraDiferenciada != null ? !grupoLecheUltraDiferenciada.getArticulos().isEmpty() : false)) {
+                    lecheUltraDiferenciada = grupoLecheUltraDiferenciada.getArticulos().get(0);
+                    pLecheUltraDiferenciada = SistemaMantenimientoArticulos.getInstance().devolverPrecioParaFechaPorArticulo(lecheUltraDiferenciada, fecha);
+                }
+
+                Articulo lecheDeslactosada = null;
+                Precio pLecheDeslactosada = null;
+                if (!grupoLecheDeslactosada.getArticulos().isEmpty()) {
+                    lecheDeslactosada = grupoLecheDeslactosada.getArticulos().get(0);
+                    pLecheDeslactosada = SistemaMantenimientoArticulos.getInstance().devolverPrecioParaFechaPorArticulo(lecheDeslactosada, fecha);
+                }
+
+                Articulo prodMinimo = SistemaMantenimientoArticulos.getInstance().devolverArticuloPorCodigo(44444);
+                Articulo prodBasico = SistemaMantenimientoArticulos.getInstance().devolverArticuloPorCodigo(55555);
+                
+                boolean todoOk = true;
+                if(cli == null) {
+                    todoOk = false;
+                    retornoFactura[2] = "Cliente no encontrado.";
+                    retorno.add(retornoFactura);
+                }
+
+                if(todoOk) {
+                    Factura f = new Factura();
+                    DocumentoDeVenta tipoDocVenta = SistemaMantenimiento.getInstance().devolverDocumentoDeVentaPorNombre("Contado");
+                    f.setTipoDocumento(tipoDocVenta);
+                    f.setFecha(fecha);
+                    f.setCliente(cli);
+                    f.setReparto(cli.getReparto());
+                    f.setEsManual(true);
+                    f.setEstaPaga(true);
+                    f.setNumero(numero);
+
+                    List<FacturaRenglon> renglones = new ArrayList<>();
+                    if (totalLecheComun != 0 && lecheComun != null && pLecheComun != null) {
+                        FacturaRenglon fr = new FacturaRenglon();
+                        fr.setFactura(f);
+                        fr.setArticulo(lecheComun);
+
+                        int cantidad = (int) (totalLecheComun / pLecheComun.getPrecioVenta());
+
+                        fr.setCantidad(cantidad);
+                        fr.setPrecio(pLecheComun.getPrecioVenta());
+                        fr.setSubtotal(totalLecheComun);
+                        fr.setIva(0);
+                        fr.setTotal(totalLecheComun);
+                        renglones.add(fr);
+                    }
+                    if (totalLecheUltra != 0 && lecheUltra != null && pLecheUltra != null) {
+                        FacturaRenglon fr = new FacturaRenglon();
+                        fr.setFactura(f);
+                        fr.setArticulo(lecheUltra);
+
+                        int cantidad = (int) (totalLecheUltra / pLecheUltra.getPrecioVenta());
+
+                        fr.setCantidad(cantidad);
+                        fr.setPrecio(pLecheUltra.getPrecioVenta());
+                        fr.setSubtotal(totalLecheUltra);
+                        fr.setIva(0);
+                        fr.setTotal(totalLecheUltra);
+                        renglones.add(fr);
+                    }
+                    if (totalLecheUltraDiferenciada != 0 && lecheUltraDiferenciada != null && pLecheUltraDiferenciada != null) {
+                        FacturaRenglon fr = new FacturaRenglon();
+                        fr.setFactura(f);
+                        fr.setArticulo(lecheUltraDiferenciada);
+
+                        int cantidad = (int) (totalLecheUltraDiferenciada / pLecheUltraDiferenciada.getPrecioVenta());
+
+                        fr.setCantidad(cantidad);
+                        fr.setPrecio(pLecheUltraDiferenciada.getPrecioVenta());
+                        fr.setSubtotal(totalLecheUltraDiferenciada);
+                        fr.setIva(0);
+                        fr.setTotal(totalLecheUltraDiferenciada);
+                        renglones.add(fr);
+                    }
+                    if (totalLecheDeslactosada != 0 && lecheDeslactosada != null && pLecheDeslactosada != null) {
+                        FacturaRenglon fr = new FacturaRenglon();
+                        fr.setFactura(f);
+                        fr.setArticulo(lecheDeslactosada);
+
+                        int cantidad = (int) (totalLecheDeslactosada / pLecheDeslactosada.getPrecioVenta());
+
+                        fr.setCantidad(cantidad);
+                        fr.setPrecio(pLecheDeslactosada.getPrecioVenta());
+                        fr.setSubtotal(totalLecheDeslactosada);
+                        fr.setIva(0);
+                        fr.setTotal(totalLecheDeslactosada);
+                        renglones.add(fr);
+                    }
+                    if (totalProductosMinimo != 0) {
+                        FacturaRenglon fr = new FacturaRenglon();
+                        fr.setFactura(f);
+                        fr.setArticulo(prodMinimo);
+                        fr.setCantidad(Double.parseDouble(df.format(totalProductosMinimo)));
+                        fr.setPrecio(1);
+                        double iva = (totalProductosMinimo * 9.1) / 100;
+                        fr.setIva(iva);
+                        fr.setTotal(totalProductosMinimo);
+                        fr.setSubtotal(totalProductosMinimo - iva);
+                        renglones.add(fr);
+                    }
+                    if (totalProductosBasico != 0) {
+                        FacturaRenglon fr = new FacturaRenglon();
+                        fr.setFactura(f);
+                        fr.setArticulo(prodBasico);
+                        fr.setCantidad(Double.parseDouble(df.format(totalProductosBasico)));
+                        fr.setPrecio(1);
+                        double iva = (totalProductosBasico * 18.03) / 100;
+                        fr.setIva(iva);
+                        fr.setTotal(totalProductosBasico);
+                        fr.setSubtotal(totalProductosBasico - iva);
+                        renglones.add(fr);
+                    }
+
+                    f.setRenglones(renglones);
+
+                    double totalLecheExcento = totalLecheComun + totalLecheUltra + totalLecheUltraDiferenciada + totalLecheDeslactosada;
+                    double ivaMinimo = (totalProductosMinimo * 9.1) / 100;
+                    double totalMinimo = totalProductosMinimo - ivaMinimo;
+                    double ivaBasico = (totalProductosBasico * 18.03) / 100;
+                    double totalBasico = totalProductosBasico - ivaBasico;
+
+                    double subTotal = totalLecheExcento + totalMinimo + totalBasico;
+                    double ivaTotal = ivaMinimo + ivaBasico;
+                    double total = subTotal + ivaTotal;
+
+                    f.setSubtotal(subTotal);
+                    f.setTotalMinimo(ivaMinimo);
+                    f.setTotalBasico(ivaBasico);
+                    f.setTotal(total);
+                    if (!f.getRenglones().isEmpty()) {
+                        GenericDAO.getGenericDAO().guardar(f);
+                        retornoFactura[2] = "Ingresada correctamente.";
+                        retorno.add(retornoFactura);
+                    }
+
+                }
+            }
+
+        } catch (FileNotFoundException ex) {
+            Logger.getLogger(Lecheros.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (IOException ex) {
+            Logger.getLogger(Lecheros.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (Exception ex) {
+            Logger.getLogger(Lecheros.class.getName()).log(Level.SEVERE, null, ex);
+        }
         return retorno;
     }
 }
