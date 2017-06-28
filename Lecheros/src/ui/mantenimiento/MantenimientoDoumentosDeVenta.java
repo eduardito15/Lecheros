@@ -53,6 +53,7 @@ public class MantenimientoDoumentosDeVenta extends javax.swing.JDialog {
         jRadioButtonResta = new javax.swing.JRadioButton();
         jButtonGuardar = new javax.swing.JButton();
         jButtonSalir = new javax.swing.JButton();
+        jRadioButtonActivo = new javax.swing.JRadioButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
         setTitle("Documentos de Venta");
@@ -89,6 +90,9 @@ public class MantenimientoDoumentosDeVenta extends javax.swing.JDialog {
             }
         });
 
+        jRadioButtonActivo.setSelected(true);
+        jRadioButtonActivo.setText("Activo");
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
@@ -107,18 +111,22 @@ public class MantenimientoDoumentosDeVenta extends javax.swing.JDialog {
                         .addGap(18, 18, 18)
                         .addComponent(jTextFieldNombre))
                     .addGroup(layout.createSequentialGroup()
-                        .addGap(61, 61, 61)
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                        .addGap(59, 59, 59)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                            .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                .addGroup(layout.createSequentialGroup()
+                                    .addComponent(jRadioButtonSuma)
+                                    .addGap(18, 18, 18)
+                                    .addComponent(jRadioButtonResta))
+                                .addGroup(layout.createSequentialGroup()
+                                    .addGap(25, 25, 25)
+                                    .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                                        .addComponent(jButtonGuardar, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                        .addComponent(jButtonSalir, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))))
                             .addGroup(layout.createSequentialGroup()
-                                .addComponent(jRadioButtonSuma)
-                                .addGap(18, 18, 18)
-                                .addComponent(jRadioButtonResta))
-                            .addGroup(layout.createSequentialGroup()
-                                .addGap(25, 25, 25)
-                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                                    .addComponent(jButtonGuardar, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                                    .addComponent(jButtonSalir, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))))
-                        .addGap(0, 63, Short.MAX_VALUE))))
+                                .addComponent(jRadioButtonActivo)
+                                .addGap(32, 32, 32)))
+                        .addGap(0, 65, Short.MAX_VALUE))))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -136,7 +144,9 @@ public class MantenimientoDoumentosDeVenta extends javax.swing.JDialog {
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                             .addComponent(jRadioButtonSuma)
                             .addComponent(jRadioButtonResta))
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(jRadioButtonActivo)
+                        .addGap(9, 9, 9)
                         .addComponent(jButtonGuardar)
                         .addGap(18, 18, 18)
                         .addComponent(jButtonSalir)))
@@ -178,6 +188,7 @@ public class MantenimientoDoumentosDeVenta extends javax.swing.JDialog {
                     //Es uno ya existente.
                     if(documentoDeVenta.getTipoDocumento().equals(jTextFieldNombre.getText().trim())){
                         documentoDeVenta.setSuma(jRadioButtonSuma.isSelected());
+                        documentoDeVenta.setActivo(jRadioButtonActivo.isSelected());
                         if (sis.actualizarDocumentoDeVenta(documentoDeVenta)) {
                             jTextFieldNombre.setText("");
                             actualizarListaDocumentosDeVenta();
@@ -189,6 +200,7 @@ public class MantenimientoDoumentosDeVenta extends javax.swing.JDialog {
                         if (aux == null) {
                             documentoDeVenta.setTipoDocumento(jTextFieldNombre.getText().trim());
                             documentoDeVenta.setSuma(jRadioButtonSuma.isSelected());
+                            documentoDeVenta.setActivo(jRadioButtonActivo.isSelected());
                             if (sis.actualizarDocumentoDeVenta(documentoDeVenta)) {
                                 jTextFieldNombre.setText("");
                                 actualizarListaDocumentosDeVenta();
@@ -227,6 +239,7 @@ public class MantenimientoDoumentosDeVenta extends javax.swing.JDialog {
             jTextFieldNombre.setText(documentoDeVenta.getTipoDocumento());
             jRadioButtonSuma.setSelected(documentoDeVenta.isSuma());
             jRadioButtonResta.setSelected(!documentoDeVenta.isSuma());
+            jRadioButtonActivo.setSelected(documentoDeVenta.isActivo());
         }
     }//GEN-LAST:event_jListDocumentosMouseClicked
 
@@ -293,6 +306,7 @@ public class MantenimientoDoumentosDeVenta extends javax.swing.JDialog {
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel7;
     private javax.swing.JList jListDocumentos;
+    private javax.swing.JRadioButton jRadioButtonActivo;
     private javax.swing.JRadioButton jRadioButtonResta;
     private javax.swing.JRadioButton jRadioButtonSuma;
     private javax.swing.JScrollPane jScrollPane1;

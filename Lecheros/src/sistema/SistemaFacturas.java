@@ -2522,6 +2522,14 @@ public class SistemaFacturas {
 
                 int litrosComunFacturar = (int) (porcentajeComunCliente * totalLitrosComunFacturar) / 100;
                 
+                if (litrosComunFacturar > 0) {
+                    boolean esNumeroMultiploDeCantidadParaFacturar = litrosComunFacturar % grupoLecheComun.getFacturarDeA() == 0;
+                    while (!esNumeroMultiploDeCantidadParaFacturar) {
+                        litrosComunFacturar = litrosComunFacturar - 1;
+                        esNumeroMultiploDeCantidadParaFacturar = litrosComunFacturar % grupoLecheComun.getFacturarDeA() == 0;
+                    }
+                }
+                
                 if (litrosComunFacturar != 0 && lecheComun != null && pLecheComun != null) {
                     FacturaRenglon fr = new FacturaRenglon();
                     fr.setFactura(f);
@@ -2563,10 +2571,33 @@ public class SistemaFacturas {
                 int litrosUltraDiferenciadaFacturar = 0;
                 //int litrosDeslactosadaFacturar = (int) (porcentajeDeslactosadaCliente * totalLitrosDeslactosadaFacturar) / 100;
 
+                if (litrosUltraFacturar > 0) {
+                    boolean esNumeroMultiploDeCantidadParaFacturar = litrosUltraFacturar % grupoLecheUtra.getFacturarDeA() == 0;
+                    while (!esNumeroMultiploDeCantidadParaFacturar) {
+                        litrosUltraFacturar = litrosUltraFacturar - 1;
+                        esNumeroMultiploDeCantidadParaFacturar = litrosUltraFacturar % grupoLecheUtra.getFacturarDeA() == 0;
+                    }
+                }
+                
                 //Si hay ultra diferenciada calculo cuanto es de cada una
                 if (litrosUltraFacturar != 0) {
                     litrosUltraDiferenciadaFacturar = (int) (porcentajeUltraDiferenciada * litrosUltraFacturar) / 100;
                     litrosUltraFacturar = (int) ((100 - porcentajeUltraDiferenciada) * litrosUltraFacturar) / 100;
+                    
+                    if (litrosUltraDiferenciadaFacturar > 0) {
+                        boolean esNumeroMultiploDeCantidadParaFacturar = litrosUltraDiferenciadaFacturar % grupoLecheUltraDiferenciada.getFacturarDeA() == 0;
+                        while (!esNumeroMultiploDeCantidadParaFacturar) {
+                            litrosUltraDiferenciadaFacturar = litrosUltraDiferenciadaFacturar - 1;
+                            esNumeroMultiploDeCantidadParaFacturar = litrosUltraDiferenciadaFacturar % grupoLecheUltraDiferenciada.getFacturarDeA() == 0;
+                        }
+                    }
+                    if (litrosUltraFacturar > 0) {
+                        boolean esNumeroMultiploDeCantidadParaFacturar = litrosUltraFacturar % grupoLecheUtra.getFacturarDeA() == 0;
+                        while (!esNumeroMultiploDeCantidadParaFacturar) {
+                            litrosUltraFacturar = litrosUltraFacturar - 1;
+                            esNumeroMultiploDeCantidadParaFacturar = litrosUltraFacturar % grupoLecheUtra.getFacturarDeA() == 0;
+                        }
+                    }
                 }
 
                 
@@ -2622,6 +2653,13 @@ public class SistemaFacturas {
 
                 int litrosDeslactosadaFacturar = (int) (porcentajeDeslactosadaCliente * totalLitrosDeslactosadaFacturar) / 100;
 
+                if (litrosDeslactosadaFacturar > 0) {
+                    boolean esNumeroMultiploDeCantidadParaFacturar = litrosDeslactosadaFacturar % grupoLecheDeslactosada.getFacturarDeA() == 0;
+                    while (!esNumeroMultiploDeCantidadParaFacturar) {
+                        litrosDeslactosadaFacturar = litrosDeslactosadaFacturar - 1;
+                        esNumeroMultiploDeCantidadParaFacturar = litrosDeslactosadaFacturar % grupoLecheDeslactosada.getFacturarDeA() == 0;
+                    }
+                }
                
                 if (litrosDeslactosadaFacturar > 0 && lecheDeslactosada != null && pLecheDeslactosada != null) {
                     FacturaRenglon fr = new FacturaRenglon();
