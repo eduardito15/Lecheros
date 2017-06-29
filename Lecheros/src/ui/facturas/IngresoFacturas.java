@@ -1031,6 +1031,16 @@ public class IngresoFacturas extends javax.swing.JFrame {
             } else //No es vacio. Busco la cadena en los rut de cliente, si conincide la muestro si no pregunto si quiere volver a ingresarlo o abrir el buscador de clientes.
             {
                 if (cliente != null) {
+                    jTextFieldCliente.setEditable(false);
+                    jTextFieldCodigoArticulo.setEnabled(true);
+                    jTextFieldCantidadRenglon.setEnabled(true);
+                    jButtonAgregar.setEnabled(true);
+                    jTableRenglones.setEnabled(true);
+                    jDateChooserFecha.setEnabled(false);
+                    jComboBoxReparto.setEnabled(false);
+                    jTextFieldCliente.setEditable(false);
+                    jTextFieldCodigoArticulo.requestFocus();
+                    jTextFieldCodigoArticulo.selectAll();
                     if (cliente.getNombre().equals(jTextFieldCliente.getText().trim())) {
                         jTextFieldCliente.setText(cliente.getNombre());
                         jTextFieldCodigoArticulo.setEnabled(true);
