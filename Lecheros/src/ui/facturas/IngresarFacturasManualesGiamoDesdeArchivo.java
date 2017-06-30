@@ -5,20 +5,60 @@
  */
 package ui.facturas;
 
+import java.text.DecimalFormat;
+import java.util.List;
+import javax.swing.JOptionPane;
+import javax.swing.SwingUtilities;
+import javax.swing.filechooser.FileNameExtensionFilter;
+import javax.swing.table.DefaultTableModel;
+import javax.swing.table.TableColumn;
+import sistema.SistemaFacturas;
+import sistema.SistemaUsuarios;
+
 /**
  *
  * @author Edu
  */
 public class IngresarFacturasManualesGiamoDesdeArchivo extends javax.swing.JDialog {
 
+    private final SistemaFacturas sisFacturas;
+    private List<String[]> resultado;
+    
+    private DefaultTableModel modelo;
+    private final DecimalFormat df;
     /**
      * Creates new form IngresarFacturasManualesGiamoDesdeArchivo
      */
     public IngresarFacturasManualesGiamoDesdeArchivo(java.awt.Frame parent, boolean modal) {
         super(parent, modal);
         initComponents();
+        sisFacturas = SistemaFacturas.getInstance();
+        inicializarTableResultado();
+        df = new DecimalFormat("0.00");
+        jLabelEspera.setVisible(false);
     }
 
+    public final void inicializarTableResultado() {
+        modelo = new DefaultTableModel() {
+            @Override
+            public boolean isCellEditable(int row, int column) {
+                return false;
+            }
+        };
+        modelo.addColumn("Fecha");
+        modelo.addColumn("Numero");
+        modelo.addColumn("Resultado");
+        jTableResultado.setModel(modelo);
+        TableColumn column = null;
+        for (int i = 0; i < 3; i++) {
+            column = jTableResultado.getColumnModel().getColumn(i);
+            if (i ==2) {
+                column.setPreferredWidth(250); //articulo column is bigger
+            } else {
+                column.setPreferredWidth(50);
+            }
+        }
+    }
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always
@@ -28,6 +68,8 @@ public class IngresarFacturasManualesGiamoDesdeArchivo extends javax.swing.JDial
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
+        jFileChooserClientes = new javax.swing.JFileChooser();
+        jFileChooserFacturas = new javax.swing.JFileChooser();
         jLabelTitulo = new javax.swing.JLabel();
         jLabel1 = new javax.swing.JLabel();
         jTextFieldRutaArchivoClientes = new javax.swing.JTextField();
@@ -46,10 +88,11 @@ public class IngresarFacturasManualesGiamoDesdeArchivo extends javax.swing.JDial
         jButtonIngresar = new javax.swing.JButton();
         jButtonSalir = new javax.swing.JButton();
         jScrollPane1 = new javax.swing.JScrollPane();
-        jTable1 = new javax.swing.JTable();
+        jTableResultado = new javax.swing.JTable();
         jLabelEspera = new javax.swing.JLabel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
+        setTitle("Ingresar Facturas Manuales Giamo desde Archivo");
 
         jLabelTitulo.setFont(new java.awt.Font("Lucida Grande", 1, 18)); // NOI18N
         jLabelTitulo.setForeground(new java.awt.Color(0, 0, 255));
@@ -58,6 +101,11 @@ public class IngresarFacturasManualesGiamoDesdeArchivo extends javax.swing.JDial
         jLabel1.setText("Archivo de Clientes:");
 
         jButtonBuscarArchivoClientes.setText("Buscar");
+        jButtonBuscarArchivoClientes.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButtonBuscarArchivoClientesActionPerformed(evt);
+            }
+        });
 
         jLabel2.setText("Archivo de Facturas:");
 
@@ -66,12 +114,22 @@ public class IngresarFacturasManualesGiamoDesdeArchivo extends javax.swing.JDial
         jLabel4.setText("Hasta Fila:");
 
         jButtonBuscarArchivoFacturas.setText("Buscar");
+        jButtonBuscarArchivoFacturas.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButtonBuscarArchivoFacturasActionPerformed(evt);
+            }
+        });
 
         jLabel5.setText("Hasta Fila:");
 
         jLabel6.setText("Desde Fila:");
 
         jButtonIngresar.setText("Ingresar");
+        jButtonIngresar.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButtonIngresarActionPerformed(evt);
+            }
+        });
 
         jButtonSalir.setText("Salir");
         jButtonSalir.addActionListener(new java.awt.event.ActionListener() {
@@ -80,7 +138,7 @@ public class IngresarFacturasManualesGiamoDesdeArchivo extends javax.swing.JDial
             }
         });
 
-        jTable1.setModel(new javax.swing.table.DefaultTableModel(
+        jTableResultado.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
                 {null, null, null},
                 {null, null, null},
@@ -99,7 +157,7 @@ public class IngresarFacturasManualesGiamoDesdeArchivo extends javax.swing.JDial
                 return canEdit [columnIndex];
             }
         });
-        jScrollPane1.setViewportView(jTable1);
+        jScrollPane1.setViewportView(jTableResultado);
 
         jLabelEspera.setIcon(new javax.swing.ImageIcon(getClass().getResource("/ui/wait_progress.gif"))); // NOI18N
 
@@ -108,52 +166,53 @@ public class IngresarFacturasManualesGiamoDesdeArchivo extends javax.swing.JDial
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                        .addGroup(layout.createSequentialGroup()
+                            .addContainerGap()
+                            .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                                .addComponent(jLabel2)
+                                .addComponent(jLabel1))
+                            .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                            .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                .addGroup(layout.createSequentialGroup()
+                                    .addComponent(jLabel3)
+                                    .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                    .addComponent(jTextFieldDesdeFilaCliente, javax.swing.GroupLayout.PREFERRED_SIZE, 100, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                    .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                    .addComponent(jLabel4)
+                                    .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                    .addComponent(jTextFieldHastaFilaCliente, javax.swing.GroupLayout.PREFERRED_SIZE, 100, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                .addGroup(layout.createSequentialGroup()
+                                    .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
+                                        .addComponent(jTextFieldRutaArchivoFacturas, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 395, Short.MAX_VALUE)
+                                        .addComponent(jTextFieldRutaArchivoClientes, javax.swing.GroupLayout.Alignment.LEADING))
+                                    .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                    .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                        .addComponent(jButtonBuscarArchivoClientes)
+                                        .addComponent(jButtonBuscarArchivoFacturas)))
+                                .addGroup(layout.createSequentialGroup()
+                                    .addComponent(jLabel6)
+                                    .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                    .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                        .addGroup(layout.createSequentialGroup()
+                                            .addComponent(jTextFieldDesdeFilaFacturas, javax.swing.GroupLayout.PREFERRED_SIZE, 100, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                            .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                            .addComponent(jLabel5)
+                                            .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                            .addComponent(jTextFieldHastaFilaFacturas, javax.swing.GroupLayout.PREFERRED_SIZE, 100, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                        .addGroup(layout.createSequentialGroup()
+                                            .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
+                                                .addComponent(jButtonSalir, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                                .addComponent(jButtonIngresar, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                                            .addGap(18, 18, 18)
+                                            .addComponent(jLabelEspera))))))
+                        .addGroup(layout.createSequentialGroup()
+                            .addContainerGap()
+                            .addComponent(jScrollPane1)))
                     .addGroup(layout.createSequentialGroup()
-                        .addGap(192, 192, 192)
-                        .addComponent(jLabelTitulo))
-                    .addGroup(layout.createSequentialGroup()
-                        .addContainerGap()
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                            .addComponent(jLabel2)
-                            .addComponent(jLabel1))
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addGroup(layout.createSequentialGroup()
-                                .addComponent(jLabel3)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(jTextFieldDesdeFilaCliente, javax.swing.GroupLayout.PREFERRED_SIZE, 100, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(jLabel4)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(jTextFieldHastaFilaCliente, javax.swing.GroupLayout.PREFERRED_SIZE, 100, javax.swing.GroupLayout.PREFERRED_SIZE))
-                            .addGroup(layout.createSequentialGroup()
-                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
-                                    .addComponent(jTextFieldRutaArchivoFacturas, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 395, Short.MAX_VALUE)
-                                    .addComponent(jTextFieldRutaArchivoClientes, javax.swing.GroupLayout.Alignment.LEADING))
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                    .addComponent(jButtonBuscarArchivoClientes)
-                                    .addComponent(jButtonBuscarArchivoFacturas)))
-                            .addGroup(layout.createSequentialGroup()
-                                .addComponent(jLabel6)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                    .addGroup(layout.createSequentialGroup()
-                                        .addComponent(jTextFieldDesdeFilaFacturas, javax.swing.GroupLayout.PREFERRED_SIZE, 100, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                        .addComponent(jLabel5)
-                                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                        .addComponent(jTextFieldHastaFilaFacturas, javax.swing.GroupLayout.PREFERRED_SIZE, 100, javax.swing.GroupLayout.PREFERRED_SIZE))
-                                    .addGroup(layout.createSequentialGroup()
-                                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
-                                            .addComponent(jButtonSalir, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                                            .addComponent(jButtonIngresar, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                                        .addGap(18, 18, 18)
-                                        .addComponent(jLabelEspera))))))
-                    .addGroup(layout.createSequentialGroup()
-                        .addContainerGap()
-                        .addComponent(jScrollPane1)))
+                        .addGap(84, 84, 84)
+                        .addComponent(jLabelTitulo)))
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
@@ -196,6 +255,7 @@ public class IngresarFacturasManualesGiamoDesdeArchivo extends javax.swing.JDial
         );
 
         pack();
+        setLocationRelativeTo(null);
     }// </editor-fold>//GEN-END:initComponents
 
     private void jButtonSalirActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonSalirActionPerformed
@@ -203,6 +263,92 @@ public class IngresarFacturasManualesGiamoDesdeArchivo extends javax.swing.JDial
         this.dispose();
     }//GEN-LAST:event_jButtonSalirActionPerformed
 
+    private void jButtonIngresarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonIngresarActionPerformed
+        // TODO add your handling code here:
+        // TODO add your handling code here:
+        if ("".equals(jTextFieldRutaArchivoClientes.getText().trim())) {
+            //Es vacio el campo que lleva la ruta del archivo
+            JOptionPane.showMessageDialog(this, "Debe seleccionar un archivo .xml del cual ingresar las boletas. El archivo debe ser descargado desde el sistema de PS", "Información", JOptionPane.INFORMATION_MESSAGE);
+            jButtonBuscarArchivoClientes.requestFocus();
+        } else {
+            //No es vacio la ruta. Asi que llamo a sistema de compras para que ingrese las compras del archivo.
+            try {
+                jTextFieldRutaArchivoClientes.setEnabled(false);
+                jButtonBuscarArchivoClientes.setEnabled(false);
+                jTextFieldRutaArchivoFacturas.setEnabled(false);
+                jButtonBuscarArchivoFacturas.setEnabled(false);
+                jLabelEspera.setVisible(true);
+                int desdeFilaCliente = Integer.parseInt(jTextFieldDesdeFilaCliente.getText().trim());
+                int hastaFilaCliente = Integer.parseInt(jTextFieldHastaFilaCliente.getText().trim());
+                int desdeFilaFactura = Integer.parseInt(jTextFieldDesdeFilaFacturas.getText().trim());
+                int hastaFilaFactura = Integer.parseInt(jTextFieldHastaFilaFacturas.getText().trim());
+                Thread worker = new Thread() {
+                    public void run() {
+
+                        try {
+                            resultado = sisFacturas.ingresarFacturasManualesGiamoDesdeArchivo(desdeFilaCliente, hastaFilaCliente, jTextFieldRutaArchivoClientes.getText().trim(), desdeFilaFactura, hastaFilaFactura, jTextFieldRutaArchivoFacturas.getText().trim());
+
+                            SwingUtilities.invokeLater(new Runnable() {
+                                public void run() {
+                                    jTextFieldRutaArchivoClientes.setEnabled(true);
+                                    jButtonBuscarArchivoClientes.setEnabled(true);
+                                    jTextFieldRutaArchivoFacturas.setEnabled(true);
+                                    jButtonBuscarArchivoFacturas.setEnabled(true);
+                                    jLabelEspera.setVisible(false);
+                                    if (!resultado.isEmpty()) {
+                                        //String[] cantIngresadasCorrectamente = resultado.get(resultado.size() - 1);
+                                        //jLabelCantiIngresadasCorrectamente.setText(cantIngresadasCorrectamente[0]);
+                                        //jTextAreaResultado.setText("Facturas ingresadas correctamente.");
+                                        for (int i = 0; i < resultado.size() - 1; i++) {
+                                            cargarRenglon(resultado.get(i));
+                                        }
+                                    } else {
+                                        String texto = "";
+                                        //Armar la respuesta texto dependiendo del resultado. 
+                                        //jTextAreaResultado.setText(texto);
+                                    }
+                                }
+                            });
+                        } catch (Exception ex) {
+                            JOptionPane.showMessageDialog(IngresarFacturasManualesGiamoDesdeArchivo.this, "Error al ingresar las facturas desde el archivo seleccionado." + "\n\n" + ex.toString(), "Error", JOptionPane.ERROR_MESSAGE);
+                        }
+                    }
+                };
+                worker.start();
+            } catch (Exception e) {
+                String stakTrace = util.Util.obtenerStackTraceEnString(e);
+                SistemaUsuarios.getInstance().registrarExcepcion(e.toString(), stakTrace);
+
+                JOptionPane.showMessageDialog(this, "Error al ingresar las facturas desde el archivo seleccionado." + "\n\n" + e.toString(), "Error", JOptionPane.ERROR_MESSAGE);
+            }
+        }
+    }//GEN-LAST:event_jButtonIngresarActionPerformed
+
+    private void jButtonBuscarArchivoClientesActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonBuscarArchivoClientesActionPerformed
+        // TODO add your handling code here:
+        FileNameExtensionFilter filter = new FileNameExtensionFilter("xlsx","xlsx");
+        jFileChooserClientes.setFileFilter(filter);
+        jFileChooserClientes.showOpenDialog(jLabel1);
+        jTextFieldRutaArchivoClientes.setText(jFileChooserClientes.getSelectedFile().getPath());
+    }//GEN-LAST:event_jButtonBuscarArchivoClientesActionPerformed
+
+    private void jButtonBuscarArchivoFacturasActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonBuscarArchivoFacturasActionPerformed
+        // TODO add your handling code here:
+        FileNameExtensionFilter filter = new FileNameExtensionFilter("xlsx","xlsx");
+        jFileChooserFacturas.setFileFilter(filter);
+        jFileChooserFacturas.showOpenDialog(jLabel1);
+        jTextFieldRutaArchivoFacturas.setText(jFileChooserFacturas.getSelectedFile().getPath());
+    }//GEN-LAST:event_jButtonBuscarArchivoFacturasActionPerformed
+
+    private void cargarRenglon(String[] r) {
+        Object[] object = new Object[3];
+        object[0] = r[0];
+        object[1] = r[1];
+        object[2] = r[2];
+        
+        modelo.addRow(object);
+    }
+    
     /**
      * @param args the command line arguments
      */
@@ -250,6 +396,8 @@ public class IngresarFacturasManualesGiamoDesdeArchivo extends javax.swing.JDial
     private javax.swing.JButton jButtonBuscarArchivoFacturas;
     private javax.swing.JButton jButtonIngresar;
     private javax.swing.JButton jButtonSalir;
+    private javax.swing.JFileChooser jFileChooserClientes;
+    private javax.swing.JFileChooser jFileChooserFacturas;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
@@ -259,7 +407,7 @@ public class IngresarFacturasManualesGiamoDesdeArchivo extends javax.swing.JDial
     private javax.swing.JLabel jLabelEspera;
     private javax.swing.JLabel jLabelTitulo;
     private javax.swing.JScrollPane jScrollPane1;
-    private javax.swing.JTable jTable1;
+    private javax.swing.JTable jTableResultado;
     private javax.swing.JTextField jTextFieldDesdeFilaCliente;
     private javax.swing.JTextField jTextFieldDesdeFilaFacturas;
     private javax.swing.JTextField jTextFieldHastaFilaCliente;
