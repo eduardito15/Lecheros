@@ -32,6 +32,7 @@ import impresion.Facturas.ImprimirFacturaRelece;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.FileReader;
@@ -47,12 +48,15 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Optional;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import java.util.stream.Collectors;
 import lecheros.Lecheros;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
+import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.hibernate.Query;
 import org.hibernate.Session;
@@ -2375,18 +2379,21 @@ public class SistemaFacturas {
                 boolean facturarLecheAlCliente = facturarLechaACliente(c, fecha);
                 clientesFacturaLeche.put(c, facturarLecheAlCliente);
                 if (facturarLecheAlCliente) {
+                    System.out.println("Cliente para facturar leche comun: " + c.getNombre() + " " + c.getRazonSocial() + " " + c.getLitrosComun() + " Litros");
                     totalLitrosComunProrrateo = totalLitrosComunProrrateo + c.getLitrosComun();
                     
                 }
                 boolean facturarLecheUltraAlCliente = facturarLechaUltraACliente(c, fecha);
                 clientesFacturaLecheUltra.put(c, facturarLecheUltraAlCliente);
                 if (facturarLecheUltraAlCliente) {
+                    System.out.println("Cliente para facturar leche ultra: " + c.getNombre() + " " + c.getRazonSocial() + " " + c.getLitrosUltra()+ " Litros");
                     totalLitrosUltraProrrateo = totalLitrosUltraProrrateo + c.getLitrosUltra();
                     
                 }
                 boolean facturarLecheDeslactosadaAlCliente = facturarLechaDeslactosadaACliente(c, fecha);
                 clientesFacturaLecheDeslactosada.put(c, facturarLecheDeslactosadaAlCliente);
                 if (facturarLecheDeslactosadaAlCliente) {
+                    //System.out.println("Cliente para facturar leche deslactosada: " + c.getNombre() + " " + c.getRazonSocial());
                     totalLitrosDeslactosadaProrrateo = totalLitrosDeslactosadaProrrateo + c.getLitrosDeslactosada();
                     
                 }
@@ -2416,6 +2423,8 @@ public class SistemaFacturas {
             }
             
         }
+        
+        //List<Cliente> clientesParaMostrarFacturarLeche = clientesFacturaLeche.keySet().stream().filter(c -> clientesFacturaLeche.get(c)).collect(Collectors.toList());
         
         //Para Etapa de Pruebas
         System.out.println("Cantidad de productos para Facturar : " + articuloCantidadParaFacturar.keySet().size());
@@ -5786,6 +5795,339 @@ public class SistemaFacturas {
             case 7 : {retorno = "7 Veces por Semana"; break;}
         }
         
+        return retorno;
+    }
+    
+    public List<String[]> ingresarFacturasManualesGiamoDesdeArchivo(int desdeFilaCli, int hastaFilaCli, String rutaArchivoClientes, int desdeFilaFact, int hastaFilaFact, String rutaArchivoFacturas) {
+        List<String[]> retorno = new ArrayList<>();
+        try {
+            //Me cargo en la memoria los clientes manuales para saber a que cliente pertenece la factura manual
+            HashMap<Long, Cliente> clientesFacturaLeche = new HashMap<>();
+            //HashMap<Long, Boolean> oidsClientesNoEncontrados = new HashMap<>();
+            List<Long> oidsNoEncontrados = new ArrayList<>();
+            FileInputStream inputStream = null;
+            inputStream = new FileInputStream(new File(rutaArchivoClientes));
+            Workbook workbook = new XSSFWorkbook(inputStream);
+            XSSFSheet hoja = (XSSFSheet) workbook.getSheetAt(0);
+            int clientesEncontrados = 0;
+            int clientesNoEncontrados = 0;
+            int cantEncontradosActivo = 0;
+            int cantEncontradosInactivos = 0;
+            int cantClientesIngresados = 0;
+            for (int i = desdeFilaCli; i <= hastaFilaCli; i++) {
+                Row fila = hoja.getRow(i - 1);
+                long oid = (long) fila.getCell(0).getNumericCellValue();
+                String codigo = fila.getCell(1).getStringCellValue();
+                Cliente cli = SistemaMantenimiento.getInstance().devolverClientePorCodigo(codigo);
+                if (cli != null) {
+                    clientesFacturaLeche.put(oid, cli);
+                    System.out.println("Encontro el cliente : " + cli.getCodigo() + " y esta " + cli.isActivo());
+                    if(cli.isActivo()) {
+                        cantEncontradosActivo++;
+                    } else {
+                        cantEncontradosInactivos++;
+                    }
+                    clientesEncontrados++;
+                } else {
+                    clientesNoEncontrados++;
+                    oidsNoEncontrados.add(oid);
+                    //String codigo = fila.getCell(1).getStringCellValue();
+                    //Cliente cli = SistemaMantenimiento.getInstance().devolverClientePorCodigo(codigo);
+                    int numRep = (int) fila.getCell(2).getNumericCellValue();
+                    String nombre = fila.getCell(3).getStringCellValue();
+                    String razonSocial = "";
+                    try {
+                        razonSocial = fila.getCell(4).getStringCellValue();
+                    } catch (NullPointerException e) {
+
+                    }
+                    String direccion = "";
+                    try {
+                        direccion = fila.getCell(5).getStringCellValue();
+                    } catch (NullPointerException e) {
+
+                    }
+                    String rut = "";
+                    String auxText = "";
+                    try {
+                        auxText = fila.getCell(6).getStringCellValue();
+                    } catch (NullPointerException ne) {
+
+                    }
+                    if (!"".equals(auxText)) {
+                        if ('-' == auxText.charAt(auxText.length() - 1)) {
+                            rut = auxText.substring(0, auxText.length() - 1);
+                        } else {
+                            rut = auxText;
+                        }
+                    }
+
+                    String telefono = "";
+                    try {
+                        telefono = fila.getCell(7).getStringCellValue();
+                    } catch (NullPointerException e) {
+
+                    }
+                    String email = "";
+                    try {
+                        email = fila.getCell(8).getStringCellValue();
+                    } catch (NullPointerException e) {
+
+                    }
+
+                    boolean activo = fila.getCell(9).getBooleanCellValue();
+
+                    //int litrosComun = (int) fila.getCell(6).getNumericCellValue();
+                    //int litrosUltra = (int) fila.getCell(7).getNumericCellValue();
+                    Reparto r = SistemaMantenimiento.getInstance().devolverRepartoPorCodigo(numRep);
+
+                    if (cli == null) {
+                        SistemaMantenimiento.getInstance().agregarClienteConCodigo(codigo, false, activo, true, null, r, nombre, razonSocial, rut, direccion, "" + telefono, email, 0, 0, 0, "", 0.0, "", 0, new ArrayList<>(), "", "");
+                        cantClientesIngresados++;
+                        cli = SistemaMantenimiento.getInstance().devolverClientePorCodigo(codigo);
+                        if (cli != null) {
+                            clientesFacturaLeche.put(oid, cli);
+                            System.out.println("Encontro el cliente : " + cli.getCodigo() + " y esta " + cli.isActivo());
+                            if (cli.isActivo()) {
+                                cantEncontradosActivo++;
+                            } else {
+                                cantEncontradosInactivos++;
+                            }
+                            clientesEncontrados++;
+                        }
+                    } /*else {
+                        cli.setActivo(activo);
+                        cli.setProrrateo(false);
+                        cli.setCobraChofer(true);
+                        cli.setCorreoElectronico(email);
+                        cli.setReparto(r);
+                        cli.setNombre(nombre);
+                        cli.setRazonSocial(razonSocial);
+                        cli.setDireccion(direccion);
+                        cli.setRut(rut);
+                        cli.setTelefono(telefono);
+                        SistemaMantenimiento.getInstance().actualizarCliente(cli);
+
+                    }*/
+                }
+            }
+
+            System.out.println("Cant Encontrados: " + clientesEncontrados);
+            System.out.println("Cant Encontrados Activos: " + cantEncontradosActivo);
+            System.out.println("Cant Encontrados Inactivos: " + cantEncontradosInactivos);
+            System.out.println("Cant No Encontrados: " + clientesNoEncontrados);
+            System.out.println("Cant clientes ingresados: " + cantClientesIngresados);
+            inputStream = null;
+            inputStream = new FileInputStream(new File(rutaArchivoFacturas));
+            workbook = new XSSFWorkbook(inputStream);
+            hoja = (XSSFSheet) workbook.getSheetAt(0);
+            int cantFacturas = 0;
+            int cantFacturasConClienteOk = 0;
+            int cantFacturasSinCliente = 0;
+            int cantFacturasDeClientesNoEncontrados = 0;
+            for (int i = desdeFilaFact; i <= hastaFilaFact; i++) {
+                Row fila = hoja.getRow(i - 1);
+                
+                String[] retornoFactura = new String[3];
+
+                long numero = (long) fila.getCell(0).getNumericCellValue();
+                Date fecha = fila.getCell(1).getDateCellValue();
+                long oid = (long) fila.getCell(2).getNumericCellValue();
+                Cliente cli = clientesFacturaLeche.get(oid);
+                
+                retornoFactura[0] = formatter.format(fecha);
+                retornoFactura[1] = Long.toString(numero);
+
+                double totalLecheComun = Double.parseDouble(fila.getCell(3).getStringCellValue().replace(',', '.'));//fila.getCell(3).getNumericCellValue();
+                double totalLecheUltra = Double.parseDouble(fila.getCell(4).getStringCellValue().replace(',', '.'));//fila.getCell(4).getNumericCellValue();
+                double totalLecheUltraDiferenciada = Double.parseDouble(fila.getCell(5).getStringCellValue().replace(',', '.'));//fila.getCell(5).getNumericCellValue();
+                double totalLecheDeslactosada = Double.parseDouble(fila.getCell(6).getStringCellValue().replace(',', '.'));//fila.getCell(6).getNumericCellValue();
+                double totalProductosMinimo = Double.parseDouble(fila.getCell(7).getStringCellValue().replace(',', '.'));//fila.getCell(7).getNumericCellValue();
+                double totalProductosBasico = Double.parseDouble(fila.getCell(8).getStringCellValue().replace(',', '.'));//fila.getCell(8).getNumericCellValue();
+
+                GrupoDeArticulos grupoLecheComun = SistemaMantenimientoArticulos.getInstance().devolverGrupoDeArticuloPorNombre("Leche Común");
+
+                GrupoDeArticulos grupoLecheUtra = SistemaMantenimientoArticulos.getInstance().devolverGrupoDeArticuloPorNombre("Leche Ultra");
+
+                GrupoDeArticulos grupoLecheUltraDiferenciada = SistemaMantenimientoArticulos.getInstance().devolverGrupoDeArticuloPorNombre("Leche Ultra Diferenciada");
+
+                GrupoDeArticulos grupoLecheDeslactosada = SistemaMantenimientoArticulos.getInstance().devolverGrupoDeArticuloPorNombre("Leche Deslactosada");
+
+                Articulo lecheComun = null;
+                Precio pLecheComun = null;
+                if (!grupoLecheComun.getArticulos().isEmpty()) {
+                    lecheComun = grupoLecheComun.getArticulos().get(0);
+                    pLecheComun = SistemaMantenimientoArticulos.getInstance().devolverPrecioParaFechaPorArticulo(lecheComun, fecha);
+                }
+
+                Articulo lecheUltra = null;
+                Precio pLecheUltra = null;
+                if (!grupoLecheUtra.getArticulos().isEmpty()) {
+                    lecheUltra = grupoLecheUtra.getArticulos().get(0);
+                    pLecheUltra = SistemaMantenimientoArticulos.getInstance().devolverPrecioParaFechaPorArticulo(lecheUltra, fecha);
+                }
+
+                Articulo lecheUltraDiferenciada = null;
+                Precio pLecheUltraDiferenciada = null;
+                if ((grupoLecheUltraDiferenciada != null ? !grupoLecheUltraDiferenciada.getArticulos().isEmpty() : false)) {
+                    lecheUltraDiferenciada = grupoLecheUltraDiferenciada.getArticulos().get(0);
+                    pLecheUltraDiferenciada = SistemaMantenimientoArticulos.getInstance().devolverPrecioParaFechaPorArticulo(lecheUltraDiferenciada, fecha);
+                }
+
+                Articulo lecheDeslactosada = null;
+                Precio pLecheDeslactosada = null;
+                if (!grupoLecheDeslactosada.getArticulos().isEmpty()) {
+                    lecheDeslactosada = grupoLecheDeslactosada.getArticulos().get(0);
+                    pLecheDeslactosada = SistemaMantenimientoArticulos.getInstance().devolverPrecioParaFechaPorArticulo(lecheDeslactosada, fecha);
+                }
+
+                Articulo prodMinimo = SistemaMantenimientoArticulos.getInstance().devolverArticuloPorCodigo(44444);
+                Articulo prodBasico = SistemaMantenimientoArticulos.getInstance().devolverArticuloPorCodigo(55555);
+                
+                boolean todoOk = true;
+                if(cli == null) {
+                    todoOk = false;
+                    cantFacturasSinCliente = cantFacturasSinCliente + 1;
+                    cantFacturas++;
+                    retornoFactura[2] = "Cliente no encontrado.";
+                    retorno.add(retornoFactura);
+                    if(oidsNoEncontrados.contains(oid)) {
+                        cantFacturasDeClientesNoEncontrados++;
+                    }
+                }
+
+                if(todoOk) {
+                    Factura f = new Factura();
+                    DocumentoDeVenta tipoDocVenta = SistemaMantenimiento.getInstance().devolverDocumentoDeVentaPorNombre("Contado");
+                    f.setTipoDocumento(tipoDocVenta);
+                    f.setFecha(fecha);
+                    f.setCliente(cli);
+                    f.setReparto(cli.getReparto());
+                    f.setEsManual(true);
+                    f.setEstaPaga(true);
+                    f.setNumero(numero);
+
+                    List<FacturaRenglon> renglones = new ArrayList<>();
+                    if (totalLecheComun != 0 && lecheComun != null && pLecheComun != null) {
+                        FacturaRenglon fr = new FacturaRenglon();
+                        fr.setFactura(f);
+                        fr.setArticulo(lecheComun);
+
+                        int cantidad = (int) (totalLecheComun / pLecheComun.getPrecioVenta());
+
+                        fr.setCantidad(cantidad);
+                        fr.setPrecio(pLecheComun.getPrecioVenta());
+                        fr.setSubtotal(totalLecheComun);
+                        fr.setIva(0);
+                        fr.setTotal(totalLecheComun);
+                        renglones.add(fr);
+                    }
+                    if (totalLecheUltra != 0 && lecheUltra != null && pLecheUltra != null) {
+                        FacturaRenglon fr = new FacturaRenglon();
+                        fr.setFactura(f);
+                        fr.setArticulo(lecheUltra);
+
+                        int cantidad = (int) (totalLecheUltra / pLecheUltra.getPrecioVenta());
+
+                        fr.setCantidad(cantidad);
+                        fr.setPrecio(pLecheUltra.getPrecioVenta());
+                        fr.setSubtotal(totalLecheUltra);
+                        fr.setIva(0);
+                        fr.setTotal(totalLecheUltra);
+                        renglones.add(fr);
+                    }
+                    if (totalLecheUltraDiferenciada != 0 && lecheUltraDiferenciada != null && pLecheUltraDiferenciada != null) {
+                        FacturaRenglon fr = new FacturaRenglon();
+                        fr.setFactura(f);
+                        fr.setArticulo(lecheUltraDiferenciada);
+
+                        int cantidad = (int) (totalLecheUltraDiferenciada / pLecheUltraDiferenciada.getPrecioVenta());
+
+                        fr.setCantidad(cantidad);
+                        fr.setPrecio(pLecheUltraDiferenciada.getPrecioVenta());
+                        fr.setSubtotal(totalLecheUltraDiferenciada);
+                        fr.setIva(0);
+                        fr.setTotal(totalLecheUltraDiferenciada);
+                        renglones.add(fr);
+                    }
+                    if (totalLecheDeslactosada != 0 && lecheDeslactosada != null && pLecheDeslactosada != null) {
+                        FacturaRenglon fr = new FacturaRenglon();
+                        fr.setFactura(f);
+                        fr.setArticulo(lecheDeslactosada);
+
+                        int cantidad = (int) (totalLecheDeslactosada / pLecheDeslactosada.getPrecioVenta());
+
+                        fr.setCantidad(cantidad);
+                        fr.setPrecio(pLecheDeslactosada.getPrecioVenta());
+                        fr.setSubtotal(totalLecheDeslactosada);
+                        fr.setIva(0);
+                        fr.setTotal(totalLecheDeslactosada);
+                        renglones.add(fr);
+                    }
+                    if (totalProductosMinimo != 0) {
+                        FacturaRenglon fr = new FacturaRenglon();
+                        fr.setFactura(f);
+                        fr.setArticulo(prodMinimo);
+                        fr.setCantidad(totalProductosMinimo);
+                        fr.setPrecio(1);
+                        double iva = (totalProductosMinimo * 9.1) / 100;
+                        fr.setIva(iva);
+                        fr.setTotal(totalProductosMinimo);
+                        fr.setSubtotal(totalProductosMinimo - iva);
+                        renglones.add(fr);
+                    }
+                    if (totalProductosBasico != 0) {
+                        FacturaRenglon fr = new FacturaRenglon();
+                        fr.setFactura(f);
+                        fr.setArticulo(prodBasico);
+                        fr.setCantidad(totalProductosBasico);
+                        fr.setPrecio(1);
+                        double iva = (totalProductosBasico * 18.03) / 100;
+                        fr.setIva(iva);
+                        fr.setTotal(totalProductosBasico);
+                        fr.setSubtotal(totalProductosBasico - iva);
+                        renglones.add(fr);
+                    }
+
+                    f.setRenglones(renglones);
+
+                    double totalLecheExcento = totalLecheComun + totalLecheUltra + totalLecheUltraDiferenciada + totalLecheDeslactosada;
+                    double ivaMinimo = (totalProductosMinimo * 9.1) / 100;
+                    double totalMinimo = totalProductosMinimo - ivaMinimo;
+                    double ivaBasico = (totalProductosBasico * 18.03) / 100;
+                    double totalBasico = totalProductosBasico - ivaBasico;
+
+                    double subTotal = totalLecheExcento + totalMinimo + totalBasico;
+                    double ivaTotal = ivaMinimo + ivaBasico;
+                    double total = subTotal + ivaTotal;
+
+                    f.setSubtotal(subTotal);
+                    f.setTotalMinimo(ivaMinimo);
+                    f.setTotalBasico(ivaBasico);
+                    f.setTotal(total);
+                    if (!f.getRenglones().isEmpty()) {
+                        GenericDAO.getGenericDAO().guardar(f);
+                        cantFacturasConClienteOk++;
+                        cantFacturas++;
+                        retornoFactura[2] = "Ingresada correctamente.";
+                        retorno.add(retornoFactura);
+                    }
+
+                }
+            }
+            
+            System.out.println("Cant Facturas : " + cantFacturas);
+            System.out.println("Cant Facturas con Cliente Ok: " + cantFacturasConClienteOk);
+            System.out.println("Cant Facturas sin Cliente: " + cantFacturasSinCliente);
+            System.out.println("Cant facturas de clientes no encontrados: " + cantFacturasDeClientesNoEncontrados);
+
+        } catch (FileNotFoundException ex) {
+            Logger.getLogger(Lecheros.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (IOException ex) {
+            Logger.getLogger(Lecheros.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (Exception ex) {
+            Logger.getLogger(Lecheros.class.getName()).log(Level.SEVERE, null, ex);
+        }
         return retorno;
     }
 }
