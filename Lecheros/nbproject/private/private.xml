@@ -12,20 +12,15 @@
     </editor-bookmarks>
     <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
         <group>
-            <file>file:/Users/Edu1/NetBeansProjects/Lecheros/src/ui/liquidaciones/VerRetencionesDeLiquidacion.java</file>
-            <file>file:/Users/Edu1/NetBeansProjects/Lecheros/src/ui/facturas/IngresoFacturas.java</file>
-            <file>file:/Users/Edu1/NetBeansProjects/Lecheros/src/ui/informes/VentanaInformeRetenciones.java</file>
-            <file>file:/Users/Edu1/NetBeansProjects/Lecheros/src/ui/facturas/FacturarProrrateo.java</file>
-            <file>file:/Users/Edu1/NetBeansProjects/Lecheros/src/ui/usuarios/Constantes.java</file>
-            <file>file:/Users/Edu1/NetBeansProjects/Lecheros/src/ui/facturas/VentanaVerificarFacturacion.java</file>
-            <file>file:/Users/Edu1/NetBeansProjects/Lecheros/src/dominio/Inventario.java</file>
-            <file>file:/Users/Edu1/NetBeansProjects/Lecheros/src/lecheros/Lecheros.java</file>
-            <file>file:/Users/Edu1/NetBeansProjects/Lecheros/src/ui/liquidaciones/IngresoRetencion.java</file>
-            <file>file:/Users/Edu1/NetBeansProjects/Lecheros/src/sistema/SistemaFacturas.java</file>
-            <file>file:/Users/Edu1/NetBeansProjects/Lecheros/src/dominio/ConfiguracionFacturacion.java</file>
-            <file>file:/Users/Edu1/NetBeansProjects/Lecheros/src/hibernate.cfg.xml</file>
-            <file>file:/Users/Edu1/NetBeansProjects/Lecheros/src/ui/facturas/MantenimientoFacturas.java</file>
-            <file>file:/Users/Edu1/NetBeansProjects/Lecheros/src/ui/facturas/MyCellRenderer.java</file>
+            <file>file:/Users/Edu1/Git/Lecheros/Lecheros/src/sistema/SistemaMantenimiento.java</file>
+            <file>file:/Users/Edu1/Git/Lecheros/Lecheros/src/sistema/SistemaFacturas.java</file>
+            <file>file:/Users/Edu1/Git/Lecheros/Lecheros/src/ui/facturas/IngresarFacturasMovilRelece.java</file>
+            <file>file:/Users/Edu1/Git/Lecheros/Lecheros/src/dominio/DocumentoDeVenta.java</file>
+            <file>file:/Users/Edu1/Git/Lecheros/Lecheros/src/ui/facturas/IngresarFacturasManualesGiamoDesdeArchivo.java</file>
+            <file>file:/Users/Edu1/Git/Lecheros/Lecheros/src/ui/MenuPrincipal.java</file>
+            <file>file:/Users/Edu1/Git/Lecheros/Lecheros/src/hibernate.cfg.xml</file>
+            <file>file:/Users/Edu1/Git/Lecheros/Lecheros/src/lecheros/Lecheros.java</file>
+            <file>file:/Users/Edu1/Git/Lecheros/Lecheros/src/ui/mantenimiento/MantenimientoDoumentosDeVenta.java</file>
         </group>
     </open-files>
 </project-private>

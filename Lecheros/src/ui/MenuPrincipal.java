@@ -71,6 +71,7 @@ import ui.clientes.VentanaEstadoDeCuenta;
 import ui.config.VentanaConfiguracionFacturacion;
 import ui.facturas.ImprimirGrupoDeFacturas;
 import ui.facturas.IngresarFacturaManualGiamo;
+import ui.facturas.IngresarFacturasManualesGiamoDesdeArchivo;
 import ui.facturas.IngresarFacturasMovilRelece;
 import ui.facturas.MantenimientoFacturas;
 import ui.facturas.VentanaInformeFacturasContadora;
@@ -207,6 +208,7 @@ public class MenuPrincipal extends javax.swing.JFrame {
         jMenuItem20 = new javax.swing.JMenuItem();
         jMenuItem18 = new javax.swing.JMenuItem();
         jMenuItem35 = new javax.swing.JMenuItem();
+        jMenuItemIngresarFacturasManualesGiamoDesdeArchivo = new javax.swing.JMenuItem();
         jMenu8 = new javax.swing.JMenu();
         jMenuItem24 = new javax.swing.JMenuItem();
         jMenuItem25 = new javax.swing.JMenuItem();
@@ -815,6 +817,14 @@ public class MenuPrincipal extends javax.swing.JFrame {
             }
         });
         jMenu6.add(jMenuItem35);
+
+        jMenuItemIngresarFacturasManualesGiamoDesdeArchivo.setText("Ingresar Manuales desde Archivo");
+        jMenuItemIngresarFacturasManualesGiamoDesdeArchivo.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jMenuItemIngresarFacturasManualesGiamoDesdeArchivoActionPerformed(evt);
+            }
+        });
+        jMenu6.add(jMenuItemIngresarFacturasManualesGiamoDesdeArchivo);
 
         jMenuBar1.add(jMenu6);
 
@@ -1770,6 +1780,12 @@ public class MenuPrincipal extends javax.swing.JFrame {
         }
     }//GEN-LAST:event_jMenuItemIngresarFacturasMovilReleceActionPerformed
 
+    private void jMenuItemIngresarFacturasManualesGiamoDesdeArchivoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItemIngresarFacturasManualesGiamoDesdeArchivoActionPerformed
+        // TODO add your handling code here:
+        IngresarFacturasManualesGiamoDesdeArchivo vifmgda = new IngresarFacturasManualesGiamoDesdeArchivo(this, false);
+        vifmgda.setVisible(true);
+    }//GEN-LAST:event_jMenuItemIngresarFacturasManualesGiamoDesdeArchivoActionPerformed
+
     private void cargarMenuCompras() {
         //jMenuItem1 = new javax.swing.JMenuItem();
         List<DocumentoDeCompra> tiposDocs;
@@ -1900,6 +1916,7 @@ public class MenuPrincipal extends javax.swing.JFrame {
             jMenuItemCoeficientes.setVisible(false);
             jMenuItemInformeContadorGiamo.setVisible(false);
             jMenuItemIngresarFacturasMovil.setVisible(false);
+            jMenuItemIngresarFacturasManualesGiamoDesdeArchivo.setVisible(false);
         }
         if ("Clafer".equals(empresa)) {
             jMenuItemControlDeEnvasesPorEmpresa.setVisible(false);
@@ -1916,6 +1933,7 @@ public class MenuPrincipal extends javax.swing.JFrame {
             jMenuItemInformeContadorGiamo.setVisible(false);
             jMenuItemIngresarFacturasMovilCerram.setVisible(false);
             jMenuItemIngresarFacturasMovilRelece.setVisible(false);
+            jMenuItemIngresarFacturasManualesGiamoDesdeArchivo.setVisible(false);
         }
         if ("Giamo".equals(empresa)) {
             jMenuItemBonificacionPorRoturasClafer.setVisible(false);
@@ -2049,6 +2067,7 @@ public class MenuPrincipal extends javax.swing.JFrame {
     private javax.swing.JMenuItem jMenuItemInformeContadorGiamo;
     private javax.swing.JMenuItem jMenuItemInformePinchadas;
     private javax.swing.JMenuItem jMenuItemInformeTotalVentaProductos;
+    private javax.swing.JMenuItem jMenuItemIngresarFacturasManualesGiamoDesdeArchivo;
     private javax.swing.JMenuItem jMenuItemIngresarFacturasMovil;
     private javax.swing.JMenuItem jMenuItemIngresarFacturasMovilCerram;
     private javax.swing.JMenuItem jMenuItemIngresarFacturasMovilRelece;
