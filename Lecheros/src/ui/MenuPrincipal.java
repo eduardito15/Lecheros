@@ -207,7 +207,7 @@ public class MenuPrincipal extends javax.swing.JFrame {
         jMenuItem43 = new javax.swing.JMenuItem();
         jMenuItem20 = new javax.swing.JMenuItem();
         jMenuItem18 = new javax.swing.JMenuItem();
-        jMenuItem35 = new javax.swing.JMenuItem();
+        jMenuItemInformeContadorCerramFacturas = new javax.swing.JMenuItem();
         jMenuItemIngresarFacturasManualesGiamoDesdeArchivo = new javax.swing.JMenuItem();
         jMenu8 = new javax.swing.JMenu();
         jMenuItem24 = new javax.swing.JMenuItem();
@@ -810,13 +810,13 @@ public class MenuPrincipal extends javax.swing.JFrame {
         });
         jMenu6.add(jMenuItem18);
 
-        jMenuItem35.setText("Generar Informe Contador");
-        jMenuItem35.addActionListener(new java.awt.event.ActionListener() {
+        jMenuItemInformeContadorCerramFacturas.setText("Generar Informe Contador");
+        jMenuItemInformeContadorCerramFacturas.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jMenuItem35ActionPerformed(evt);
+                jMenuItemInformeContadorCerramFacturasActionPerformed(evt);
             }
         });
-        jMenu6.add(jMenuItem35);
+        jMenu6.add(jMenuItemInformeContadorCerramFacturas);
 
         jMenuItemIngresarFacturasManualesGiamoDesdeArchivo.setText("Ingresar Manuales desde Archivo");
         jMenuItemIngresarFacturasManualesGiamoDesdeArchivo.addActionListener(new java.awt.event.ActionListener() {
@@ -1622,11 +1622,11 @@ public class MenuPrincipal extends javax.swing.JFrame {
         }
     }//GEN-LAST:event_jMenuItem24ActionPerformed
 
-    private void jMenuItem35ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem35ActionPerformed
+    private void jMenuItemInformeContadorCerramFacturasActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItemInformeContadorCerramFacturasActionPerformed
         // TODO add your handling code here:
         VentanaInformeFacturasContadora vifc = new VentanaInformeFacturasContadora(this, false);
         vifc.setVisible(true);
-    }//GEN-LAST:event_jMenuItem35ActionPerformed
+    }//GEN-LAST:event_jMenuItemInformeContadorCerramFacturasActionPerformed
 
     private void jMenuItem29ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem29ActionPerformed
         // TODO add your handling code here:
@@ -1934,6 +1934,7 @@ public class MenuPrincipal extends javax.swing.JFrame {
             jMenuItemIngresarFacturasMovilCerram.setVisible(false);
             jMenuItemIngresarFacturasMovilRelece.setVisible(false);
             jMenuItemIngresarFacturasManualesGiamoDesdeArchivo.setVisible(false);
+            jMenuItemInformeContadorCerramFacturas.setVisible(false);
         }
         if ("Giamo".equals(empresa)) {
             jMenuItemBonificacionPorRoturasClafer.setVisible(false);
@@ -1954,6 +1955,7 @@ public class MenuPrincipal extends javax.swing.JFrame {
             jMenuItemResumenDeEnvasesReleceYCerram.setVisible(false);
             jMenuItemIngresarFacturasMovilCerram.setVisible(false);
             jMenuItemIngresarFacturasMovilRelece.setVisible(false);
+            jMenuItemInformeContadorCerramFacturas.setVisible(false);
         }
     }
 
@@ -2030,7 +2032,6 @@ public class MenuPrincipal extends javax.swing.JFrame {
     private javax.swing.JMenuItem jMenuItem32;
     private javax.swing.JMenuItem jMenuItem33;
     private javax.swing.JMenuItem jMenuItem34;
-    private javax.swing.JMenuItem jMenuItem35;
     private javax.swing.JMenuItem jMenuItem36;
     private javax.swing.JMenuItem jMenuItem37;
     private javax.swing.JMenuItem jMenuItem38;
@@ -2064,6 +2065,7 @@ public class MenuPrincipal extends javax.swing.JFrame {
     private javax.swing.JMenuItem jMenuItemInfCheques;
     private javax.swing.JMenuItem jMenuItemInformeAnep;
     private javax.swing.JMenuItem jMenuItemInformeComisionMama;
+    private javax.swing.JMenuItem jMenuItemInformeContadorCerramFacturas;
     private javax.swing.JMenuItem jMenuItemInformeContadorGiamo;
     private javax.swing.JMenuItem jMenuItemInformePinchadas;
     private javax.swing.JMenuItem jMenuItemInformeTotalVentaProductos;

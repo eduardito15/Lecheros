@@ -45,7 +45,7 @@ import ui.usuarios.Login;
  */
 public class Lecheros {
 
-    public static String nombreEmpresa = "Giamo";
+    public static String nombreEmpresa = "Relece";
     /**
      * @param args the command line arguments
      */
