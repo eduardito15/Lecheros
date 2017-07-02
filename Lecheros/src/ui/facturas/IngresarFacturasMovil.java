@@ -224,6 +224,7 @@ public class IngresarFacturasMovil extends javax.swing.JDialog {
 
     private void jButtonIngresarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonIngresarActionPerformed
         // TODO add your handling code here:
+        inicializarTableResultado();
         if("".equals(jTextFieldRutaArchivo.getText().trim())){
             //Es vacio el campo que lleva la ruta del archivo
             JOptionPane.showMessageDialog(this, "Debe seleccionar un archivo .xml del cual ingresar las boletas. El archivo debe ser descargado desde el sistema de PS", "Información", JOptionPane.INFORMATION_MESSAGE);
