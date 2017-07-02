@@ -37,6 +37,7 @@ import org.hibernate.Session;
 import sistema.SistemaFacturas;
 import sistema.SistemaMantenimiento;
 import sistema.SistemaMantenimientoArticulos;
+import sistema.SistemaUsuarios;
 import ui.usuarios.Login;
 
 /**
@@ -45,7 +46,7 @@ import ui.usuarios.Login;
  */
 public class Lecheros {
 
-    public static String nombreEmpresa = "Relece";
+    public static String nombreEmpresa = "";
     /**
      * @param args the command line arguments
      */
@@ -89,6 +90,7 @@ public class Lecheros {
         } catch (Exception ex) {
             Logger.getLogger(Lecheros.class.getName()).log(Level.SEVERE, null, ex);
         }*/
+        SistemaUsuarios su = SistemaUsuarios.getInstance();
         Login login = new Login();
         login.setVisible(true);
     }
