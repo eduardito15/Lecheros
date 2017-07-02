@@ -49,9 +49,10 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Optional;
 import java.util.logging.Level;
-import java.util.logging.Logger;
 import java.util.stream.Collectors;
 import lecheros.Lecheros;
+import org.apache.log4j.Logger;
+import org.apache.log4j.Priority;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
@@ -78,6 +79,8 @@ public class SistemaFacturas {
 
     DecimalFormat df;
     DecimalFormat df8decimales;
+    
+    private Logger logger = Logger.getLogger(SistemaFacturas.class.getName());
 
     /**
      * @return the instance
@@ -2293,6 +2296,8 @@ public class SistemaFacturas {
         Date fecha;
         fecha = fechaHasta;
         
+        logger.info("-----------------------------------------------------------------------------------------------------------------------------------------------");
+        logger.info("Comienza Facturacion Prorrateo para el reparto: " + r.getNombre() + " con la fecha: " + formatter.format(fecha));
         boolean hayCantidadesDeProductosNegativos = false;
         
         double totalLitrosComunFacturar = 0;
@@ -2378,46 +2383,59 @@ public class SistemaFacturas {
         double productosProrrateo = 0;
         for (Cliente c : clientes) {
             if (facturarLeche) {
-                boolean facturarLecheAlCliente = facturarLechaACliente(c, fecha);
-                clientesFacturaLeche.put(c, facturarLecheAlCliente);
-                if (facturarLecheAlCliente) {
-                    System.out.println("Cliente para facturar leche comun: " + c.getNombre() + " " + c.getRazonSocial() + " " + c.getLitrosComun() + " Litros");
-                    totalLitrosComunProrrateo = totalLitrosComunProrrateo + c.getLitrosComun();
+                if(c.getLitrosComun() != 0) {
+                    boolean facturarLecheAlCliente = facturarLechaACliente(c, fecha);
+                    clientesFacturaLeche.put(c, facturarLecheAlCliente);
+                    if (facturarLecheAlCliente) {
+                        System.out.println("Cliente para facturar leche comun: " + c.getNombre() + " " + c.getRazonSocial() + " " + c.getLitrosComun() + " Litros");
+                        logger.info("Cliente para facturar leche comun: " + c.getNombre() + " " + c.getRazonSocial() + " " + c.getLitrosComun() + " Litros");
+                        totalLitrosComunProrrateo = totalLitrosComunProrrateo + c.getLitrosComun();
                     
+                    }
                 }
-                boolean facturarLecheUltraAlCliente = facturarLechaUltraACliente(c, fecha);
-                clientesFacturaLecheUltra.put(c, facturarLecheUltraAlCliente);
-                if (facturarLecheUltraAlCliente) {
-                    System.out.println("Cliente para facturar leche ultra: " + c.getNombre() + " " + c.getRazonSocial() + " " + c.getLitrosUltra()+ " Litros");
-                    totalLitrosUltraProrrateo = totalLitrosUltraProrrateo + c.getLitrosUltra();
+                if(c.getLitrosUltra() != 0) {
+                    boolean facturarLecheUltraAlCliente = facturarLechaUltraACliente(c, fecha);
+                    clientesFacturaLecheUltra.put(c, facturarLecheUltraAlCliente);
+                    if (facturarLecheUltraAlCliente) {
+                        System.out.println("Cliente para facturar leche ultra: " + c.getNombre() + " " + c.getRazonSocial() + " " + c.getLitrosUltra()+ " Litros");
+                        logger.info("Cliente para facturar leche ultra: " + c.getNombre() + " " + c.getRazonSocial() + " " + c.getLitrosUltra()+ " Litros");
+                        totalLitrosUltraProrrateo = totalLitrosUltraProrrateo + c.getLitrosUltra();
                     
+                    }
                 }
-                boolean facturarLecheDeslactosadaAlCliente = facturarLechaDeslactosadaACliente(c, fecha);
-                clientesFacturaLecheDeslactosada.put(c, facturarLecheDeslactosadaAlCliente);
-                if (facturarLecheDeslactosadaAlCliente) {
-                    //System.out.println("Cliente para facturar leche deslactosada: " + c.getNombre() + " " + c.getRazonSocial());
-                    totalLitrosDeslactosadaProrrateo = totalLitrosDeslactosadaProrrateo + c.getLitrosDeslactosada();
+                if(c.getLitrosDeslactosada() != 0) {
+                    boolean facturarLecheDeslactosadaAlCliente = facturarLechaDeslactosadaACliente(c, fecha);
+                    clientesFacturaLecheDeslactosada.put(c, facturarLecheDeslactosadaAlCliente);
+                    if (facturarLecheDeslactosadaAlCliente) {
+                        System.out.println("Cliente para facturar leche deslactosada: " + c.getNombre() + " " + c.getRazonSocial());
+                        logger.info("Cliente para facturar leche deslactosada: " + c.getNombre() + " " + c.getRazonSocial());
+                        totalLitrosDeslactosadaProrrateo = totalLitrosDeslactosadaProrrateo + c.getLitrosDeslactosada();
                     
+                    }
                 }
             }
             if (facturarProductos) {
-                Ref<Double> totalAFacturarAlCliente = new Ref<Double>(0.0);
-                boolean facturarProductosAlCliente = facturarProductosACliente(c, fecha, totalAFacturarAlCliente);
-                clientesFacturaProductos.put(c, facturarProductosAlCliente);
-                double totalParaHash = totalAFacturarAlCliente.get();
-                totalProductosEnPesosAFacturarPorCliente.put(c, totalParaHash);
-                if (facturarProductosAlCliente) {
-                    productosProrrateo = productosProrrateo + c.getProductos();
-                    List<Articulo> articulosAFacturarAlCliente = articulosParaFacturarAlCliente(c, fecha);
-                    if (!articulosAFacturarAlCliente.isEmpty()) {
-                        productosAFacturarPorCliente.put(c, articulosAFacturarAlCliente);
-                        for (Articulo a : articulosAFacturarAlCliente) {
-                            if (clientesPorArticulo.containsKey(a)) {
-                                clientesPorArticulo.get(a).add(c);
-                            } else {
-                                List<Cliente> clientesParaArt = new ArrayList<>();
-                                clientesParaArt.add(c);
-                                clientesPorArticulo.put(a, clientesParaArt);
+                if(c.getProductos() != 0) {
+                    Ref<Double> totalAFacturarAlCliente = new Ref<Double>(0.0);
+                    boolean facturarProductosAlCliente = facturarProductosACliente(c, fecha, totalAFacturarAlCliente);
+                    clientesFacturaProductos.put(c, facturarProductosAlCliente);
+                    double totalParaHash = totalAFacturarAlCliente.get();
+                    totalProductosEnPesosAFacturarPorCliente.put(c, totalParaHash);
+                    if (facturarProductosAlCliente) {
+                        logger.info("Cliente para facturar productos: " + c.getNombre() + " " + c.getRazonSocial());
+                        productosProrrateo = productosProrrateo + c.getProductos();
+                        List<Articulo> articulosAFacturarAlCliente = articulosParaFacturarAlCliente(c, fecha);
+                        if (!articulosAFacturarAlCliente.isEmpty()) {
+                            productosAFacturarPorCliente.put(c, articulosAFacturarAlCliente);
+                            for (Articulo a : articulosAFacturarAlCliente) {
+                                logger.info("Se le puede facturar al cliente : " + c.getNombre() + " " + c.getRazonSocial() + " del articulo " + a.getCodigo() + " " + a.getDescripcion() );
+                                if (clientesPorArticulo.containsKey(a)) {
+                                    clientesPorArticulo.get(a).add(c);
+                                } else {
+                                    List<Cliente> clientesParaArt = new ArrayList<>();
+                                    clientesParaArt.add(c);
+                                    clientesPorArticulo.put(a, clientesParaArt);
+                                }
                             }
                         }
                     }
@@ -2430,6 +2448,7 @@ public class SistemaFacturas {
         
         //Para Etapa de Pruebas
         System.out.println("Cantidad de productos para Facturar : " + articuloCantidadParaFacturar.keySet().size());
+        logger.info("Cantidad de productos para Facturar : " + articuloCantidadParaFacturar.keySet().size());
         int cantImprimir = 0;
         for(Cliente c : clientesFacturaLeche.keySet()) {
             if(clientesFacturaLeche.get(c)) {
@@ -2438,6 +2457,8 @@ public class SistemaFacturas {
         }
         System.out.println("Total de Litros Comun para Facturar : " + totalLitrosComunFacturar);
         System.out.println("Cantidad de Clientes para Facturar Leche Comun : " + cantImprimir);
+        logger.info("Total de Litros Comun para Facturar : " + totalLitrosComunFacturar);
+        logger.info("Cantidad de Clientes para Facturar Leche Comun : " + cantImprimir);
         cantImprimir = 0;
         for(Cliente c : clientesFacturaLecheUltra.keySet()) {
             if (clientesFacturaLecheUltra.get(c)) {
@@ -2446,6 +2467,8 @@ public class SistemaFacturas {
         }
         System.out.println("Total de Litros Ultra para Facturar : " + totalLitrosUltraFacturar);
         System.out.println("Cantidad de Clientes para Facturar Leche Ultra : " + cantImprimir);
+        logger.info("Total de Litros Ultra para Facturar : " + totalLitrosUltraFacturar);
+        logger.info("Cantidad de Clientes para Facturar Leche Ultra : " + cantImprimir);
         cantImprimir = 0;
         for(Cliente c : clientesFacturaLecheDeslactosada.keySet()) {
             if (clientesFacturaLecheDeslactosada.get(c)) {
@@ -2455,6 +2478,8 @@ public class SistemaFacturas {
         }
         System.out.println("Total de Litros Deslactosada para Facturar : " + totalLitrosDeslactosadaFacturar);
         System.out.println("Cantidad de Clientes para Facturar Leche Deslactosada : " + cantImprimir);
+        logger.info("Total de Litros Deslactosada para Facturar : " + totalLitrosDeslactosadaFacturar);
+        logger.info("Cantidad de Clientes para Facturar Leche Deslactosada : " + cantImprimir);
         cantImprimir = 0;
         for(Cliente c : clientesFacturaProductos.keySet()) {
             if (clientesFacturaProductos.get(c)) {
@@ -2464,8 +2489,14 @@ public class SistemaFacturas {
         }
         System.out.println("Cantidad de Clientes para Facturar Productos : " + cantImprimir);
         System.out.println("Cantidad de Articulos para Cliente : " + clientesPorArticulo.keySet().size());
+        logger.info("Cantidad de Clientes para Facturar Productos : " + cantImprimir);
+        logger.info("Cantidad de Articulos para Cliente : " + clientesPorArticulo.keySet().size());
         //
 
+        logger.info("Entre todos lo clientes a los que hay que facturarle leche comun suman : " + totalLitrosComunProrrateo + " para calcular el porcentaje." );
+        logger.info("Entre todos lo clientes a los que hay que facturarle leche ultra suman : " + totalLitrosUltraProrrateo + " para calcular el porcentaje." );
+        logger.info("Entre todos lo clientes a los que hay que facturarle leche deslactosada suman : " + totalLitrosDeslactosadaProrrateo + " para calcular el porcentaje." );
+        
         Articulo lecheComun = null;
         Precio pLecheComun = null;
         if (!grupoLecheComun.getArticulos().isEmpty()) {
@@ -2521,7 +2552,7 @@ public class SistemaFacturas {
             f.setRenglones(renglones);
 
             //Si hay que facturar la leche comun, agrego la leche comun
-            if (clientesFacturaLeche.get(c)) {
+            if (clientesFacturaLeche.get(c) != null && clientesFacturaLeche.get(c)) {
 
                 if (Lecheros.nombreEmpresa.equals("Relece") && f.getTipoDocumento() == null) {
                     DocumentoDeVenta tipoDocVenta = SistemaMantenimiento.getInstance().devolverDocumentoDeVentaPorNombre("Contado Relece");
@@ -2541,7 +2572,7 @@ public class SistemaFacturas {
                     }
                 }
                 
-                if (litrosComunFacturar != 0 && lecheComun != null && pLecheComun != null) {
+                if (litrosComunFacturar > 0 && lecheComun != null && pLecheComun != null) {
                     FacturaRenglon fr = new FacturaRenglon();
                     fr.setFactura(f);
                     fr.setArticulo(lecheComun);
@@ -2566,7 +2597,7 @@ public class SistemaFacturas {
             }
 
             //Me fijo si hay que facturar leche ultra, si hay que facturar leche ultra la agrego
-            if (clientesFacturaLecheUltra.get(c)) {
+            if (clientesFacturaLecheUltra.get(c) != null && clientesFacturaLecheUltra.get(c)) {
 
                 if (Lecheros.nombreEmpresa.equals("Relece") && f.getTipoDocumento() == null) {
                     DocumentoDeVenta tipoDocVenta = SistemaMantenimiento.getInstance().devolverDocumentoDeVentaPorNombre("Contado Relece");
@@ -2591,7 +2622,7 @@ public class SistemaFacturas {
                 }
                 
                 //Si hay ultra diferenciada calculo cuanto es de cada una
-                if (litrosUltraFacturar != 0) {
+                if (litrosUltraFacturar > 0) {
                     litrosUltraDiferenciadaFacturar = (int) (porcentajeUltraDiferenciada * litrosUltraFacturar) / 100;
                     litrosUltraFacturar = (int) ((100 - porcentajeUltraDiferenciada) * litrosUltraFacturar) / 100;
                     
@@ -2612,7 +2643,7 @@ public class SistemaFacturas {
                 }
 
                 
-                if (litrosUltraFacturar != 0 && lecheUltra != null && pLecheUltra != null) {
+                if (litrosUltraFacturar > 0 && lecheUltra != null && pLecheUltra != null) {
                     FacturaRenglon fr = new FacturaRenglon();
                     fr.setFactura(f);
                     fr.setArticulo(lecheUltra);
@@ -2623,7 +2654,7 @@ public class SistemaFacturas {
                     fr.setTotal(litrosUltraFacturar * pLecheUltra.getPrecioVenta());
                     renglones.add(fr);
                 }
-                if (litrosUltraDiferenciadaFacturar != 0 && lecheUltraDiferenciada != null && pLecheUltraDiferenciada != null) {
+                if (litrosUltraDiferenciadaFacturar > 0 && lecheUltraDiferenciada != null && pLecheUltraDiferenciada != null) {
                     FacturaRenglon fr = new FacturaRenglon();
                     fr.setFactura(f);
                     fr.setArticulo(lecheUltraDiferenciada);
@@ -2650,7 +2681,7 @@ public class SistemaFacturas {
             }
 
             //Me fijo si hay que facturar leche deslactosada, si hay que facturar leche ultra la agrego
-            if (clientesFacturaLecheDeslactosada.get(c)) {
+            if (clientesFacturaLecheDeslactosada.get(c) != null && clientesFacturaLecheDeslactosada.get(c)) {
 
                 if (Lecheros.nombreEmpresa.equals("Relece") && f.getTipoDocumento() == null) {
                     DocumentoDeVenta tipoDocVenta = SistemaMantenimiento.getInstance().devolverDocumentoDeVentaPorNombre("Contado Relece");
@@ -3215,6 +3246,15 @@ public class SistemaFacturas {
         retorno[0] = Double.toString(totalExcentoFacturado);
         retorno[1] = Double.toString(totalMinimoFacturado);
         retorno[2] = Double.toString(totalBasicoFacturado);
+        
+        logger.info(("Total excento para facturar: " + totalExcentoParaFacturar));
+        logger.info("Total minimo para facturar: " + totalMinimoParaFacturar);
+        logger.info("Total Basico para Facturar: " + totalBasicoParaFacturar);
+        logger.info(("Total excento facturado: " + totalExcentoFacturado));
+        logger.info("Total minimo facturado: " + totalMinimoFacturado);
+        logger.info("Total Basico Facturado: " + totalBasicoFacturado);
+        logger.info("-----------------------------------------------------------------------------------------------------------------------------------------------");
+        
         SistemaUsuarios.getInstance().registrarOperacion(Constantes.ActividadFacturarProrrateo, "Facturo el prorrateo detallado. ");
         return retorno;
     }
@@ -6124,11 +6164,11 @@ public class SistemaFacturas {
             System.out.println("Cant facturas de clientes no encontrados: " + cantFacturasDeClientesNoEncontrados);
 
         } catch (FileNotFoundException ex) {
-            Logger.getLogger(Lecheros.class.getName()).log(Level.SEVERE, null, ex);
+            //Logger.getLogger(Lecheros.class.getName()).log(Level.SEVERE, null, ex);
         } catch (IOException ex) {
-            Logger.getLogger(Lecheros.class.getName()).log(Level.SEVERE, null, ex);
+            //Logger.getLogger(Lecheros.class.getName()).log(Level.SEVERE, null, ex);
         } catch (Exception ex) {
-            Logger.getLogger(Lecheros.class.getName()).log(Level.SEVERE, null, ex);
+            //Logger.getLogger(Lecheros.class.getName()).log(Level.SEVERE, null, ex);
         }
         return retorno;
     }
