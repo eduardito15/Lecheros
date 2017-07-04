@@ -28,6 +28,7 @@ import dominio.Precio;
 import dominio.ProductoClienteProrrateo;
 import dominio.Reparto;
 import impresion.Facturas.ImprimirFactura;
+import impresion.Facturas.ImprimirFacturaGiamo;
 import impresion.Facturas.ImprimirFacturaRelece;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
@@ -48,11 +49,9 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Optional;
-import java.util.logging.Level;
 import java.util.stream.Collectors;
 import lecheros.Lecheros;
 import org.apache.log4j.Logger;
-import org.apache.log4j.Priority;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
@@ -109,6 +108,9 @@ public class SistemaFacturas {
     private static void asignarImpresion() {
         if ("Relece".equals(Lecheros.nombreEmpresa)) {
             impresion = new ImprimirFacturaRelece();
+        }
+        if (Constantes.nombreEmpresaGiamo.equals(Lecheros.nombreEmpresa)) {
+            impresion = new ImprimirFacturaGiamo();
         }
     }
 
