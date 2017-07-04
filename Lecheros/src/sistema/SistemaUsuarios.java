@@ -12,12 +12,18 @@ import dominio.usuarios.Rol;
 import dominio.usuarios.Usuario;
 import excepciones.LogDeExcepciones;
 import java.io.BufferedReader;
+import java.io.FileInputStream;
 import java.io.FileReader;
 import java.io.IOException;
+import java.io.InputStream;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.Date;
 import java.util.List;
+import java.util.Properties;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import lecheros.Lecheros;
 import org.hibernate.Query;
 import org.hibernate.Session;
 import ui.usuarios.Constantes;
@@ -43,7 +49,11 @@ public class SistemaUsuarios {
     }
     
     private SistemaUsuarios(){
-        
+        try {
+            cargarNombreEmpresa();
+        } catch (Exception ex) {
+            //Logger.getLogger(SistemaUsuarios.class.getName()).log(Level.SEVERE, null, ex);
+        }
     }
     
     private static MessageDigest md;
@@ -80,6 +90,35 @@ public class SistemaUsuarios {
             retorno = sb.toString();
             return retorno;
         } 
+    }
+    
+    public void cargarNombreEmpresa() throws IOException, Exception {
+        Properties prop = new Properties();
+	InputStream input = null;
+
+	try {
+
+            input = new FileInputStream("src/config.properties");
+
+            // load a properties file
+            prop.load(input);
+
+            // get the property value and print it out
+            Lecheros.nombreEmpresa = prop.getProperty("empresa");
+            //System.out.println(prop.getProperty("dbuser"));
+            //System.out.println(prop.getProperty("dbpassword"));
+
+	} catch (IOException ex) {
+		ex.printStackTrace();
+	} finally {
+            if (input != null) {
+		try {
+                    input.close();
+		} catch (IOException e) {
+                    e.printStackTrace();
+		}
+            }
+	}
     }
     
     public List<Actividad> devolverActividades() throws Exception {
