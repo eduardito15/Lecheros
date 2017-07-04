@@ -90,7 +90,7 @@ public class Lecheros {
         } catch (Exception ex) {
             Logger.getLogger(Lecheros.class.getName()).log(Level.SEVERE, null, ex);
         }*/
-        SistemaUsuarios su = SistemaUsuarios.getInstance();
+        SistemaUsuarios.getInstance();
         Login login = new Login();
         login.setVisible(true);
     }
