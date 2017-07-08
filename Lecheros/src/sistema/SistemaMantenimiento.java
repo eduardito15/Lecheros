@@ -506,7 +506,7 @@ public class SistemaMantenimiento {
     }
 
     //Metodos Relacionados con Clientes
-    public boolean agregarCliente(boolean prorrateo, boolean activo, boolean cobraChofer, GrupoCliente gc, Reparto rep, String nombre, String razonSocial, String rut, String direccion, String telefono, String email, int litrosComun, int litrosUltra, int litrosDeslactosada, String frecFactLeche, double productos, String frecFactProds, long codigoPS, List<ProductoClienteProrrateo> prodsCli, String frecFactLecheUltra, String frecFactLecheDeslactosada) throws Exception {
+    public boolean agregarCliente(boolean prorrateo, boolean activo, boolean cobraChofer, GrupoCliente gc, Reparto rep, String nombre, String razonSocial, String rut, String direccion, String telefono, String email, int litrosComun, int litrosUltra, int litrosDeslactosada, String frecFactLeche, double productos, String frecFactProds, long codigoPS, int sucursalPS, List<ProductoClienteProrrateo> prodsCli, String frecFactLecheUltra, String frecFactLecheDeslactosada) throws Exception {
         //Primero guardo los productos del cliente
         if(prodsCli != null) {
             for(ProductoClienteProrrateo pcp : prodsCli) {
@@ -518,6 +518,7 @@ public class SistemaMantenimiento {
         c.setActivo(activo);
         c.setCobraChofer(cobraChofer);
         c.setCodigoPS(codigoPS);
+        c.setSucursalPS(sucursalPS);
         c.setReparto(rep);
         c.setNombre(nombre);
         c.setRazonSocial(razonSocial);
@@ -762,6 +763,18 @@ public class SistemaMantenimiento {
         Session session = GenericDAO.getGenericDAO().getSessionFactory().openSession();
         session.beginTransaction();
         Query consulta = session.createQuery("FROM Cliente where codigoPS = " + codigoPS + "AND activo = :est");
+        consulta.setBoolean("est", true);
+        retorno = (Cliente) consulta.uniqueResult();
+        session.getTransaction().commit();
+        session.close();
+        return retorno;
+    }
+    
+    public Cliente devolverClienteActivoPorCodigoYSucursalPS(long codigoPS, int sucursalPS) {
+        Cliente retorno;
+        Session session = GenericDAO.getGenericDAO().getSessionFactory().openSession();
+        session.beginTransaction();
+        Query consulta = session.createQuery("FROM Cliente where codigoPS = " + codigoPS + " AND sucursalPS = " + sucursalPS +  " AND activo = :est");
         consulta.setBoolean("est", true);
         retorno = (Cliente) consulta.uniqueResult();
         session.getTransaction().commit();

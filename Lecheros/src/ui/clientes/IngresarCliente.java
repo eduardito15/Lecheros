@@ -162,6 +162,8 @@ public class IngresarCliente extends javax.swing.JFrame {
         jComboBoxFrecFactLecheUltra = new javax.swing.JComboBox<>();
         jComboBoxFrecFactLecheDeslactosada = new javax.swing.JComboBox<>();
         jLabelFrecFavtLecheDeslca = new javax.swing.JLabel();
+        jLabel13 = new javax.swing.JLabel();
+        jTextFieldSucursalPS = new javax.swing.JTextField();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
         setTitle("Datos Cliente");
@@ -401,6 +403,10 @@ public class IngresarCliente extends javax.swing.JFrame {
 
         jLabelFrecFavtLecheDeslca.setText("Frecuencia Facturación:");
 
+        jLabel13.setText("SucursalPS:");
+
+        jTextFieldSucursalPS.setText("1");
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
@@ -460,22 +466,28 @@ public class IngresarCliente extends javax.swing.JFrame {
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                                     .addGroup(layout.createSequentialGroup()
-                                        .addComponent(jRadioButtonChofer)
-                                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                        .addComponent(jRadioButtonEmpresa))
-                                    .addGroup(layout.createSequentialGroup()
-                                        .addComponent(jRadioButtonManual)
-                                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                        .addComponent(jRadioButtonProrrateo))
+                                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                            .addGroup(layout.createSequentialGroup()
+                                                .addComponent(jRadioButtonChofer)
+                                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                                .addComponent(jRadioButtonEmpresa))
+                                            .addGroup(layout.createSequentialGroup()
+                                                .addComponent(jRadioButtonManual)
+                                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                                .addComponent(jRadioButtonProrrateo)))
+                                        .addGap(173, 173, 173)
+                                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                            .addComponent(jLabel2, javax.swing.GroupLayout.Alignment.TRAILING)
+                                            .addComponent(jLabelLitrosUltra, javax.swing.GroupLayout.Alignment.TRAILING)
+                                            .addComponent(jLabelLitrosComun)))
                                     .addGroup(layout.createSequentialGroup()
                                         .addComponent(jLabel11)
                                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                        .addComponent(jTextFieldCodigoPS, javax.swing.GroupLayout.PREFERRED_SIZE, 190, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                                .addGap(15, 15, 15)
-                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                    .addComponent(jLabel2, javax.swing.GroupLayout.Alignment.TRAILING)
-                                    .addComponent(jLabelLitrosUltra, javax.swing.GroupLayout.Alignment.TRAILING)
-                                    .addComponent(jLabelLitrosComun))))
+                                        .addComponent(jTextFieldCodigoPS, javax.swing.GroupLayout.PREFERRED_SIZE, 75, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                        .addComponent(jLabel13)
+                                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                        .addComponent(jTextFieldSucursalPS, javax.swing.GroupLayout.PREFERRED_SIZE, 75, javax.swing.GroupLayout.PREFERRED_SIZE)))))
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                             .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
@@ -520,7 +532,9 @@ public class IngresarCliente extends javax.swing.JFrame {
                 .addGap(16, 16, 16)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel11)
-                    .addComponent(jTextFieldCodigoPS, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(jTextFieldCodigoPS, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jLabel13)
+                    .addComponent(jTextFieldSucursalPS, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel2)
@@ -656,9 +670,15 @@ public class IngresarCliente extends javax.swing.JFrame {
                         } else {
                             codigoPS = Long.parseLong(jTextFieldCodigoPS.getText().trim());
                         }
+                        int sucursalPS;
+                        if("".equals(jTextFieldSucursalPS.getText().trim())){
+                            sucursalPS = 1;
+                        } else {
+                            sucursalPS = Integer.parseInt(jTextFieldCodigoPS.getText().trim());
+                        }
                         double prods = Double.parseDouble(jTextFieldProductos.getText().trim());
                         
-                        if (sis.agregarCliente(prorrateo, activo, cobraChofer, gc, r, nombre, razonSocial, rut, direccion, telefono, email, lComun, lUltra, lDeslactosada, (String) jComboBoxFrecFactLeche.getSelectedItem(), prods, (String) jComboBoxFrecFactProductos.getSelectedItem(),codigoPS, prodsCliNuevo, (String)jComboBoxFrecFactLecheUltra.getSelectedItem(), (String)jComboBoxFrecFactLecheDeslactosada.getSelectedItem())) {
+                        if (sis.agregarCliente(prorrateo, activo, cobraChofer, gc, r, nombre, razonSocial, rut, direccion, telefono, email, lComun, lUltra, lDeslactosada, (String) jComboBoxFrecFactLeche.getSelectedItem(), prods, (String) jComboBoxFrecFactProductos.getSelectedItem(),codigoPS, sucursalPS, prodsCliNuevo, (String)jComboBoxFrecFactLecheUltra.getSelectedItem(), (String)jComboBoxFrecFactLecheDeslactosada.getSelectedItem())) {
                             JOptionPane.showMessageDialog(this, "Cliente guardado correctamente.", "Información", JOptionPane.INFORMATION_MESSAGE);
                             vaciarCampos();
                             jComboBoxReparto.requestFocus();
@@ -700,8 +720,14 @@ public class IngresarCliente extends javax.swing.JFrame {
                 } else {
                     codigoPS = Long.parseLong(jTextFieldCodigoPS.getText().trim());
                 }
+                int sucursalPS;
+                        if("".equals(jTextFieldSucursalPS.getText().trim())){
+                            sucursalPS = 1;
+                        } else {
+                            sucursalPS = Integer.parseInt(jTextFieldCodigoPS.getText().trim());
+                        }
                 try {
-                    if (sis.agregarCliente(prorrateo, activo, cobraChofer, gc, r, nombre, razonSocial, rut, direccion, telefono, email, 0, 0, 0, "", 0, "",codigoPS, prodsCliNuevo, "","")) {
+                    if (sis.agregarCliente(prorrateo, activo, cobraChofer, gc, r, nombre, razonSocial, rut, direccion, telefono, email, 0, 0, 0, "", 0, "",codigoPS, sucursalPS, prodsCliNuevo, "","")) {
                         JOptionPane.showMessageDialog(this, "Cliente guardado correctamente.", "Información", JOptionPane.INFORMATION_MESSAGE);
                         vaciarCampos();
                         jComboBoxReparto.requestFocus();
@@ -750,6 +776,7 @@ public class IngresarCliente extends javax.swing.JFrame {
                     cliente.setLitrosDeslactosada(Integer.parseInt(jTextFieldLitrosDeslactosada.getText().trim()));
                     cliente.setProductos(Double.parseDouble(jTextFieldProductos.getText().trim()));
                     cliente.setCodigoPS(Long.parseLong(jTextFieldCodigoPS.getText().trim()));
+                    cliente.setSucursalPS(Integer.parseInt(jTextFieldSucursalPS.getText().trim()));
                     if (sis.actualizarCliente(cliente)) {
                         JOptionPane.showMessageDialog(this, "Cliente guardado correctamente.", "Información", JOptionPane.INFORMATION_MESSAGE);
                         this.dispose();
@@ -786,6 +813,7 @@ public class IngresarCliente extends javax.swing.JFrame {
             cliente.setTelefono(jTextFieldTelefono.getText().trim());
             cliente.setCorreoElectronico(jTextFieldEmail.getText().trim());
             cliente.setCodigoPS(Long.parseLong(jTextFieldCodigoPS.getText().trim()));
+            cliente.setSucursalPS(Integer.parseInt(jTextFieldSucursalPS.getText().trim()));
             try {
                 if (sis.actualizarCliente(cliente)) {
                     JOptionPane.showMessageDialog(this, "Cliente guardado correctamente.", "Información", JOptionPane.INFORMATION_MESSAGE);
@@ -951,6 +979,7 @@ public class IngresarCliente extends javax.swing.JFrame {
             jRadioButtonProrrateo.setEnabled(false);
             jComboBoxGruposDeClientes.setEnabled(false);
             jTextFieldCodigoPS.setEnabled(false);
+            jTextFieldSucursalPS.setEnabled(false);
             jComboBoxReparto.setEnabled(false);
             jTextFieldDireccion.setEnabled(false);
             jTextFieldEmail.setEnabled(false);
@@ -975,6 +1004,7 @@ public class IngresarCliente extends javax.swing.JFrame {
             jRadioButtonInActivo.setSelected(!getCliente().isActivo());
             jRadioButtonEmpresa.setSelected(!getCliente().isCobraChofer());
             jTextFieldCodigoPS.setText(Long.toString(getCliente().getCodigoPS()));
+            jTextFieldSucursalPS.setText(Integer.toString(getCliente().getSucursalPS()));
             if (getCliente().getGrupoCliente() == null) {
                 jComboBoxGruposDeClientes.setSelectedIndex(0);
             } else {
@@ -1010,6 +1040,7 @@ public class IngresarCliente extends javax.swing.JFrame {
             jRadioButtonInActivo.setSelected(!getCliente().isActivo());
             jRadioButtonEmpresa.setSelected(!getCliente().isCobraChofer());
             jTextFieldCodigoPS.setText(Long.toString(getCliente().getCodigoPS()));
+            jTextFieldSucursalPS.setText(Integer.toString(getCliente().getSucursalPS()));
             if (getCliente().getGrupoCliente() == null) {
                 jComboBoxGruposDeClientes.setSelectedIndex(0);
             } else {
@@ -1242,6 +1273,7 @@ public class IngresarCliente extends javax.swing.JFrame {
     private javax.swing.JLabel jLabel10;
     private javax.swing.JLabel jLabel11;
     private javax.swing.JLabel jLabel12;
+    private javax.swing.JLabel jLabel13;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel4;
@@ -1279,6 +1311,7 @@ public class IngresarCliente extends javax.swing.JFrame {
     private javax.swing.JTextField jTextFieldProductos;
     private javax.swing.JTextField jTextFieldRazonSocial;
     private javax.swing.JTextField jTextFieldRut;
+    private javax.swing.JTextField jTextFieldSucursalPS;
     private javax.swing.JTextField jTextFieldTelefono;
     // End of variables declaration//GEN-END:variables
 

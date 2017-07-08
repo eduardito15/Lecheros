@@ -787,11 +787,15 @@ public class SistemaFacturas {
                         //Verifico si existe una boleta manual con ese numero. 
                         
                         if (this.numeroDeFacturaMovilValido(numeroFactura, tipoDocumento)) {
-                            Cliente c;
+                            Cliente c = null;
 
                             try {
-                                Long codigoClientePS = Long.parseLong(Cuenta);
-                                c = SistemaMantenimiento.getInstance().devolverClienteActivoPorCodigoPS(codigoClientePS);
+                                String[] cliSuc = Cuenta.split(" - ");
+                                if(cliSuc.length == 2) {
+                                    Long codigoClientePS = Long.parseLong(cliSuc[0]);
+                                    int sucursalPS = Integer.parseInt(cliSuc[1]);
+                                    c = SistemaMantenimiento.getInstance().devolverClienteActivoPorCodigoYSucursalPS(codigoClientePS, sucursalPS);
+                                }
                                 if (c == null) {
                                     retornoPorFactura[5] = "No existe el cliente con ese codigo.";
                                     throw new Exception(retornoPorFactura[5]);
@@ -1308,11 +1312,15 @@ public class SistemaFacturas {
                         //Verifico si existe una boleta manual con ese numero. 
                         
                         if (this.numeroDeFacturaMovilValido(numeroFactura, tipoDocumento)) {
-                            Cliente c;
+                            Cliente c = null;
 
                             try {
-                                Long codigoClientePS = Long.parseLong(Cuenta);
-                                c = SistemaMantenimiento.getInstance().devolverClienteActivoPorCodigoPS(codigoClientePS);
+                                String[] cliSuc = Cuenta.split(" - ");
+                                if(cliSuc.length == 2) {
+                                    Long codigoClientePS = Long.parseLong(cliSuc[0]);
+                                    int sucursalClientePS = Integer.parseInt(cliSuc[1]);
+                                    c = SistemaMantenimiento.getInstance().devolverClienteActivoPorCodigoYSucursalPS(codigoClientePS, sucursalClientePS);
+                                }
                                 if (c == null) {
                                     retornoPorFactura[5] = "No existe el cliente con ese codigo.";
                                     throw new Exception(retornoPorFactura[5]);
