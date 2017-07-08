@@ -2718,7 +2718,7 @@ public class SistemaFacturas {
                 }
 
                 //f.setRenglones(renglones);
-                double totalLecheExcento = (pLecheComun != null ? 0 * pLecheComun.getPrecioVenta() : 0) + (pLecheUltra != null ? 0 * pLecheUltra.getPrecioVenta() : 0) + (pLecheUltraDiferenciada != null ? 0 * pLecheUltraDiferenciada.getPrecioVenta() : 0) + (pLecheDeslactosada != null ? 0 * pLecheDeslactosada.getPrecioVenta() : 0);
+                double totalLecheExcento = (pLecheComun != null ? 0 * pLecheComun.getPrecioVenta() : 0) + (pLecheUltra != null ? 0 * pLecheUltra.getPrecioVenta() : 0) + (pLecheUltraDiferenciada != null ? 0 * pLecheUltraDiferenciada.getPrecioVenta() : 0) + (pLecheDeslactosada != null ? litrosDeslactosadaFacturar * pLecheDeslactosada.getPrecioVenta() : 0);
 
                 totalExcentoFacturado = totalExcentoFacturado + totalLecheExcento;
 
