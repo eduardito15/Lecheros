@@ -4246,6 +4246,11 @@ public class SistemaFacturas {
             }
             //}
         }
+        
+        logger.info("Total Litros Comun para Facturar: " + totalLitrosComunFacturar);
+        logger.info("Total Litros Ultra para Facturar: " + totalLitrosUltraFacturar);
+        logger.info("Total Litros Ultra diferenciada para Facturar: " + totalLitrosUltraDiferenciadaFacturar);
+        logger.info("Total Litros Deslactosada para facturar: " + totalLitrosDeslactosadaFacturar);
 
         //Si hay ultra diferenciada me fijo cual es el porcentaje
         double porcentajeUltraDiferenciada = 0;
@@ -4261,6 +4266,7 @@ public class SistemaFacturas {
         double totalLitrosDeslactosadaProrrateo = 0;
         double productosMinimoProrrateo = 0;
         double productosBasicoProrrateo = 0;
+        
         for (Cliente c : clientes) {
             totalLitrosComunProrrateo = totalLitrosComunProrrateo + c.getLitrosComun();
             totalLitrosUltraProrrateo = totalLitrosUltraProrrateo + c.getLitrosUltra();
@@ -4268,6 +4274,11 @@ public class SistemaFacturas {
             productosMinimoProrrateo = productosMinimoProrrateo + 0;
             productosBasicoProrrateo = productosBasicoProrrateo + c.getProductos();
         }
+        
+        logger.info("Total Litros Comun Prorrateo: " + totalLitrosComunProrrateo);
+        logger.info("Total Litros Ultra Proppateo: " + totalLitrosUltraProrrateo);
+        logger.info("Total Litros Deslactosada Prorrateo: " + totalLitrosDeslactosadaProrrateo);
+        logger.info("Total Productos Prorrateo: " + productosBasicoProrrateo);
 
         Articulo lecheComun = null;
         Precio pLecheComun = null;
@@ -4371,7 +4382,7 @@ public class SistemaFacturas {
             configFact.setUltimoNumeroFactura(numero);
             f.setNumero(numero);
             List<FacturaRenglon> renglones = new ArrayList<>();
-            if (litrosComunFacturar != 0 && lecheComun != null && pLecheComun != null) {
+            if (litrosComunFacturar > 0 && lecheComun != null && pLecheComun != null) {
                 FacturaRenglon fr = new FacturaRenglon();
                 fr.setFactura(f);
                 fr.setArticulo(lecheComun);
@@ -4382,7 +4393,7 @@ public class SistemaFacturas {
                 fr.setTotal(litrosComunFacturar * pLecheComun.getPrecioVenta());
                 renglones.add(fr);
             }
-            if (litrosUltraFacturar != 0 && lecheUltra != null && pLecheUltra != null) {
+            if (litrosUltraFacturar > 0 && lecheUltra != null && pLecheUltra != null) {
                 FacturaRenglon fr = new FacturaRenglon();
                 fr.setFactura(f);
                 fr.setArticulo(lecheUltra);
@@ -4393,7 +4404,7 @@ public class SistemaFacturas {
                 fr.setTotal(litrosUltraFacturar * pLecheUltra.getPrecioVenta());
                 renglones.add(fr);
             }
-            if (litrosUltraDiferenciadaFacturar != 0 && lecheUltraDiferenciada != null && pLecheUltraDiferenciada != null) {
+            if (litrosUltraDiferenciadaFacturar > 0 && lecheUltraDiferenciada != null && pLecheUltraDiferenciada != null) {
                 FacturaRenglon fr = new FacturaRenglon();
                 fr.setFactura(f);
                 fr.setArticulo(lecheUltraDiferenciada);
@@ -4404,7 +4415,7 @@ public class SistemaFacturas {
                 fr.setTotal(litrosUltraDiferenciadaFacturar * pLecheUltraDiferenciada.getPrecioVenta());
                 renglones.add(fr);
             }
-            if (litrosDeslactosadaFacturar != 0 && lecheDeslactosada != null && pLecheDeslactosada != null) {
+            if (litrosDeslactosadaFacturar > 0 && lecheDeslactosada != null && pLecheDeslactosada != null) {
                 FacturaRenglon fr = new FacturaRenglon();
                 fr.setFactura(f);
                 fr.setArticulo(lecheDeslactosada);
@@ -4415,7 +4426,7 @@ public class SistemaFacturas {
                 fr.setTotal(litrosDeslactosadaFacturar * pLecheDeslactosada.getPrecioVenta());
                 renglones.add(fr);
             }
-            if (productosMinimoFacturar != 0) {
+            if (productosMinimoFacturar > 0) {
                 FacturaRenglon fr = new FacturaRenglon();
                 fr.setFactura(f);
                 fr.setArticulo(prodMinimo);
@@ -4427,7 +4438,7 @@ public class SistemaFacturas {
                 fr.setSubtotal(productosMinimoFacturar - iva);
                 renglones.add(fr);
             }
-            if (productosBasicoFacturar != 0) {
+            if (productosBasicoFacturar > 0) {
                 FacturaRenglon fr = new FacturaRenglon();
                 fr.setFactura(f);
                 fr.setArticulo(prodBasico);
@@ -4469,6 +4480,137 @@ public class SistemaFacturas {
         retorno[1] = Double.toString(totalMinimoFacturado);
         retorno[2] = Double.toString(totalBasicoFacturado);
         SistemaUsuarios.getInstance().registrarOperacion(Constantes.ActividadFacturarProrrateo, "Facturo el prorrateo no detallado. ");
+        return retorno;
+    }
+    
+    public String[] facturarProrrateoIngresandoTotales(Date fechaDesde, Date fechaHasta, Reparto r, String[][] detallesPorArticuloParaFacturar, Double totalExcentoParaFacturar, Double totalMinimoParaFacturar, Double totalBasicoParaFacturar, boolean facturarLeche, boolean facturarProductos) {
+        String[] retorno = {""};
+        try {
+            
+            logger.info("-----------------------------------------------------------------------------------------------------------------------------------------------");
+            logger.info("Comienza Facturacion Prorrateo " + "de la fecha: " + formatter.format(fechaHasta));
+            logger.info("Total Excento Ingresado: " + totalExcentoParaFacturar);
+            logger.info("Total Minimo Ingresado: " + totalMinimoParaFacturar);
+            logger.info("Total Basico Ingresado: " + totalBasicoParaFacturar);
+
+            GrupoDeArticulos grupoLecheComun = SistemaMantenimientoArticulos.getInstance().devolverGrupoDeArticuloPorNombre("Leche Común");
+
+            GrupoDeArticulos grupoLecheUltra = SistemaMantenimientoArticulos.getInstance().devolverGrupoDeArticuloPorNombre("Leche Ultra");
+
+            GrupoDeArticulos grupoLecheUltraDiferenciada = SistemaMantenimientoArticulos.getInstance().devolverGrupoDeArticuloPorNombre("Leche Ultra Diferenciada");
+
+            GrupoDeArticulos grupoLecheDeslactosada = SistemaMantenimientoArticulos.getInstance().devolverGrupoDeArticuloPorNombre("Leche Deslactosada");
+
+            List<Factura> facturasProrrateoViejas = this.devolverFacturasProrrateoEntreFechasYReparto(fechaDesde, fechaHasta, r);
+            if (!facturasProrrateoViejas.isEmpty()) {
+                for (Factura f : facturasProrrateoViejas) {
+                    GenericDAO.getGenericDAO().borrar(f);
+                }
+            }
+            
+            //Resto lo que ya se facturo.
+            
+            List<Factura> facturas;
+            if (r == null) {
+                facturas = new ArrayList<>();
+                List<Reparto> repartos = SistemaMantenimiento.getInstance().devolverRepartos();
+                for (Reparto rep : repartos) {
+                    facturas.addAll(this.devolverFacturasEntreFechasYReparto(fechaDesde, fechaHasta, rep, true));
+                }
+            } else {
+                facturas = this.devolverFacturasEntreFechasYReparto(fechaDesde, fechaHasta, r, true);
+            }
+            
+            //Calculo los total de las facturas
+            double totalExcentoFacturas = 0;
+            double totalMinimoFacturas = 0;
+            double totalBasicoFacturas = 0;
+            
+            logger.info("Total Excento Facturas: " + totalExcentoFacturas);
+            logger.info("Total Minimo Facturas: " + totalMinimoFacturas);
+            logger.info("Total Basico Facturas: " + totalBasicoFacturas);
+            
+            for (Factura f : facturas) {
+                if (f.getTipoDocumento().isSuma()) {
+                    for (FacturaRenglon fr : f.getRenglones()) {
+                        if (!esEnvase(fr.getArticulo())) {
+                            if ("Excento".equals(fr.getArticulo().getIva().getNombre())) {
+                                totalExcentoFacturas = totalExcentoFacturas + fr.getSubtotal();
+                            }
+                            if ("Minimo".equals(fr.getArticulo().getIva().getNombre())) {
+                                totalMinimoFacturas = totalMinimoFacturas + fr.getSubtotal();
+                            }
+                            if ("Basico".equals(fr.getArticulo().getIva().getNombre())) {
+                                totalBasicoFacturas = totalBasicoFacturas + fr.getSubtotal();
+                            }
+                            if(esLeche(fr.getArticulo())) {
+                                if(grupoLecheComun.getArticulos().contains(fr.getArticulo())) {
+                                    detallesPorArticuloParaFacturar[0][4] = Double.toString(Double.parseDouble(detallesPorArticuloParaFacturar[0][4]) - fr.getCantidad());
+                                }
+                                if (grupoLecheUltra.getArticulos().contains(fr.getArticulo())) {
+                                    detallesPorArticuloParaFacturar[1][4] = Double.toString(Double.parseDouble(detallesPorArticuloParaFacturar[1][4]) - fr.getCantidad());
+                                }
+
+                                if (grupoLecheUltraDiferenciada.getArticulos().contains(fr.getArticulo())) {
+                                    detallesPorArticuloParaFacturar[2][4] = Double.toString(Double.parseDouble(detallesPorArticuloParaFacturar[2][4]) - fr.getCantidad());
+                                }
+
+                                if (grupoLecheDeslactosada.getArticulos().contains(fr.getArticulo())) {
+                                    detallesPorArticuloParaFacturar[3][4] = Double.toString(Double.parseDouble(detallesPorArticuloParaFacturar[3][4]) - fr.getCantidad());
+                                }
+                            }
+                        }
+                    }
+                } else {
+                    for (FacturaRenglon fr : f.getRenglones()) {
+                        if (!esEnvase(fr.getArticulo())) {
+                            if ("Excento".equals(fr.getArticulo().getIva().getNombre())) {
+                                totalExcentoFacturas = totalExcentoFacturas - fr.getSubtotal();
+                            }
+                            if ("Minimo".equals(fr.getArticulo().getIva().getNombre())) {
+                                totalMinimoFacturas = totalMinimoFacturas - fr.getSubtotal();
+                            }
+                            if ("Basico".equals(fr.getArticulo().getIva().getNombre())) {
+                                totalBasicoFacturas = totalBasicoFacturas - fr.getSubtotal();
+                            }
+                            if(esLeche(fr.getArticulo())) {
+                                if(grupoLecheComun.getArticulos().contains(fr.getArticulo())) {
+                                    detallesPorArticuloParaFacturar[0][4] = Double.toString(Double.parseDouble(detallesPorArticuloParaFacturar[0][4]) + fr.getCantidad());
+                                }
+                                if (grupoLecheUltra.getArticulos().contains(fr.getArticulo())) {
+                                    detallesPorArticuloParaFacturar[1][4] = Double.toString(Double.parseDouble(detallesPorArticuloParaFacturar[1][4]) + fr.getCantidad());
+                                }
+
+                                if (grupoLecheUltraDiferenciada.getArticulos().contains(fr.getArticulo())) {
+                                    detallesPorArticuloParaFacturar[2][4] = Double.toString(Double.parseDouble(detallesPorArticuloParaFacturar[2][4]) + fr.getCantidad());
+                                }
+
+                                if (grupoLecheDeslactosada.getArticulos().contains(fr.getArticulo())) {
+                                    detallesPorArticuloParaFacturar[3][4] = Double.toString(Double.parseDouble(detallesPorArticuloParaFacturar[3][4]) + fr.getCantidad());
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+            
+            detallesPorArticuloParaFacturar[4][0] = "Totales";
+            detallesPorArticuloParaFacturar[4][1] = Double.toString(Double.parseDouble(detallesPorArticuloParaFacturar[4][1]) - totalExcentoFacturas);
+            detallesPorArticuloParaFacturar[4][2] = Double.toString(Double.parseDouble(detallesPorArticuloParaFacturar[4][2]) - totalMinimoFacturas);
+            detallesPorArticuloParaFacturar[4][3] = Double.toString(Double.parseDouble(detallesPorArticuloParaFacturar[4][3]) - totalBasicoFacturas);
+            
+            totalExcentoParaFacturar = totalExcentoParaFacturar - totalExcentoFacturas;
+            totalMinimoParaFacturar = totalMinimoParaFacturar - totalMinimoFacturas;
+            totalBasicoParaFacturar = totalBasicoParaFacturar - totalBasicoFacturas;
+            
+            
+            facturarProrrateoNoDetallado(fechaHasta, r, detallesPorArticuloParaFacturar, totalExcentoParaFacturar, totalMinimoParaFacturar, totalBasicoParaFacturar, facturarLeche, facturarProductos);
+            
+            SistemaUsuarios.getInstance().registrarOperacion(Constantes.ActividadFacturarProrrateo, "Facturo el prorrateo ");
+        } catch (Exception exp) {
+            String stakTrace = util.Util.obtenerStackTraceEnString(exp);
+            SistemaUsuarios.getInstance().registrarExcepcion(exp.toString(), stakTrace);
+        }
         return retorno;
     }
 
@@ -5969,6 +6111,14 @@ public class SistemaFacturas {
             System.out.println("Cant Encontrados Inactivos: " + cantEncontradosInactivos);
             System.out.println("Cant No Encontrados: " + clientesNoEncontrados);
             System.out.println("Cant clientes ingresados: " + cantClientesIngresados);
+            
+            logger.info("-------------------------------------------------------------------------------------------------");
+            logger.info("Cant Encontrados: " + clientesEncontrados);
+            logger.info("Cant Encontrados Activos: " + cantEncontradosActivo);
+            logger.info("Cant Encontrados Inactivos: " + cantEncontradosInactivos);
+            logger.info("Cant No Encontrados: " + clientesNoEncontrados);
+            logger.info("Cant clientes ingresados: " + cantClientesIngresados);
+            
             inputStream = null;
             inputStream = new FileInputStream(new File(rutaArchivoFacturas));
             workbook = new XSSFWorkbook(inputStream);
@@ -6172,6 +6322,12 @@ public class SistemaFacturas {
             System.out.println("Cant Facturas con Cliente Ok: " + cantFacturasConClienteOk);
             System.out.println("Cant Facturas sin Cliente: " + cantFacturasSinCliente);
             System.out.println("Cant facturas de clientes no encontrados: " + cantFacturasDeClientesNoEncontrados);
+            
+            logger.info("Cant Facturas : " + cantFacturas);
+            logger.info("Cant Facturas con Cliente Ok: " + cantFacturasConClienteOk);
+            logger.info("Cant Facturas sin Cliente: " + cantFacturasSinCliente);
+            logger.info("Cant facturas de clientes no encontrados: " + cantFacturasDeClientesNoEncontrados);
+            logger.info("---------------------------------------------------------------------------------------------------------------");
 
         } catch (FileNotFoundException ex) {
             //Logger.getLogger(Lecheros.class.getName()).log(Level.SEVERE, null, ex);
