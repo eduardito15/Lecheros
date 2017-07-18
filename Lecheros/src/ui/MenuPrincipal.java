@@ -59,15 +59,21 @@ import ui.informes.VentanaInformeRetenciones;
 import dominio.ConfiguracionLiquidacion;
 import dominio.DocumentoDeCompra;
 import dominio.DocumentoDeVenta;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.List;
+import java.util.Properties;
 import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
 import lecheros.Lecheros;
 import sistema.SistemaMantenimiento;
 import sistema.SistemaUsuarios;
+import ui.clientes.IngresarClientesDesdePS;
 import ui.clientes.ResumenDeComprasPorCliente;
 import ui.clientes.VentanaEstadoDeCuenta;
 import ui.config.VentanaConfiguracionFacturacion;
+import ui.facturas.FacturarProrrateoIngresandoTotales;
 import ui.facturas.ImprimirGrupoDeFacturas;
 import ui.facturas.IngresarFacturaManualGiamo;
 import ui.facturas.IngresarFacturasManualesGiamoDesdeArchivo;
@@ -139,6 +145,7 @@ public class MenuPrincipal extends javax.swing.JFrame {
         jMenuItem27 = new javax.swing.JMenuItem();
         jMenuItem33 = new javax.swing.JMenuItem();
         jMenuItem28 = new javax.swing.JMenuItem();
+        jMenuItemIngresarClientesPSDesdeArchivo = new javax.swing.JMenuItem();
         jMenuItem12 = new javax.swing.JMenuItem();
         jMenuItem5 = new javax.swing.JMenuItem();
         jMenuItem21 = new javax.swing.JMenuItem();
@@ -284,6 +291,14 @@ public class MenuPrincipal extends javax.swing.JFrame {
             }
         });
         jMenu5.add(jMenuItem28);
+
+        jMenuItemIngresarClientesPSDesdeArchivo.setText("Ingresar desde Archivo de PS");
+        jMenuItemIngresarClientesPSDesdeArchivo.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jMenuItemIngresarClientesPSDesdeArchivoActionPerformed(evt);
+            }
+        });
+        jMenu5.add(jMenuItemIngresarClientesPSDesdeArchivo);
 
         jMenu1.add(jMenu5);
 
@@ -1460,8 +1475,47 @@ public class MenuPrincipal extends javax.swing.JFrame {
         // TODO add your handling code here:
         try {
             if (sisUsuarios.tienePermisos(Constantes.ActividadFacturarProrrateo)) {
-                FacturarProrrateo vfp = new FacturarProrrateo(this, false);
-                vfp.setVisible(true);
+                if(Lecheros.nombreEmpresa.equals(Constantes.nombreEmpresaGiamo)) {
+                    Properties prop = new Properties();
+                    InputStream input = null;
+                    try {
+                        String sSistemaOperativo = System.getProperty("os.name");
+                        if (sSistemaOperativo.equals("Mac OS X")) {
+                            input = new FileInputStream("src/config.properties");
+                        } else {
+                            String dir = System.getProperty("user.dir");
+                            input = new FileInputStream("C:\\Lecheros\\config.properties");
+                        }
+
+                        // load a properties file
+                        prop.load(input);
+
+                        // get the property value and print it out
+                        String ingresarTotales = prop.getProperty("ingresarTotalesParaFacturacion");
+                        
+                        if(ingresarTotales.equals("true")) {
+                            FacturarProrrateoIngresandoTotales fpit = new FacturarProrrateoIngresandoTotales(this, false);
+                            fpit.setVisible(true);
+                        } else {
+                            FacturarProrrateo vfp = new FacturarProrrateo(this, false);
+                            vfp.setVisible(true);
+                        }
+
+                    } catch (IOException ex) {
+                        ex.printStackTrace();
+                    } finally {
+                        if (input != null) {
+                            try {
+                                input.close();
+                            } catch (IOException e) {
+                                e.printStackTrace();
+                            }
+                        }
+                    }
+                } else {
+                    FacturarProrrateo vfp = new FacturarProrrateo(this, false);
+                    vfp.setVisible(true);
+                }
             } else {
                 JOptionPane.showMessageDialog(this, Constantes.MensajeDeErrorDePermisos, "Permisos", JOptionPane.INFORMATION_MESSAGE);
             }
@@ -1786,6 +1840,12 @@ public class MenuPrincipal extends javax.swing.JFrame {
         vifmgda.setVisible(true);
     }//GEN-LAST:event_jMenuItemIngresarFacturasManualesGiamoDesdeArchivoActionPerformed
 
+    private void jMenuItemIngresarClientesPSDesdeArchivoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItemIngresarClientesPSDesdeArchivoActionPerformed
+        // TODO add your handling code here:
+        IngresarClientesDesdePS vicdps = new IngresarClientesDesdePS(this, false);
+        vicdps.setVisible(true);
+    }//GEN-LAST:event_jMenuItemIngresarClientesPSDesdeArchivoActionPerformed
+
     private void cargarMenuCompras() {
         //jMenuItem1 = new javax.swing.JMenuItem();
         List<DocumentoDeCompra> tiposDocs;
@@ -1917,6 +1977,7 @@ public class MenuPrincipal extends javax.swing.JFrame {
             jMenuItemInformeContadorGiamo.setVisible(false);
             jMenuItemIngresarFacturasMovil.setVisible(false);
             jMenuItemIngresarFacturasManualesGiamoDesdeArchivo.setVisible(false);
+            jMenuItemIngresarClientesPSDesdeArchivo.setVisible(false);
         }
         if ("Clafer".equals(empresa)) {
             jMenuItemControlDeEnvasesPorEmpresa.setVisible(false);
@@ -1935,6 +1996,7 @@ public class MenuPrincipal extends javax.swing.JFrame {
             jMenuItemIngresarFacturasMovilRelece.setVisible(false);
             jMenuItemIngresarFacturasManualesGiamoDesdeArchivo.setVisible(false);
             jMenuItemInformeContadorCerramFacturas.setVisible(false);
+            jMenuItemIngresarClientesPSDesdeArchivo.setVisible(false);
         }
         if ("Giamo".equals(empresa)) {
             jMenuItemBonificacionPorRoturasClafer.setVisible(false);
@@ -2069,6 +2131,7 @@ public class MenuPrincipal extends javax.swing.JFrame {
     private javax.swing.JMenuItem jMenuItemInformeContadorGiamo;
     private javax.swing.JMenuItem jMenuItemInformePinchadas;
     private javax.swing.JMenuItem jMenuItemInformeTotalVentaProductos;
+    private javax.swing.JMenuItem jMenuItemIngresarClientesPSDesdeArchivo;
     private javax.swing.JMenuItem jMenuItemIngresarFacturasManualesGiamoDesdeArchivo;
     private javax.swing.JMenuItem jMenuItemIngresarFacturasMovil;
     private javax.swing.JMenuItem jMenuItemIngresarFacturasMovilCerram;

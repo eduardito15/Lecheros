@@ -33,7 +33,7 @@ public class Cliente extends ObjetoPersistente {
     @Column
     private String codigo;
     
-    @Column(unique = true)
+    @Column
     private long codigoPS;
     
     @Column

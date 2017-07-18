@@ -23,8 +23,16 @@ import dominio.Iva;
 import dominio.ProductoClienteProrrateo;
 import dominio.RepartoCompuesto;
 import dominio.RubroGasto;
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.List;
+import org.apache.log4j.Logger;
 import org.hibernate.Query;
 import org.hibernate.Session;
 import ui.usuarios.Constantes;
@@ -36,6 +44,8 @@ import ui.usuarios.Constantes;
 public class SistemaMantenimiento {
 
     private static SistemaMantenimiento instance;
+    
+    private Logger logger = Logger.getLogger(SistemaMantenimiento.class.getName());
 
     /**
      * @return the instance
@@ -947,5 +957,139 @@ public class SistemaMantenimiento {
     public boolean eliminarComision(Comision c) throws Exception {
         SistemaUsuarios.getInstance().registrarOperacion(Constantes.ActividadMantenimientoComisiones, "Elimino la comision  :  " + c.getNombre() );
         return GenericDAO.getGenericDAO().borrar(c);
+    }
+    
+    public List<String[]> ingresarClientesDesdePowerStreet(String rutaArchivo) throws Exception {
+        List<String[]> retorno = new ArrayList<>();
+        BufferedReader br = null;
+        String line;
+        String cvsSplitBy = "\\t";
+        
+        File fileDir = new File(rutaArchivo);
+
+        int totalClientesIngresados = 0;
+
+        try {
+
+            br = new BufferedReader(new InputStreamReader(new FileInputStream(fileDir), "ISO-8859-1"));
+            //Leo la linea de los encabezados.
+            line = br.readLine();
+            logger.info("-------------------------------INICIO INGRESO DE CLIENTES--------------------------------------------");
+            while ((line = br.readLine()) != null) {
+                String[] retornoPorFactura = new String[6];
+
+                String[] data = line.split(cvsSplitBy);
+                
+                String Vendedor = data[0];
+                //String Ruta = data[1];
+                //String orden = data[2];
+                //String UltimaVenta = data[3];
+                //String UltimaVisita = data[4];
+                String Cuenta = data[5];
+                String codAlt = data[6];
+                String Nombre = data[7];
+                String Razon = data[8];
+                String Direccion = "";
+                String Rut = "";
+                
+                if(data.length >= 10) {
+                    Direccion = data[9];
+                }
+                if(data.length >=11) {
+                    Rut = data[10];
+                }
+                
+                retornoPorFactura[0] = Cuenta;
+                retornoPorFactura[1] = codAlt;
+                retornoPorFactura[2] = Nombre;
+                retornoPorFactura[3] = Razon;
+                retornoPorFactura[4] = Direccion;
+                retornoPorFactura[5] = "";
+                
+           
+                Reparto r = null;
+
+                try {
+                    String[] primerSplit = Vendedor.split(": ");
+                    if(primerSplit.length >= 2) {
+                        String[] segundoSplit = primerSplit[1].split(" -");
+                        int numeroVendedorPS = Integer.parseInt(segundoSplit[0]);
+                        r = SistemaMantenimiento.getInstance().devolverRepartoPorNumeroVendedorPS(numeroVendedorPS);
+                    }
+                    if (r == null) {
+                        retornoPorFactura[5] = "No existe el vendedor con ese número.";
+                        //throw new Exception(retornoPorFactura[5]);
+                    }
+                } catch (NumberFormatException ne) {
+                    retornoPorFactura[5] = "El número de vendedor debe ser un número.";
+                    //throw new Exception(retornoPorFactura[5]);
+                }
+                
+                int codigoAlternativo = 0;
+                int codigoSuc = 1;
+                
+                try{
+                    String[] splitCodigo = Cuenta.split("-");
+                    if(splitCodigo.length == 2) {
+                        //codigoAlternativo = Integer.parseInt(splitCodigo[0]);
+                        codigoSuc = Integer.parseInt(splitCodigo[1]);
+                    }
+                    
+                } catch (NumberFormatException ne) {
+                    retornoPorFactura[5] = "El codigo debe ser número un guion y un número.";
+                    //throw new Exception(retornoPorFactura[5]);
+                }
+                
+                
+                try {
+                    codigoAlternativo = Integer.parseInt(codAlt);
+                } catch (NumberFormatException ne) {
+                    retornoPorFactura[5] = "El codigo altenativo debe ser un número.";
+                    //throw new Exception(retornoPorFactura[5]);
+                }
+                
+                Cliente aux = SistemaMantenimiento.getInstance().devolverClienteActivoPorCodigoYSucursalPS(codigoAlternativo, codigoSuc);
+                if(aux == null) {
+                    //No existe el cliente.
+                    //Si no existe lo agrego.
+                    if(retornoPorFactura[5].equals("")) {
+                        if(SistemaMantenimiento.getInstance().agregarCliente(false, true, true, null, r, Nombre, Razon, Rut, Direccion, "", "", 0, 0, 0, "", 0, "", codigoAlternativo, codigoSuc, null, "", "")) {
+                            totalClientesIngresados++;
+                            retornoPorFactura[5] = "Ingresado correctamente.";
+                        }
+                    }
+                } else {
+                    //Es un cliente que ya existe.
+                    retornoPorFactura[5] = "Ya existe un cliente con ese codigo y sucursal.";
+                }
+                
+                logger.info("Cliente : " + retornoPorFactura[0] + " " + retornoPorFactura[1] + " " + retornoPorFactura[2] + " " + retornoPorFactura[3] + " " + retornoPorFactura[4] + " " + retornoPorFactura[5] + " ");
+                
+                retorno.add(retornoPorFactura);
+            }
+            
+            logger.info("-----------------------------------------------------------------------------------------------------------");
+            
+        } catch (FileNotFoundException e) {
+            String stakTrace = util.Util.obtenerStackTraceEnString(e);
+            SistemaUsuarios.getInstance().registrarExcepcion(e.toString(), stakTrace);
+        } catch (IOException e) {
+            String stakTrace = util.Util.obtenerStackTraceEnString(e);
+            SistemaUsuarios.getInstance().registrarExcepcion(e.toString(), stakTrace);
+        } finally {
+            if (br != null) {
+                try {
+                    br.close();
+                } catch (IOException e) {
+                    String stakTrace = util.Util.obtenerStackTraceEnString(e);
+                    SistemaUsuarios.getInstance().registrarExcepcion(e.toString(), stakTrace);
+                }
+            }
+        }
+        
+        String[] retCantIngresadas = new String[1];
+        retCantIngresadas[0] = "Ingresados correctamente : " + totalClientesIngresados;
+        retorno.add(retCantIngresadas);
+        return retorno;
     }
 }
