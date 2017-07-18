@@ -544,6 +544,11 @@ public class MantenimientoFacturas extends javax.swing.JFrame {
                 return canEdit [columnIndex];
             }
         });
+        jTableFacturas.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                jTableFacturasMouseClicked(evt);
+            }
+        });
         jScrollPane1.setViewportView(jTableFacturas);
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
@@ -947,6 +952,32 @@ public class MantenimientoFacturas extends javax.swing.JFrame {
             jButtonBuscar.doClick();
         }
     }//GEN-LAST:event_formWindowActivated
+
+    private void jTableFacturasMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jTableFacturasMouseClicked
+        // TODO add your handling code here:
+        if (evt.getClickCount() == 2) {
+            if (jTableFacturas.getSelectedRow() == -1) {
+                JOptionPane.showMessageDialog(this, "Debe seleccionar una factura.", "Información", JOptionPane.INFORMATION_MESSAGE);
+            } else {
+                try {
+                    if (SistemaUsuarios.getInstance().tienePermisos(Constantes.ActividadIngresarFacturas)) {
+                        IngresoFacturas vif = new IngresoFacturas(MantenimientoFacturas.this, false);
+                        vif.setAccion("Modificar");
+                        Factura f = facturas.get(jTableFacturas.getSelectedRow());
+                        vif.setFactura(f);
+                        vif.setTipoDoc(f.getTipoDocumento());
+                        vif.setVisible(true);
+                    } else {
+                        JOptionPane.showMessageDialog(MantenimientoFacturas.this, Constantes.MensajeDeErrorDePermisos, "Permisos", JOptionPane.INFORMATION_MESSAGE);
+                    }
+                } catch (Exception exp) {
+                    String stakTrace = util.Util.obtenerStackTraceEnString(exp);
+                    SistemaUsuarios.getInstance().registrarExcepcion(exp.toString(), stakTrace);
+                    JOptionPane.showMessageDialog(MantenimientoFacturas.this, Constantes.MensajeDeErrorGenerico, "Error", JOptionPane.ERROR_MESSAGE);
+                }
+            }
+        }
+    }//GEN-LAST:event_jTableFacturasMouseClicked
 
     public void cargarFacturaEnTabla(Factura f) {
         if(f!=null) {
