@@ -46,7 +46,7 @@ import ui.usuarios.Login;
  */
 public class Lecheros {
 
-    public static String nombreEmpresa = "";
+    public static String nombreEmpresa = "Giamo";
     /**
      * @param args the command line arguments
      */
@@ -320,7 +320,7 @@ public class Lecheros {
                 //int litrosUltra = (int) fila.getCell(7).getNumericCellValue();
 
                 Reparto r = SistemaMantenimiento.getInstance().devolverRepartoPorCodigo(numRep);
-                SistemaMantenimiento.getInstance().agregarCliente(true, true, true, null, r, nombre, razonSocial, rut, direccion, "", "", 0, 0, 0, "", 0.0, "", 0, new ArrayList<>(), "","");
+                SistemaMantenimiento.getInstance().agregarCliente(true, true, true, null, r, nombre, razonSocial, rut, direccion, "", "", 0, 0, 0, "", 0.0, "", 0, 1, new ArrayList<>(), "","");
             }
         } catch (FileNotFoundException ex) {
             Logger.getLogger(Lecheros.class.getName()).log(Level.SEVERE, null, ex);
@@ -701,7 +701,7 @@ public class Lecheros {
                 }
 
                 Reparto r = SistemaMantenimiento.getInstance().devolverRepartoPorCodigo(numRep);
-                SistemaMantenimiento.getInstance().agregarCliente(true, true, true, null, r, nombre, razonSocial, rut, direccion, "", "", litrosComun, litrosUltra, 0, "", 0.0, "", 0, new ArrayList<>(), "", "");
+                SistemaMantenimiento.getInstance().agregarCliente(true, true, true, null, r, nombre, razonSocial, rut, direccion, "", "", litrosComun, litrosUltra, 0, "", 0.0, "", 0, 1, new ArrayList<>(), "", "");
             }
         } catch (FileNotFoundException ex) {
             Logger.getLogger(Lecheros.class.getName()).log(Level.SEVERE, null, ex);
@@ -953,7 +953,7 @@ public class Lecheros {
                 }
 
                 Reparto r = SistemaMantenimiento.getInstance().devolverRepartoPorCodigo(numRep);
-                SistemaMantenimiento.getInstance().agregarCliente(true, true, true, null, r, nombre, razonSocial, rut, direccion, "", "", 0, 0, 0, "", 0.0, "", 0, new ArrayList<>(), "", "");
+                SistemaMantenimiento.getInstance().agregarCliente(true, true, true, null, r, nombre, razonSocial, rut, direccion, "", "", 0, 0, 0, "", 0.0, "", 0, 1, new ArrayList<>(), "", "");
             }
         } catch (FileNotFoundException ex) {
             Logger.getLogger(Lecheros.class.getName()).log(Level.SEVERE, null, ex);

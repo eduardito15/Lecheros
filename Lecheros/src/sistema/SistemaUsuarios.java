@@ -50,7 +50,7 @@ public class SistemaUsuarios {
     
     private SistemaUsuarios(){
         try {
-            cargarNombreEmpresa();
+            //cargarNombreEmpresa();
         } catch (Exception ex) {
             //Logger.getLogger(SistemaUsuarios.class.getName()).log(Level.SEVERE, null, ex);
         }
@@ -92,13 +92,19 @@ public class SistemaUsuarios {
         } 
     }
     
-    public void cargarNombreEmpresa() throws IOException, Exception {
+    public final void cargarNombreEmpresa() throws IOException, Exception {
         Properties prop = new Properties();
-	InputStream input = null;
+        InputStream input = null;
 
 	try {
-
-            input = new FileInputStream("src/config.properties");
+            String sSistemaOperativo = System.getProperty("os.name");
+            //System.out.println(sSistemaOperativo);
+            if(sSistemaOperativo.equals("Mac OS X")) {
+                input = new FileInputStream("src/config.properties");
+            } else {
+                String dir = System.getProperty("user.dir");
+                input = new FileInputStream(dir + "\\src\\config.properties");
+            }
 
             // load a properties file
             prop.load(input);
@@ -118,7 +124,7 @@ public class SistemaUsuarios {
                     e.printStackTrace();
 		}
             }
-	}
+        }
     }
     
     public List<Actividad> devolverActividades() throws Exception {

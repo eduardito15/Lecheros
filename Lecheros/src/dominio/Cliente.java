@@ -33,8 +33,11 @@ public class Cliente extends ObjetoPersistente {
     @Column
     private String codigo;
     
-    @Column(unique = true)
+    @Column
     private long codigoPS;
+    
+    @Column
+    private int sucursalPS;
     
     @OneToOne(fetch = FetchType.EAGER)
     private Reparto reparto;
@@ -435,6 +438,20 @@ public class Cliente extends ObjetoPersistente {
      */
     public void setFrecuenciaFacturacionLecheDeslactosada(String frecuenciaFacturacionLecheDeslactosada) {
         this.frecuenciaFacturacionLecheDeslactosada = frecuenciaFacturacionLecheDeslactosada;
+    }
+
+    /**
+     * @return the sucursalPS
+     */
+    public int getSucursalPS() {
+        return sucursalPS;
+    }
+
+    /**
+     * @param sucursalPS the sucursalPS to set
+     */
+    public void setSucursalPS(int sucursalPS) {
+        this.sucursalPS = sucursalPS;
     }
     
     

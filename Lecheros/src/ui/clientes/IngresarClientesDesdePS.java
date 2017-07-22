@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package ui.facturas;
+package ui.clientes;
 
 import java.text.DecimalFormat;
 import java.util.List;
@@ -13,15 +13,16 @@ import javax.swing.filechooser.FileNameExtensionFilter;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableColumn;
 import sistema.SistemaFacturas;
+import sistema.SistemaMantenimiento;
 import sistema.SistemaUsuarios;
 
 /**
  *
  * @author Edu
  */
-public class IngresarFacturasMovil extends javax.swing.JDialog {
+public class IngresarClientesDesdePS extends javax.swing.JDialog {
 
-    private SistemaFacturas sisFacturas;
+    private SistemaMantenimiento sis;
     
     private DefaultTableModel modelo;
     private final DecimalFormat df;
@@ -30,11 +31,11 @@ public class IngresarFacturasMovil extends javax.swing.JDialog {
     /**
      * Creates new form IngresarFacturasMovil
      */
-    public IngresarFacturasMovil(java.awt.Frame parent, boolean modal) {
+    public IngresarClientesDesdePS(java.awt.Frame parent, boolean modal) {
         super(parent, modal);
         initComponents();
         jLabelEspera.setVisible(false);
-        sisFacturas = SistemaFacturas.getInstance();
+        sis = SistemaMantenimiento.getInstance();
         inicializarTableResultado();
         df = new DecimalFormat("0.00");
     }
@@ -46,12 +47,12 @@ public class IngresarFacturasMovil extends javax.swing.JDialog {
                 return false;
             }
         };
-        modelo.addColumn("Fecha");
-        modelo.addColumn("Numero");
-        modelo.addColumn("Cliente");
-        modelo.addColumn("Reparto");
-        modelo.addColumn("Total");
-        modelo.addColumn("Mensaje");
+        modelo.addColumn("Cuenta");
+        modelo.addColumn("Cod Alt");
+        modelo.addColumn("Nombre");
+        modelo.addColumn("Razon Social");
+        modelo.addColumn("Direccion");
+        modelo.addColumn("Resultado");
         jTableResultado.setModel(modelo);
         TableColumn column = null;
         for (int i = 0; i < 6; i++) {
@@ -90,7 +91,7 @@ public class IngresarFacturasMovil extends javax.swing.JDialog {
 
         jLabelTitulo.setFont(new java.awt.Font("Lucida Grande", 1, 18)); // NOI18N
         jLabelTitulo.setForeground(new java.awt.Color(0, 0, 255));
-        jLabelTitulo.setText("Ingresar Facturas del Movil");
+        jLabelTitulo.setText("Ingresar Clientes de PS");
 
         jLabelEspera.setIcon(new javax.swing.ImageIcon(getClass().getResource("/ui/wait_progress.gif"))); // NOI18N
 
@@ -127,7 +128,7 @@ public class IngresarFacturasMovil extends javax.swing.JDialog {
                 {null, null, null, null, null, null}
             },
             new String [] {
-                "Fecha", "Numero", "Cliente", "Reparto", "Total", "Estado"
+                "Cuenta", "Cod Alt.", "Nombre", "Razon Social", "Direccion", "Resultado"
             }
         ) {
             boolean[] canEdit = new boolean [] {
@@ -141,7 +142,7 @@ public class IngresarFacturasMovil extends javax.swing.JDialog {
         jScrollPane1.setViewportView(jTableResultado);
 
         jLabel2.setFont(new java.awt.Font("Lucida Grande", 1, 14)); // NOI18N
-        jLabel2.setText("Cantidad Ingresada Correctamente: ");
+        jLabel2.setText("Cantidad Ingresados Correctamente: ");
 
         jLabelCantiIngresadasCorrectamente.setFont(new java.awt.Font("Lucida Grande", 1, 14)); // NOI18N
         jLabelCantiIngresadasCorrectamente.setForeground(new java.awt.Color(0, 153, 0));
@@ -163,9 +164,6 @@ public class IngresarFacturasMovil extends javax.swing.JDialog {
                                 .addGap(18, 18, 18)
                                 .addComponent(jLabelEspera))
                             .addGroup(layout.createSequentialGroup()
-                                .addGap(127, 127, 127)
-                                .addComponent(jLabelTitulo))
-                            .addGroup(layout.createSequentialGroup()
                                 .addGap(12, 12, 12)
                                 .addComponent(jLabel1)
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
@@ -183,6 +181,10 @@ public class IngresarFacturasMovil extends javax.swing.JDialog {
                         .addContainerGap()
                         .addComponent(jScrollPane1)))
                 .addContainerGap())
+            .addGroup(layout.createSequentialGroup()
+                .addGap(150, 150, 150)
+                .addComponent(jLabelTitulo)
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -201,7 +203,7 @@ public class IngresarFacturasMovil extends javax.swing.JDialog {
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(jButtonSalir))
                     .addComponent(jLabelEspera))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addGap(18, 18, Short.MAX_VALUE)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel2)
                     .addComponent(jLabelCantiIngresadasCorrectamente))
@@ -227,7 +229,7 @@ public class IngresarFacturasMovil extends javax.swing.JDialog {
         inicializarTableResultado();
         if("".equals(jTextFieldRutaArchivo.getText().trim())){
             //Es vacio el campo que lleva la ruta del archivo
-            JOptionPane.showMessageDialog(this, "Debe seleccionar un archivo .xml del cual ingresar las boletas. El archivo debe ser descargado desde el sistema de PS", "Información", JOptionPane.INFORMATION_MESSAGE);
+            JOptionPane.showMessageDialog(this, "Debe seleccionar un archivo .tsv del cual ingresar los clientes. El archivo debe ser descargado desde el sistema de PS", "Información", JOptionPane.INFORMATION_MESSAGE);
             jButtonBuscar.requestFocus();
         } else {
             //No es vacio la ruta. Asi que llamo a sistema de compras para que ingrese las compras del archivo.
@@ -239,7 +241,7 @@ public class IngresarFacturasMovil extends javax.swing.JDialog {
                     public void run() {
 
                         try {
-                            resultado = sisFacturas.ingresarFacturasDesdeArchivo(jTextFieldRutaArchivo.getText().trim());
+                            resultado = sis.ingresarClientesDesdePowerStreet(jTextFieldRutaArchivo.getText().trim());
 
                             SwingUtilities.invokeLater(new Runnable() {
                                 public void run() {
@@ -261,7 +263,7 @@ public class IngresarFacturasMovil extends javax.swing.JDialog {
                                 }
                             });
                         } catch (Exception ex) {
-                            JOptionPane.showMessageDialog(IngresarFacturasMovil.this, "Error al ingresar las facturas desde el archivo seleccionado." + "\n\n" + ex.toString(),"Error",JOptionPane.ERROR_MESSAGE);
+                            JOptionPane.showMessageDialog(IngresarClientesDesdePS.this, "Error al ingresar las facturas desde el archivo seleccionado." + "\n\n" + ex.toString(),"Error",JOptionPane.ERROR_MESSAGE);
                         }
                     }
                 };
@@ -287,11 +289,7 @@ public class IngresarFacturasMovil extends javax.swing.JDialog {
         object[1] = r[1];
         object[2] = r[2];
         object[3] = r[3];
-        try {
-            object[4] = df.format(Double.parseDouble(r[4])).replace(',', '.');
-        } catch(NumberFormatException ne) {
-            object[4] = r[4];
-        }
+        object[4] = r[4];
         object[5] = r[5];
         modelo.addRow(object);
     }
@@ -313,20 +311,21 @@ public class IngresarFacturasMovil extends javax.swing.JDialog {
                 }
             }
         } catch (ClassNotFoundException ex) {
-            java.util.logging.Logger.getLogger(IngresarFacturasMovil.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(IngresarClientesDesdePS.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         } catch (InstantiationException ex) {
-            java.util.logging.Logger.getLogger(IngresarFacturasMovil.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(IngresarClientesDesdePS.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         } catch (IllegalAccessException ex) {
-            java.util.logging.Logger.getLogger(IngresarFacturasMovil.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(IngresarClientesDesdePS.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         } catch (javax.swing.UnsupportedLookAndFeelException ex) {
-            java.util.logging.Logger.getLogger(IngresarFacturasMovil.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(IngresarClientesDesdePS.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         }
+        //</editor-fold>
         //</editor-fold>
 
         /* Create and display the dialog */
         java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
-                IngresarFacturasMovil dialog = new IngresarFacturasMovil(new javax.swing.JFrame(), true);
+                IngresarClientesDesdePS dialog = new IngresarClientesDesdePS(new javax.swing.JFrame(), true);
                 dialog.addWindowListener(new java.awt.event.WindowAdapter() {
                     @Override
                     public void windowClosing(java.awt.event.WindowEvent e) {

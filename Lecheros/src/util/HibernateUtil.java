@@ -5,6 +5,7 @@
  */
 package util;
 
+import java.util.Properties;
 import org.hibernate.cfg.AnnotationConfiguration;
 import org.hibernate.SessionFactory;
 
@@ -20,9 +21,18 @@ public class HibernateUtil {
     
     static {
         try {
+            
+            Properties dbConnectionProperties = new Properties();
+            try {
+                dbConnectionProperties.load(HibernateUtil.class.getClassLoader().getSystemClassLoader().getResourceAsStream("hibernate.properties"));
+            } catch (Exception e) {
+                System.err.println("Initial SessionFactory creation failed." + e);
+                throw new ExceptionInInitializerError(e);
+                // Log
+            }
             // Create the SessionFactory from standard (hibernate.cfg.xml) 
             // config file.
-            sessionFactory = new AnnotationConfiguration().configure().buildSessionFactory();
+            sessionFactory = new AnnotationConfiguration().mergeProperties(dbConnectionProperties).configure().buildSessionFactory();
         } catch (Throwable ex) {
             // Log the exception. 
             System.err.println("Initial SessionFactory creation failed." + ex);

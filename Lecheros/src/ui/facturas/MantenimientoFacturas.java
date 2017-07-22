@@ -949,19 +949,21 @@ public class MantenimientoFacturas extends javax.swing.JFrame {
     }//GEN-LAST:event_formWindowActivated
 
     public void cargarFacturaEnTabla(Factura f) {
-        Object[] object = new Object[9];
-        object[0] = f.getTipoDocumento();
-        object[1] = f.getCliente();
-        object[2] = f.getNumero();
-        SimpleDateFormat formatter;
-        formatter = new SimpleDateFormat("dd-MM-yyyy");
-        object[3] = formatter.format(f.getFecha());
-        object[4] = f.getReparto();
-        object[5] = df.format(f.getSubtotal()).replace(',', '.');
-        object[6] = df.format(f.getTotalMinimo()).replace(',', '.');
-        object[7] = df.format(f.getTotalBasico()).replace(',', '.');
-        object[8] = df.format(f.getTotal()).replace(',', '.');
-        modelo.addRow(object);
+        if(f!=null) {
+            Object[] object = new Object[9];
+            object[0] = f.getTipoDocumento();
+            object[1] = f.getCliente();
+            object[2] = f.getNumero();
+            SimpleDateFormat formatter;
+            formatter = new SimpleDateFormat("dd-MM-yyyy");
+            object[3] = formatter.format(f.getFecha());
+            object[4] = f.getReparto();
+            object[5] = df.format(f.getSubtotal()).replace(',', '.');
+            object[6] = df.format(f.getTotalMinimo()).replace(',', '.');
+            object[7] = df.format(f.getTotalBasico()).replace(',', '.');
+            object[8] = df.format(f.getTotal()).replace(',', '.');
+            modelo.addRow(object);
+        }
     }
 
     /**

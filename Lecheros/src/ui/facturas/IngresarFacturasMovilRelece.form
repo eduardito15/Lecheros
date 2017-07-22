@@ -34,9 +34,9 @@
                       <Group type="103" groupAlignment="0" attributes="0">
                           <Group type="102" alignment="0" attributes="0">
                               <EmptySpace min="-2" pref="165" max="-2" attributes="0"/>
-                              <Group type="103" groupAlignment="1" attributes="0">
-                                  <Component id="jButtonSalir" alignment="1" min="-2" pref="95" max="-2" attributes="0"/>
-                                  <Component id="jButtonIngresar" alignment="1" min="-2" max="-2" attributes="0"/>
+                              <Group type="103" groupAlignment="0" max="-2" attributes="0">
+                                  <Component id="jButtonSalir" pref="95" max="32767" attributes="0"/>
+                                  <Component id="jButtonIngresar" max="32767" attributes="0"/>
                               </Group>
                               <EmptySpace type="separate" max="-2" attributes="0"/>
                               <Component id="jLabelEspera" min="-2" max="-2" attributes="0"/>

@@ -7,9 +7,6 @@ package sistema;
 
 import dao.GenericDAO;
 import dominio.Articulo;
-import dominio.Compra;
-import dominio.CompraRenglon;
-import dominio.DocumentoDeCompra;
 import dominio.Factura;
 import dominio.FacturaRenglon;
 import dominio.Precio;
@@ -116,7 +113,7 @@ public class SistemaInformesGiamo {
                 directory.mkdir();
             }
             writer = new BufferedWriter(new OutputStreamWriter(
-                    new FileOutputStream(new File(SistemaMantenimiento.getInstance().devolverConfiguracionGeneral().getRutaInforme() + "/" + nombreCapeta + "/" + "InterfazCerramDesde" + formatter.format(fechaDesde).replace("-", "") + "Hasta" + formatter.format(fechaHasta).replace("-", "") + ".txt")), "utf-8"));
+                    new FileOutputStream(new File(SistemaMantenimiento.getInstance().devolverConfiguracionGeneral().getRutaInforme() + "/" + nombreCapeta + "/" + "InformeFacturasDesde" + formatter.format(fechaDesde).replace("-", "") + "Hasta" + formatter.format(fechaHasta).replace("-", "") + ".txt")), "utf-8"));
             
             Session session = GenericDAO.getGenericDAO().getSessionFactory().openSession();
             session.beginTransaction();
@@ -126,6 +123,12 @@ public class SistemaInformesGiamo {
             List<Factura> facturas = consulta.list();
             session.getTransaction().commit();
             session.close();
+            
+            writer.write(";BorraExistentes = Si");
+            
+            String str = new String(System.getProperty("line.separator").getBytes(), StandardCharsets.UTF_8);
+            writer.write(str);
+            
             for (Factura f : facturas) {
                 boolean esDeEnvases = false;
                 //double netoExcento = 0;
@@ -156,21 +159,30 @@ public class SistemaInformesGiamo {
                         ventaBasico = ventaBasico + fr.getTotal();
                         ventaIvaBasico = ventaIvaBasico + fr.getIva();
                     }
+                }
                     if(!esDeEnvases) {
-                        writer.write(";BorraExistentes = Si");
-
+                        
+                        Calendar calParaDia = Calendar.getInstance();
+                        calParaDia.setTime(f.getFecha());
+                        int dia = calParaDia.get(Calendar.DAY_OF_MONTH);
                        
                         if (ventaExcenta != 0) {
-                            writer.write(f.getFecha() + "," + "1111" + "," + "5111" + "," + "B Contado A " + f.getNumero() + "," + f.getCliente().getRut() + "," + "0" + "," + Double.toString(ventaExcenta).replace(",", ".") + "," + "0" + "," + "0" + "," + "0.0000000" + "," + "I");
+                            writer.write(dia + "," + "1111" + "," + "5111" + "," + "B Contado A " + f.getNumero() + "," + f.getCliente().getRut() + "," + "0" + "," + Double.toString(ventaExcenta).replace(",", ".") + "," + "0" + "," + "0" + "," + "0.0000000" + "," + "I");
+                            //String str = new String(System.getProperty("line.separator").getBytes(), StandardCharsets.UTF_8);
+                            writer.write(str);
                         }
                         if (ventaMinimo != 0) {
-                            writer.write(f.getFecha() + "," + "1111" + "," + "5113" + "," + "B Contado A " + f.getNumero() + "," + f.getCliente().getRut() + "," + "0" + "," + Double.toString(ventaMinimo).replace(",", ".") + "," + "16" + "," + df.format(ventaIvaMinimo).replace(",", ".") + "," + "0.0000000" + "," + "I");
+                            writer.write(dia + "," + "1111" + "," + "5113" + "," + "B Contado A " + f.getNumero() + "," + f.getCliente().getRut() + "," + "0" + "," + Double.toString(ventaMinimo).replace(",", ".") + "," + "16" + "," + df.format(ventaIvaMinimo).replace(",", ".") + "," + "0.0000000" + "," + "I");
+                            //String str = new String(System.getProperty("line.separator").getBytes(), StandardCharsets.UTF_8);
+                            writer.write(str);
                         }
                         if (ventaBasico != 0) {
-                                writer.write(f.getFecha() + "," + "1111" + "," + "5112" + "," + "B Contado A " + f.getNumero() + "," + f.getCliente().getRut() + "," + "0" + "," + df.format(ventaBasico).replace(",", ".") + "," + "17" + "," + df.format(ventaIvaBasico).replace(",", ".") + "," + "0.0000000" + "," + "I");   
+                            writer.write(dia + "," + "1111" + "," + "5112" + "," + "B Contado A " + f.getNumero() + "," + f.getCliente().getRut() + "," + "0" + "," + df.format(ventaBasico).replace(",", ".") + "," + "17" + "," + df.format(ventaIvaBasico).replace(",", ".") + "," + "0.0000000" + "," + "I");   
+                            //String str = new String(System.getProperty("line.separator").getBytes(), StandardCharsets.UTF_8);
+                            writer.write(str);
                         }
                     }
-                }
+                //}
             }
         } catch (IOException ex) {
             // report
