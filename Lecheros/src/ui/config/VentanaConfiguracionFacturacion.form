@@ -44,23 +44,6 @@
                       </Group>
                   </Group>
                   <Group type="102" alignment="0" attributes="0">
-                      <EmptySpace max="-2" attributes="0"/>
-                      <Group type="103" groupAlignment="1" attributes="0">
-                          <Component id="jLabel2" min="-2" max="-2" attributes="0"/>
-                          <Component id="jLabel3" min="-2" max="-2" attributes="0"/>
-                          <Component id="jLabel5" min="-2" max="-2" attributes="0"/>
-                          <Component id="jRadioButtonSoloLeche" alignment="1" min="-2" max="-2" attributes="0"/>
-                      </Group>
-                      <EmptySpace max="-2" attributes="0"/>
-                      <Group type="103" groupAlignment="0" max="-2" attributes="0">
-                          <Component id="jTextFieldMaximoBoletaConsumoFinal" max="32767" attributes="0"/>
-                          <Component id="jTextFieldProximoNumeroDeFactura" max="32767" attributes="0"/>
-                          <Component id="jTextFieldporcentajeFacturacion" pref="100" max="32767" attributes="0"/>
-                      </Group>
-                      <EmptySpace max="-2" attributes="0"/>
-                      <Component id="jLabel4" min="-2" max="-2" attributes="0"/>
-                  </Group>
-                  <Group type="102" alignment="0" attributes="0">
                       <EmptySpace min="-2" pref="29" max="-2" attributes="0"/>
                       <Group type="103" groupAlignment="0" attributes="0">
                           <Group type="102" attributes="0">
@@ -72,6 +55,28 @@
                               <Component id="jRadioButtonModoDetallado" min="-2" max="-2" attributes="0"/>
                               <EmptySpace type="separate" max="-2" attributes="0"/>
                               <Component id="jRadioButtonModoNoDetallado" min="-2" max="-2" attributes="0"/>
+                          </Group>
+                      </Group>
+                  </Group>
+                  <Group type="102" alignment="0" attributes="0">
+                      <EmptySpace min="-2" max="-2" attributes="0"/>
+                      <Group type="103" groupAlignment="0" attributes="0">
+                          <Component id="jRadioButtonIngresarPreciosAlIngresarFacturas" min="-2" max="-2" attributes="0"/>
+                          <Group type="102" attributes="0">
+                              <Group type="103" groupAlignment="1" attributes="0">
+                                  <Component id="jLabel2" min="-2" max="-2" attributes="0"/>
+                                  <Component id="jLabel5" min="-2" max="-2" attributes="0"/>
+                                  <Component id="jRadioButtonSoloLeche" alignment="1" min="-2" max="-2" attributes="0"/>
+                                  <Component id="jLabel3" min="-2" max="-2" attributes="0"/>
+                              </Group>
+                              <EmptySpace max="-2" attributes="0"/>
+                              <Group type="103" groupAlignment="0" max="-2" attributes="0">
+                                  <Component id="jTextFieldMaximoBoletaConsumoFinal" max="32767" attributes="0"/>
+                                  <Component id="jTextFieldProximoNumeroDeFactura" max="32767" attributes="0"/>
+                                  <Component id="jTextFieldporcentajeFacturacion" pref="100" max="32767" attributes="0"/>
+                              </Group>
+                              <EmptySpace max="-2" attributes="0"/>
+                              <Component id="jLabel4" min="-2" max="-2" attributes="0"/>
                           </Group>
                       </Group>
                   </Group>
@@ -113,7 +118,9 @@
                   <Component id="jTextFieldMaximoBoletaConsumoFinal" alignment="3" min="-2" max="-2" attributes="0"/>
                   <Component id="jLabel5" alignment="3" min="-2" max="-2" attributes="0"/>
               </Group>
-              <EmptySpace type="separate" max="32767" attributes="0"/>
+              <EmptySpace max="-2" attributes="0"/>
+              <Component id="jRadioButtonIngresarPreciosAlIngresarFacturas" min="-2" max="-2" attributes="0"/>
+              <EmptySpace type="separate" pref="22" max="32767" attributes="0"/>
               <Component id="jButtonGuardar" min="-2" max="-2" attributes="0"/>
               <EmptySpace max="-2" attributes="0"/>
               <Component id="jButtonSalir" min="-2" max="-2" attributes="0"/>
@@ -215,6 +222,11 @@
           <ComponentRef name="buttonGroup2"/>
         </Property>
         <Property name="text" type="java.lang.String" value="Por Grupo de Art&#xed;culo"/>
+      </Properties>
+    </Component>
+    <Component class="javax.swing.JRadioButton" name="jRadioButtonIngresarPreciosAlIngresarFacturas">
+      <Properties>
+        <Property name="text" type="java.lang.String" value="Ingresar Precios de Venta al ingresar Facturas"/>
       </Properties>
     </Component>
   </SubComponents>
