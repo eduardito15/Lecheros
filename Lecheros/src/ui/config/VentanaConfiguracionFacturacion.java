@@ -33,6 +33,7 @@ public class VentanaConfiguracionFacturacion extends javax.swing.JDialog {
         jRadioButtonModoDetallado.setSelected(configuracionFacturacion.isDetalladaPorArticulo());
         jRadioButtonModoNoDetallado.setSelected(!configuracionFacturacion.isDetalladaPorArticulo());
         jRadioButtonSoloLeche.setSelected(configuracionFacturacion.isSoloLeche());
+        jRadioButtonIngresarPreciosAlIngresarFacturas.setSelected(configuracionFacturacion.isIngresarPreciosDeFacturasAlIngesarLasFacturas());
         jRadioButtonDetalladoPorArt.setSelected(!configuracionFacturacion.isDetalladoPorGrupoDeArticulo());
         jRadioButtonDetalladoPorGrupo.setSelected(configuracionFacturacion.isDetalladoPorGrupoDeArticulo());
         jTextFieldProximoNumeroDeFactura.setText(""+configuracionFacturacion.getUltimoNumeroFactura());
@@ -66,6 +67,7 @@ public class VentanaConfiguracionFacturacion extends javax.swing.JDialog {
         jLabel5 = new javax.swing.JLabel();
         jRadioButtonDetalladoPorArt = new javax.swing.JRadioButton();
         jRadioButtonDetalladoPorGrupo = new javax.swing.JRadioButton();
+        jRadioButtonIngresarPreciosAlIngresarFacturas = new javax.swing.JRadioButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
         setTitle("Configuración de Facturación");
@@ -114,6 +116,8 @@ public class VentanaConfiguracionFacturacion extends javax.swing.JDialog {
         buttonGroup2.add(jRadioButtonDetalladoPorGrupo);
         jRadioButtonDetalladoPorGrupo.setText("Por Grupo de Artículo");
 
+        jRadioButtonIngresarPreciosAlIngresarFacturas.setText("Ingresar Precios de Venta al ingresar Facturas");
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
@@ -129,20 +133,6 @@ public class VentanaConfiguracionFacturacion extends javax.swing.JDialog {
                             .addComponent(jButtonGuardar, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                             .addComponent(jButtonSalir, javax.swing.GroupLayout.PREFERRED_SIZE, 93, javax.swing.GroupLayout.PREFERRED_SIZE)))
                     .addGroup(layout.createSequentialGroup()
-                        .addContainerGap()
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                            .addComponent(jLabel2)
-                            .addComponent(jLabel3)
-                            .addComponent(jLabel5)
-                            .addComponent(jRadioButtonSoloLeche))
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                            .addComponent(jTextFieldMaximoBoletaConsumoFinal)
-                            .addComponent(jTextFieldProximoNumeroDeFactura)
-                            .addComponent(jTextFieldporcentajeFacturacion, javax.swing.GroupLayout.DEFAULT_SIZE, 100, Short.MAX_VALUE))
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(jLabel4))
-                    .addGroup(layout.createSequentialGroup()
                         .addGap(29, 29, 29)
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addGroup(layout.createSequentialGroup()
@@ -152,7 +142,24 @@ public class VentanaConfiguracionFacturacion extends javax.swing.JDialog {
                             .addGroup(layout.createSequentialGroup()
                                 .addComponent(jRadioButtonModoDetallado)
                                 .addGap(18, 18, 18)
-                                .addComponent(jRadioButtonModoNoDetallado)))))
+                                .addComponent(jRadioButtonModoNoDetallado))))
+                    .addGroup(layout.createSequentialGroup()
+                        .addContainerGap()
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(jRadioButtonIngresarPreciosAlIngresarFacturas)
+                            .addGroup(layout.createSequentialGroup()
+                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                                    .addComponent(jLabel2)
+                                    .addComponent(jLabel5)
+                                    .addComponent(jRadioButtonSoloLeche)
+                                    .addComponent(jLabel3))
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                                    .addComponent(jTextFieldMaximoBoletaConsumoFinal)
+                                    .addComponent(jTextFieldProximoNumeroDeFactura)
+                                    .addComponent(jTextFieldporcentajeFacturacion, javax.swing.GroupLayout.DEFAULT_SIZE, 100, Short.MAX_VALUE))
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(jLabel4)))))
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
@@ -183,7 +190,9 @@ public class VentanaConfiguracionFacturacion extends javax.swing.JDialog {
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jTextFieldMaximoBoletaConsumoFinal, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jLabel5))
-                .addGap(18, 18, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(jRadioButtonIngresarPreciosAlIngresarFacturas)
+                .addGap(18, 22, Short.MAX_VALUE)
                 .addComponent(jButtonGuardar)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jButtonSalir)
@@ -198,6 +207,7 @@ public class VentanaConfiguracionFacturacion extends javax.swing.JDialog {
         // TODO add your handling code here:
         configuracionFacturacion.setDetalladaPorArticulo(jRadioButtonModoDetallado.isSelected());
         configuracionFacturacion.setSoloLeche(jRadioButtonSoloLeche.isSelected());
+        configuracionFacturacion.setIngresarPreciosDeFacturasAlIngesarLasFacturas(jRadioButtonIngresarPreciosAlIngresarFacturas.isSelected());
         configuracionFacturacion.setDetalladoPorGrupoDeArticulo(jRadioButtonDetalladoPorGrupo.isSelected());
         try{
             Long numFact = Long.parseLong(jTextFieldProximoNumeroDeFactura.getText().trim());
@@ -278,6 +288,7 @@ public class VentanaConfiguracionFacturacion extends javax.swing.JDialog {
     private javax.swing.JLabel jLabel5;
     private javax.swing.JRadioButton jRadioButtonDetalladoPorArt;
     private javax.swing.JRadioButton jRadioButtonDetalladoPorGrupo;
+    private javax.swing.JRadioButton jRadioButtonIngresarPreciosAlIngresarFacturas;
     private javax.swing.JRadioButton jRadioButtonModoDetallado;
     private javax.swing.JRadioButton jRadioButtonModoNoDetallado;
     private javax.swing.JRadioButton jRadioButtonSoloLeche;

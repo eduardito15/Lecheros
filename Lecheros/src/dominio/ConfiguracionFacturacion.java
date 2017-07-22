@@ -32,6 +32,9 @@ public class ConfiguracionFacturacion extends ObjetoPersistente {
     
     @Column
     private boolean detalladoPorGrupoDeArticulo;
+    
+    @Column
+    private boolean ingresarPreciosDeFacturasAlIngesarLasFacturas;
     /**
      * @return the detalladaPorArticulo
      */
@@ -114,6 +117,20 @@ public class ConfiguracionFacturacion extends ObjetoPersistente {
      */
     public void setDetalladoPorGrupoDeArticulo(boolean detalladoPorGrupoDeArticulo) {
         this.detalladoPorGrupoDeArticulo = detalladoPorGrupoDeArticulo;
+    }
+
+    /**
+     * @return the ingresarPreciosDeFacturasAlIngesarLasFacturas
+     */
+    public boolean isIngresarPreciosDeFacturasAlIngesarLasFacturas() {
+        return ingresarPreciosDeFacturasAlIngesarLasFacturas;
+    }
+
+    /**
+     * @param ingresarPreciosDeFacturasAlIngesarLasFacturas the ingresarPreciosDeFacturasAlIngesarLasFacturas to set
+     */
+    public void setIngresarPreciosDeFacturasAlIngesarLasFacturas(boolean ingresarPreciosDeFacturasAlIngesarLasFacturas) {
+        this.ingresarPreciosDeFacturasAlIngesarLasFacturas = ingresarPreciosDeFacturasAlIngesarLasFacturas;
     }
 
     

@@ -21,8 +21,6 @@ import java.security.NoSuchAlgorithmException;
 import java.util.Date;
 import java.util.List;
 import java.util.Properties;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import lecheros.Lecheros;
 import org.hibernate.Query;
 import org.hibernate.Session;
@@ -50,7 +48,7 @@ public class SistemaUsuarios {
     
     private SistemaUsuarios(){
         try {
-            //cargarNombreEmpresa();
+            cargarNombreEmpresa();
         } catch (Exception ex) {
             //Logger.getLogger(SistemaUsuarios.class.getName()).log(Level.SEVERE, null, ex);
         }
@@ -103,7 +101,7 @@ public class SistemaUsuarios {
                 input = new FileInputStream("src/config.properties");
             } else {
                 String dir = System.getProperty("user.dir");
-                input = new FileInputStream(dir + "\\src\\config.properties");
+                input = new FileInputStream(dir + "\\config.properties");
             }
 
             // load a properties file

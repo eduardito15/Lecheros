@@ -498,6 +498,11 @@ public class MantenimientoCompras extends javax.swing.JFrame {
                 return canEdit [columnIndex];
             }
         });
+        jTableCompras.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                jTableComprasMouseClicked(evt);
+            }
+        });
         jScrollPane1.setViewportView(jTableCompras);
 
         jTextFieldNumero.addKeyListener(new java.awt.event.KeyAdapter() {
@@ -894,6 +899,32 @@ public class MantenimientoCompras extends javax.swing.JFrame {
             jButtonBuscar.doClick();
         }
     }//GEN-LAST:event_jComboBoxRepartoKeyPressed
+
+    private void jTableComprasMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jTableComprasMouseClicked
+        // TODO add your handling code here:
+        if(evt.getClickCount() == 2){
+            if (jTableCompras.getSelectedRow() == -1) {
+                JOptionPane.showMessageDialog(this, "Debe seleccionar una compra.", "Información", JOptionPane.INFORMATION_MESSAGE);
+            } else {
+                try {
+                    if (SistemaUsuarios.getInstance().tienePermisos(Constantes.ActividadIngresarCompras)) {
+                        IngresarCompras ic = new IngresarCompras(MantenimientoCompras.this, false);
+                        ic.setAccion("Modificar");
+                        Compra c = compras.get(jTableCompras.getSelectedRow());
+                        ic.setCompra(c);
+                        ic.setTipoDoc(c.getTipoDocumento());
+                        ic.setVisible(true);
+                    } else {
+                        JOptionPane.showMessageDialog(MantenimientoCompras.this, Constantes.MensajeDeErrorDePermisos, "Permisos", JOptionPane.INFORMATION_MESSAGE);
+                    }
+                } catch (Exception exp) {
+                    String stakTrace = util.Util.obtenerStackTraceEnString(exp);
+                    SistemaUsuarios.getInstance().registrarExcepcion(exp.toString(), stakTrace);
+                    JOptionPane.showMessageDialog(MantenimientoCompras.this, Constantes.MensajeDeErrorGenerico, "Error", JOptionPane.ERROR_MESSAGE);
+                }
+            }
+        }
+    }//GEN-LAST:event_jTableComprasMouseClicked
 
     public void cargarCompraEnTabla(Compra c){
         Object[] object = new Object[8];

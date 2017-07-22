@@ -237,6 +237,11 @@ public class MantenimientoClientes extends javax.swing.JFrame {
                 "Codigo", "Nombre", "Rut", "Dirección", "Teléfono", "Email", "Prorrateo"
             }
         ));
+        jTableClientes.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                jTableClientesMouseClicked(evt);
+            }
+        });
         jScrollPane1.setViewportView(jTableClientes);
 
         jButtonSalir.setText("Salir");
@@ -583,6 +588,21 @@ public class MantenimientoClientes extends javax.swing.JFrame {
         vg.setVisible(true);
         this.dispose();
     }//GEN-LAST:event_jButtonRefrescarActionPerformed
+
+    private void jTableClientesMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jTableClientesMouseClicked
+        // TODO add your handling code here:
+        if (evt.getClickCount() == 2) {
+            if (jTableClientes.getSelectedRow() == -1) {
+                JOptionPane.showMessageDialog(this, "Debe seleccionar un cliente.", "Información", JOptionPane.INFORMATION_MESSAGE);
+            } else {
+                IngresarCliente ic = new IngresarCliente(MantenimientoClientes.this, false);
+                ic.setAccion("Modificar");
+                Cliente c = clientes.get(jTableClientes.getSelectedRow());
+                ic.setCliente(c);
+                ic.setVisible(true);
+            }
+        }
+    }//GEN-LAST:event_jTableClientesMouseClicked
 
     public void cargarClienteEnTabla(Cliente c){
         Object[] object = new Object[7];
