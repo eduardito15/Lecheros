@@ -398,6 +398,8 @@ public class SistemaFacturas {
         BufferedReader br = null;
         String line;
         String cvsSplitBy = "\\t";
+        
+        ConfiguracionFacturacion configFact = SistemaMantenimiento.getInstance().devolverConfiguracionFacturacion();
 
         int totalBoletasIngresadas = 0;
 
@@ -593,8 +595,29 @@ public class SistemaFacturas {
                                     //Me fijo si el precio es igual al guardado.
                                     double diferencia = precioDeLaBoleta - p.getPrecioVenta();
                                     if (diferencia > 0.05 || diferencia < -0.05) {
-                                        retornoPorFactura[5] = "El precio en el sistema para el artículo: " + art.getCodigo() + " difiere del de la boleta. Revisarlo y volver a intentar.";
-                                        throw new Exception(retornoPorFactura[5]);
+                                        if(configFact.isIngresarPreciosDeFacturasAlIngesarLasFacturas()) {
+                                            //Ingreso el nuevo precio.
+                                            SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
+                                            String fechaPrecio = sdf.format(p.getFecha());
+                                            String fechaHoy = sdf.format(f.getFecha());
+                                            if(fechaPrecio.equals(fechaHoy)) {
+                                                //El precio ya existe para la fecha. y es el precio p. Actualizamos el de venta y guardamos.
+                                                p.setPrecioVenta(precioDeLaBoleta);
+                                                GenericDAO.getGenericDAO().actualizar(p);
+                                            } else {
+                                                //Creamos un nuevo precio con el de compra para la fecha y el nuevo de venta.
+                                                Precio nuevoPrecio = new Precio();
+                                                nuevoPrecio.setArticulo(art);
+                                                nuevoPrecio.setFecha(f.getFecha());
+                                                nuevoPrecio.setPrecioCompra(p.getPrecioCompra());
+                                                nuevoPrecio.setPrecioVenta(precioDeLaBoleta);
+                                                GenericDAO.getGenericDAO().guardar(nuevoPrecio);
+                                            }
+                                        } else {
+                                            //Informo al usuario de la diferencia y no ingreso el precio. 
+                                            retornoPorFactura[5] = "El precio en el sistema para el artículo: " + art.getCodigo() + " difiere del de la boleta. Revisarlo y volver a intentar.";
+                                            throw new Exception(retornoPorFactura[5]);
+                                        }
                                     }
                                 }
 
@@ -851,9 +874,30 @@ public class SistemaFacturas {
                                         //Me fijo si el precio es igual al guardado.
                                         double diferencia = precioDeLaBoleta - p.getPrecioVenta();
                                         if (diferencia > 0.05 || diferencia < -0.05) {
-                                            retornoPorFactura[5] = "El precio en el sistema para el artículo: " + art.getCodigo() + " difiere del de la boleta. Revisarlo y volver a intentar.";
-                                            throw new Exception(retornoPorFactura[5]);
-                                        }
+                                            if (configFact.isIngresarPreciosDeFacturasAlIngesarLasFacturas()) {
+                                                //Ingreso el nuevo precio.
+                                                SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
+                                                String fechaPrecio = sdf.format(p.getFecha());
+                                                String fechaHoy = sdf.format(fecha);
+                                                if (fechaPrecio.equals(fechaHoy)) {
+                                                    //El precio ya existe para la fecha. y es el precio p. Actualizamos el de venta y guardamos.
+                                                    p.setPrecioVenta(precioDeLaBoleta);
+                                                    GenericDAO.getGenericDAO().actualizar(p);
+                                                } else {
+                                                    //Creamos un nuevo precio con el de compra para la fecha y el nuevo de venta.
+                                                    Precio nuevoPrecio = new Precio();
+                                                    nuevoPrecio.setArticulo(art);
+                                                    nuevoPrecio.setFecha(fecha);
+                                                    nuevoPrecio.setPrecioCompra(p.getPrecioCompra());
+                                                    nuevoPrecio.setPrecioVenta(precioDeLaBoleta);
+                                                    GenericDAO.getGenericDAO().guardar(nuevoPrecio);
+                                                }
+                                            } else {
+                                                //Informo al usuario de la diferencia y no ingreso el precio.
+                                                retornoPorFactura[5] = "El precio en el sistema para el artículo: " + art.getCodigo() + " difiere del de la boleta. Revisarlo y volver a intentar.";
+                                                throw new Exception(retornoPorFactura[5]);
+                                            }
+                                        }  
                                     }
 
                                     double impuesto = 0;
