@@ -6382,4 +6382,163 @@ public class SistemaFacturas {
         }
         return retorno;
     }
+    
+    public String[] crearFacturasParaAjusteDeContabilidad(Date fecha, double excento, double minimo, double basico) throws Exception {
+        String[] retorno = new String[3];
+        ConfiguracionFacturacion configFact = SistemaMantenimiento.getInstance().devolverConfiguracionFacturacion();
+        double maxConsumoFinal = configFact.getMaximoBoletaContadoFinal();
+        boolean hayParaFacturar = true;
+        while(hayParaFacturar) {
+            Factura f = new Factura();
+            f.setEsManual(false);
+            f.setFecha(fecha);
+            f.setEstaPaga(true);
+            long numeroCF = configFact.getUltimoNumeroFactura();
+            numeroCF++;
+            configFact.setUltimoNumeroFactura(numeroCF);
+            f.setNumero(numeroCF);
+            List<FacturaRenglon> renglonesCF = new ArrayList<>();
+            f.setRenglones(renglonesCF);
+            Cliente cli = SistemaMantenimiento.getInstance().devolverClientePorCodigo("0.2");
+            f.setCliente(cli);
+            f.setReparto(cli.getReparto());
+            
+            DocumentoDeVenta tipoDocVenta = SistemaMantenimiento.getInstance().devolverDocumentoDeVentaPorNombre("Contado");
+            f.setTipoDocumento(tipoDocVenta);
+            
+            if(excento > maxConsumoFinal) {
+                excento = excento - maxConsumoFinal;
+                FacturaRenglon fr = new FacturaRenglon();
+                fr.setFactura(f);
+                fr.setDescuento(0);
+                Articulo art = SistemaMantenimientoArticulos.getInstance().devolverArticuloPorCodigo(77777);
+                fr.setArticulo(art);
+                fr.setCantidad(maxConsumoFinal);
+                fr.setIva(0);
+                fr.setPrecio(1);
+                fr.setSubtotal(maxConsumoFinal);
+                fr.setTotal(maxConsumoFinal);
+
+                f.getRenglones().add(fr);
+
+                f.setSubtotal(maxConsumoFinal);
+                f.setTotal(maxConsumoFinal);
+                f.setTotalBasico(0);
+                f.setTotalMinimo(0);
+
+                GenericDAO.getGenericDAO().guardar(f);
+            } else {
+                if(excento > 0) {
+                    FacturaRenglon fr = new FacturaRenglon();
+                    fr.setFactura(f);
+                    fr.setDescuento(0);
+                    Articulo artExcento = SistemaMantenimientoArticulos.getInstance().devolverArticuloPorCodigo(77777);
+                    fr.setArticulo(artExcento);
+                    fr.setCantidad(excento);
+                    fr.setIva(0);
+                    fr.setPrecio(1);
+                    fr.setSubtotal(excento);
+                    fr.setTotal(excento);
+
+                    f.getRenglones().add(fr);
+
+                    f.setSubtotal(excento);
+                    f.setTotal(excento);
+                    f.setTotalBasico(0);
+                    f.setTotalMinimo(0);
+
+                    excento = 0;
+                }
+            }
+            
+            if(excento <= 0 && minimo + f.getTotal() > maxConsumoFinal) {
+                minimo = minimo - (maxConsumoFinal - f.getTotal());
+                FacturaRenglon frMinimo = new FacturaRenglon();
+                frMinimo.setFactura(f);
+                Articulo prodMinimo = SistemaMantenimientoArticulos.getInstance().devolverArticuloPorCodigo(44444);
+                frMinimo.setArticulo(prodMinimo);
+                frMinimo.setCantidad(maxConsumoFinal - f.getTotal());
+                frMinimo.setPrecio(1);
+                double iva = ((maxConsumoFinal - f.getTotal()) * 9.1) / 100;
+                frMinimo.setIva(iva);
+                frMinimo.setTotal(maxConsumoFinal - f.getTotal());
+                frMinimo.setSubtotal((maxConsumoFinal - f.getTotal()) - iva);
+                f.getRenglones().add(frMinimo);
+                
+                f.setSubtotal(f.getSubtotal()+frMinimo.getSubtotal());
+                f.setTotalMinimo(f.getTotalMinimo() + frMinimo.getIva());
+                f.setTotal(f.getTotal()+frMinimo.getTotal());
+                
+                GenericDAO.getGenericDAO().guardar(f);
+            } else {
+                if(excento <= 0) {
+                    if(minimo > 0) {
+                        FacturaRenglon frMinimo = new FacturaRenglon();
+                        frMinimo.setFactura(f);
+                        Articulo prodMinimo = SistemaMantenimientoArticulos.getInstance().devolverArticuloPorCodigo(44444);
+                        frMinimo.setArticulo(prodMinimo);
+                        frMinimo.setCantidad(minimo);
+                        frMinimo.setPrecio(1);
+                        double iva = (minimo * 9.1) / 100;
+                        frMinimo.setIva(iva);
+                        frMinimo.setTotal(minimo);
+                        frMinimo.setSubtotal(minimo - iva);
+                        f.getRenglones().add(frMinimo);
+
+                        f.setSubtotal(f.getSubtotal() + frMinimo.getSubtotal());
+                        f.setTotalMinimo(f.getTotalMinimo() + frMinimo.getIva());
+                        f.setTotal(f.getTotal() + frMinimo.getTotal());
+
+                        minimo = 0;
+                    }
+                }
+            }
+            
+            if (excento <= 0 && minimo <= 0 && basico + f.getTotal() > maxConsumoFinal) {
+                basico = basico - (maxConsumoFinal - f.getTotal());
+                FacturaRenglon frBasico = new FacturaRenglon();
+                frBasico.setFactura(f);
+                Articulo prodBasico = SistemaMantenimientoArticulos.getInstance().devolverArticuloPorCodigo(55555);
+                frBasico.setArticulo(prodBasico);
+                frBasico.setCantidad(maxConsumoFinal - f.getTotal());
+                frBasico.setPrecio(1);
+                double ivaBasico = ((maxConsumoFinal - f.getTotal()) * 18.03) / 100;
+                frBasico.setIva(ivaBasico);
+                frBasico.setTotal(maxConsumoFinal - f.getTotal());
+                frBasico.setSubtotal((maxConsumoFinal - f.getTotal()) - ivaBasico);
+                f.getRenglones().add(frBasico);
+
+                f.setSubtotal(f.getSubtotal() + frBasico.getSubtotal());
+                f.setTotalBasico(f.getTotalBasico() + frBasico.getIva());
+                f.setTotal(f.getTotal() + frBasico.getTotal());
+
+                GenericDAO.getGenericDAO().guardar(f);
+            } else {
+                if (excento <= 0 && minimo <= 0){
+                    FacturaRenglon frBasico = new FacturaRenglon();
+                    frBasico.setFactura(f);
+                    Articulo prodBasico = SistemaMantenimientoArticulos.getInstance().devolverArticuloPorCodigo(55555);
+                    frBasico.setArticulo(prodBasico);
+                    frBasico.setCantidad(basico);
+                    frBasico.setPrecio(1);
+                    double ivaBasico = (basico * 18.03) / 100;
+                    frBasico.setIva(ivaBasico);
+                    frBasico.setTotal(basico);
+                    frBasico.setSubtotal(basico - ivaBasico);
+                    f.getRenglones().add(frBasico);
+
+                    f.setSubtotal(f.getSubtotal() + frBasico.getSubtotal());
+                    f.setTotalBasico(f.getTotalMinimo() + frBasico.getIva());
+                    f.setTotal(f.getTotal() + frBasico.getTotal());
+
+                    GenericDAO.getGenericDAO().guardar(f);
+
+                    basico = 0;
+                    hayParaFacturar = false;
+                }
+            }
+             
+        }
+        return retorno;
+    }
 }

@@ -73,6 +73,7 @@ import ui.clientes.IngresarClientesDesdePS;
 import ui.clientes.ResumenDeComprasPorCliente;
 import ui.clientes.VentanaEstadoDeCuenta;
 import ui.config.VentanaConfiguracionFacturacion;
+import ui.facturas.AjustarFacturacionIngresandoTotales;
 import ui.facturas.FacturarProrrateoIngresandoTotales;
 import ui.facturas.ImprimirGrupoDeFacturas;
 import ui.facturas.IngresarFacturaManualGiamo;
@@ -216,6 +217,7 @@ public class MenuPrincipal extends javax.swing.JFrame {
         jMenuItem18 = new javax.swing.JMenuItem();
         jMenuItemInformeContadorCerramFacturas = new javax.swing.JMenuItem();
         jMenuItemIngresarFacturasManualesGiamoDesdeArchivo = new javax.swing.JMenuItem();
+        jMenuItemAjustarFacturacion = new javax.swing.JMenuItem();
         jMenu8 = new javax.swing.JMenu();
         jMenuItem24 = new javax.swing.JMenuItem();
         jMenuItem25 = new javax.swing.JMenuItem();
@@ -840,6 +842,14 @@ public class MenuPrincipal extends javax.swing.JFrame {
             }
         });
         jMenu6.add(jMenuItemIngresarFacturasManualesGiamoDesdeArchivo);
+
+        jMenuItemAjustarFacturacion.setText("Ajustar Facturación Ingresando Totales");
+        jMenuItemAjustarFacturacion.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jMenuItemAjustarFacturacionActionPerformed(evt);
+            }
+        });
+        jMenu6.add(jMenuItemAjustarFacturacion);
 
         jMenuBar1.add(jMenu6);
 
@@ -1846,6 +1856,12 @@ public class MenuPrincipal extends javax.swing.JFrame {
         vicdps.setVisible(true);
     }//GEN-LAST:event_jMenuItemIngresarClientesPSDesdeArchivoActionPerformed
 
+    private void jMenuItemAjustarFacturacionActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItemAjustarFacturacionActionPerformed
+        // TODO add your handling code here:
+        AjustarFacturacionIngresandoTotales vafit = new AjustarFacturacionIngresandoTotales(this, false);
+        vafit.setVisible(true);
+    }//GEN-LAST:event_jMenuItemAjustarFacturacionActionPerformed
+
     private void cargarMenuCompras() {
         //jMenuItem1 = new javax.swing.JMenuItem();
         List<DocumentoDeCompra> tiposDocs;
@@ -1978,6 +1994,7 @@ public class MenuPrincipal extends javax.swing.JFrame {
             jMenuItemIngresarFacturasMovil.setVisible(false);
             jMenuItemIngresarFacturasManualesGiamoDesdeArchivo.setVisible(false);
             jMenuItemIngresarClientesPSDesdeArchivo.setVisible(false);
+            jMenuItemAjustarFacturacion.setVisible(false);
         }
         if ("Clafer".equals(empresa)) {
             jMenuItemControlDeEnvasesPorEmpresa.setVisible(false);
@@ -1997,6 +2014,7 @@ public class MenuPrincipal extends javax.swing.JFrame {
             jMenuItemIngresarFacturasManualesGiamoDesdeArchivo.setVisible(false);
             jMenuItemInformeContadorCerramFacturas.setVisible(false);
             jMenuItemIngresarClientesPSDesdeArchivo.setVisible(false);
+            jMenuItemAjustarFacturacion.setVisible(false);
         }
         if ("Giamo".equals(empresa)) {
             jMenuItemBonificacionPorRoturasClafer.setVisible(false);
@@ -2110,6 +2128,7 @@ public class MenuPrincipal extends javax.swing.JFrame {
     private javax.swing.JMenuItem jMenuItem7;
     private javax.swing.JMenuItem jMenuItem8;
     private javax.swing.JMenuItem jMenuItem9;
+    private javax.swing.JMenuItem jMenuItemAjustarFacturacion;
     private javax.swing.JMenuItem jMenuItemAnalisisIvasMama;
     private javax.swing.JMenuItem jMenuItemAnep;
     private javax.swing.JMenuItem jMenuItemBonificacionPorRoturasClafer;
