@@ -1049,14 +1049,14 @@ public class SistemaFacturas {
                 String Impuesto = data[14];
                 String Total = data[15];
 
-                if (ultimoNumeroLeido.equals(Numero)) {
+                if (ultimoNumeroLeido.equals(Vendedor + Numero)) {
                     //Es una que ya existe
                     retornoPorFactura = retorno.get(retorno.size()-1);
                     if(retornoPorFactura[5].equals("Ingresada correctamente.")) {
                         //Es valida
                         long numeroFactura = 0;
                         try {
-                            numeroFactura = Long.parseLong(Numero);
+                            numeroFactura = Long.parseLong(Vendedor + Numero);
                         } catch (NumberFormatException ne) {
                             retornoPorFactura[5] = "El número de factura debe ser un número.";
                             throw new Exception(retornoPorFactura[5]);
@@ -1248,7 +1248,7 @@ public class SistemaFacturas {
                     
                 } else {
                     try {
-                        ultimoNumeroLeido = Numero;
+                        ultimoNumeroLeido = Vendedor + Numero;
                         //Es una nueva
 
                         retornoPorFactura[0] = FechaS;
@@ -1347,7 +1347,7 @@ public class SistemaFacturas {
 
                         long numeroFactura = 0;
                         try {
-                            numeroFactura = Long.parseLong(Numero);
+                            numeroFactura = Long.parseLong(Vendedor + Numero);
                         } catch (NumberFormatException ne) {
                             retornoPorFactura[5] = "El número de factura debe ser un número.";
                             throw new Exception(retornoPorFactura[5]);
