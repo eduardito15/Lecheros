@@ -84,6 +84,7 @@ import ui.facturas.MantenimientoFacturas;
 import ui.facturas.VentanaInformeFacturasContadora;
 import ui.informes.VentanaInformeJornales;
 import ui.informes.VentanaInformeResumenDeEnvases;
+import ui.informes.VentanaResumenDescuentos;
 import ui.informes.clafer.InformeChoferTotalProductos;
 import ui.informes.clafer.InformeControlChequesConaprole;
 import ui.informes.clafer.InformeResumenLiquidaciones;
@@ -204,6 +205,7 @@ public class MenuPrincipal extends javax.swing.JFrame {
         jMenuItemImportarFacturasManualesGiamo = new javax.swing.JMenuItem();
         jMenuItem46 = new javax.swing.JMenuItem();
         jMenuItemInformeContadorGiamo = new javax.swing.JMenuItem();
+        jMenuItem35 = new javax.swing.JMenuItem();
         jMenu6 = new javax.swing.JMenu();
         jMenu7 = new javax.swing.JMenu();
         jMenuItem26 = new javax.swing.JMenuItem();
@@ -748,6 +750,14 @@ public class MenuPrincipal extends javax.swing.JFrame {
         });
         jMenu4.add(jMenuItemInformeContadorGiamo);
 
+        jMenuItem35.setText("Consultar Descuentos");
+        jMenuItem35.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jMenuItem35ActionPerformed(evt);
+            }
+        });
+        jMenu4.add(jMenuItem35);
+
         jMenuBar1.add(jMenu4);
 
         jMenu6.setText("Facturas");
@@ -891,7 +901,7 @@ public class MenuPrincipal extends javax.swing.JFrame {
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 485, Short.MAX_VALUE)
+            .addGap(0, 714, Short.MAX_VALUE)
         );
 
         pack();
@@ -1862,6 +1872,12 @@ public class MenuPrincipal extends javax.swing.JFrame {
         vafit.setVisible(true);
     }//GEN-LAST:event_jMenuItemAjustarFacturacionActionPerformed
 
+    private void jMenuItem35ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem35ActionPerformed
+        // TODO add your handling code here:
+        VentanaResumenDescuentos vrd = new VentanaResumenDescuentos(this, false);
+        vrd.setVisible(true);
+    }//GEN-LAST:event_jMenuItem35ActionPerformed
+
     private void cargarMenuCompras() {
         //jMenuItem1 = new javax.swing.JMenuItem();
         List<DocumentoDeCompra> tiposDocs;
@@ -2112,6 +2128,7 @@ public class MenuPrincipal extends javax.swing.JFrame {
     private javax.swing.JMenuItem jMenuItem32;
     private javax.swing.JMenuItem jMenuItem33;
     private javax.swing.JMenuItem jMenuItem34;
+    private javax.swing.JMenuItem jMenuItem35;
     private javax.swing.JMenuItem jMenuItem36;
     private javax.swing.JMenuItem jMenuItem37;
     private javax.swing.JMenuItem jMenuItem38;

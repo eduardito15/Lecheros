@@ -2538,4 +2538,35 @@ public class SistemaInformes {
         }
     }
     
+    public List<String[]> consultarDescuentosRealizados(Date desdeFecha, Date hastaFecha, Cliente c) throws Exception {
+        List<String[]> retorno = new ArrayList<>();
+        List<Factura> facturas = new ArrayList<>();
+        if(c == null) {
+            //El cliente es null, busco en todas las facturas entre las fechas indicadas.
+            List<Factura> factsManuales = SistemaFacturas.getInstance().devolverFacturasEntreFechas(desdeFecha, hastaFecha, true);
+            facturas.addAll(factsManuales);
+        } else {
+            //Busco en las facturas del cliente el total facturado entre las fechas.
+            List<Factura> factsManualesDeCliente = SistemaFacturas.getInstance().devolverFacturasEntreFechasYCliente(desdeFecha, hastaFecha, c, true);
+            facturas.addAll(factsManualesDeCliente);
+        }
+        double descuentoTotal = 0;
+        for(Factura f : facturas) {
+            if(f.getDescuento() != 0) {
+                descuentoTotal  = descuentoTotal + f.getDescuento();
+                String[] detalleDescuento = new String[4];
+                detalleDescuento[0] = formatter.format(f.getFecha());
+                detalleDescuento[1] = Long.toString(f.getNumero());
+                detalleDescuento[2] = Double.toString(f.getTotal());
+                detalleDescuento[3] = Double.toString(f.getDescuento());
+                retorno.add(detalleDescuento);
+            }
+        }
+        String[] descuentoTotalRet = new String[2];
+        descuentoTotalRet[0] = "Descuento Total";
+        descuentoTotalRet[1] = Double.toString(descuentoTotal);
+        retorno.add(descuentoTotalRet);
+        return retorno;
+    }
+    
 }
