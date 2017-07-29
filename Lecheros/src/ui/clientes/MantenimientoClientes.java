@@ -59,26 +59,30 @@ public class MantenimientoClientes extends javax.swing.JFrame {
             }
         };
         modelo.addColumn("Codigo");
+        modelo.addColumn("CodigoPS");
         modelo.addColumn("Nombre");
+        modelo.addColumn("Razon Social");
         modelo.addColumn("Rut");
         modelo.addColumn("Dirección");
-        modelo.addColumn("Teléfono");
-        modelo.addColumn("Email");
         modelo.addColumn("Prorrateo");
         jTableClientes.setModel(modelo);
         TableColumn column = null;
-        for (int i = 0; i < 5; i++) {
+        for (int i = 0; i < 7; i++) {
             column = jTableClientes.getColumnModel().getColumn(i);
-            if (i == 1 || i == 3) {
-                column.setPreferredWidth(180); //articulo column is bigger
+            if (i == 2 || i == 3) {
+                column.setPreferredWidth(150); //articulo column is bigger
             } else {
-                if(i == 0){
-                    column.setPreferredWidth(35);
+                if(i == 0 || i == 1){
+                    column.setPreferredWidth(10);
                 } else {
-                    if(i == 2){
-                        column.setPreferredWidth(100);
+                    if(i == 4){
+                        column.setPreferredWidth(30);
                     } else {
-                        column.setPreferredWidth(50);
+                        if(i == 5) {
+                            column.setPreferredWidth(150);
+                        } else {
+                            column.setPreferredWidth(30);
+                        }
                     }
                 }   
             }
@@ -234,7 +238,7 @@ public class MantenimientoClientes extends javax.swing.JFrame {
                 {null, null, null, null, null, null, null}
             },
             new String [] {
-                "Codigo", "Nombre", "Rut", "Dirección", "Teléfono", "Email", "Prorrateo"
+                "Codigo", "CodigoPS", "Nombre", "Razon Social", "Rut", "Dirección", "Prorrateo"
             }
         ));
         jTableClientes.addMouseListener(new java.awt.event.MouseAdapter() {
@@ -328,11 +332,12 @@ public class MantenimientoClientes extends javax.swing.JFrame {
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                                     .addComponent(jLabelTitulo1)
-                                    .addComponent(jLabel5)))))
+                                    .addComponent(jLabel5))))
+                        .addGap(0, 442, Short.MAX_VALUE))
                     .addGroup(layout.createSequentialGroup()
                         .addGap(15, 15, 15)
-                        .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 842, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                .addContainerGap(15, Short.MAX_VALUE))
+                        .addComponent(jScrollPane1)))
+                .addContainerGap())
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -607,11 +612,11 @@ public class MantenimientoClientes extends javax.swing.JFrame {
     public void cargarClienteEnTabla(Cliente c){
         Object[] object = new Object[7];
         object[0] = c.getCodigo();
-        object[1] = c.getNombre();
-        object[2] = c.getRut();
-        object[3] = c.getDireccion();
-        object[4] = c.getTelefono();
-        object[5] = c.getCorreoElectronico();
+        object[1] = c.getCodigoPS();
+        object[2] = c.getNombre();
+        object[3] = c.getRazonSocial();
+        object[4] = c.getRut();
+        object[5] = c.getDireccion();
         if(c.isProrrateo()){
             object[6] = "Si";
         }
