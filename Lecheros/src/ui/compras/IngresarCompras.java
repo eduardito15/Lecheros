@@ -25,6 +25,8 @@ import java.util.Collections;
 import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
 import javax.swing.JPopupMenu;
@@ -289,6 +291,86 @@ public class IngresarCompras extends javax.swing.JFrame {
 
         });
         popupMenu.add(deleteItem);
+        
+        JMenuItem cambiarPrecioItem = new JMenuItem("Cambiar Precio");
+        cambiarPrecioItem.addActionListener(new ActionListener() {
+
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                try {
+                    CompraRenglon cr = compra.getRenglones().get(jTableRenglones.getSelectedRow());
+                    compra.setSubtotal(compra.getSubtotal() - cr.getSubtotal());
+                    compra.setTotal(compra.getTotal() - cr.getTotal());
+                    compra.setTotalAPrecioDeVentaSinIva(compra.getTotalAPrecioDeVentaSinIva() - cr.getTotalPrecioVentaSinIva());
+                    compra.setTotalAPrecioDeVentaConIva(compra.getTotalAPrecioDeVentaConIva() - cr.getTotalPrecioVentaConIva());
+                    if ("Basico".equals(cr.getArticulo().getIva().getNombre())) {
+                        compra.setTotalBasico(compra.getTotalBasico() - cr.getIva());
+                    }
+                    if ("Minimo".equals(cr.getArticulo().getIva().getNombre())) {
+                        compra.setTotalBasico(compra.getTotalMinimo() - cr.getIva());
+                    }
+                    jLabelSubTotal.setText(df.format(compra.getSubtotal()).replace(',', '.'));
+                    jLabelIvaMinimo.setText(df.format(compra.getTotalMinimo()).replace(',', '.'));
+                    jLabelIvaBasico.setText(df.format(compra.getTotalBasico()).replace(',', '.'));
+                    jLabelTotalAPrecioDeVentaSinIva.setText(df.format(compra.getTotalAPrecioDeVentaSinIva()).replace(',', '.'));
+                    jLabelTotalAPrecioDeVentaConIva.setText(df.format(compra.getTotalAPrecioDeVentaConIva()).replace(',', '.'));
+                    jLabelTotal.setText(df.format(compra.getTotal()).replace(',', '.'));
+                    
+                    MantenimientoPreciosDesdeCompras vmpdc = new MantenimientoPreciosDesdeCompras(IngresarCompras.this, true);
+                    vmpdc.setArticulo(cr.getArticulo());
+                    vmpdc.setFecha(compra.getFecha());
+                    vmpdc.setVisible(true);
+                    
+                    //Actualizo la informacion del renglon
+                    //cr.setArticulo(a);
+                    //cr.setCantidad(Double.parseDouble(jTextFieldCantidadRenglon.getText().trim()));
+                    Precio p = sisArticulos.devolverPrecioParaFechaPorArticulo(cr.getArticulo(), compra.getFecha());
+                    if (p != null) {
+                        //Cargo el objeto renglon de compra
+                        cr.setPrecio(p.getPrecioCompra());
+                        cr.setSubtotal(p.getPrecioCompra() * cr.getCantidad());
+                        cr.setIva((cr.getSubtotal() * cr.getArticulo().getIva().getPorcentaje() / 100));
+                        cr.setTotal(cr.getSubtotal() + cr.getIva());
+                        cr.setTotalPrecioVentaSinIva(p.getPrecioVenta() * cr.getCantidad());
+                        cr.setTotalPrecioVentaConIva(cr.getTotalPrecioVentaSinIva() + ((p.getPrecioVenta() * cr.getCantidad()) * cr.getArticulo().getIva().getPorcentaje() / 100));
+                    }
+                    //Actualizo el objeto de la tabla
+                    int fila = jTableRenglones.getSelectedRow();
+                    modelo.setValueAt(cr.getArticulo().getCodigo(), fila, 0);
+                    modelo.setValueAt(cr.getArticulo().getDescripcion(), fila, 1);
+                    modelo.setValueAt(cr.getCantidad(), fila, 2);
+                    modelo.setValueAt(df.format(cr.getPrecio()).replace(',', '.'), fila, 3);
+                    modelo.setValueAt(df.format(cr.getSubtotal()).replace(',', '.'), fila, 4);
+                    modelo.setValueAt(df.format(cr.getTotalPrecioVentaSinIva()).replace(',', '.'), fila, 5);
+                    
+                    compra.setSubtotal(compra.getSubtotal() + cr.getSubtotal());
+                    compra.setTotal(compra.getTotal() + cr.getTotal());
+                    compra.setTotalAPrecioDeVentaSinIva(compra.getTotalAPrecioDeVentaSinIva() + cr.getTotalPrecioVentaSinIva());
+                    compra.setTotalAPrecioDeVentaConIva(compra.getTotalAPrecioDeVentaConIva() + cr.getTotalPrecioVentaConIva());
+                    if ("Basico".equals(cr.getArticulo().getIva().getNombre())) {
+                        compra.setTotalBasico(compra.getTotalBasico() + cr.getIva());
+                    }
+                    if ("Minimo".equals(cr.getArticulo().getIva().getNombre())) {
+                        compra.setTotalBasico(compra.getTotalMinimo() + cr.getIva());
+                    }
+                    jLabelSubTotal.setText(df.format(compra.getSubtotal()).replace(',', '.'));
+                    jLabelIvaMinimo.setText(df.format(compra.getTotalMinimo()).replace(',', '.'));
+                    jLabelIvaBasico.setText(df.format(compra.getTotalBasico()).replace(',', '.'));
+                    jLabelTotalAPrecioDeVentaSinIva.setText(df.format(compra.getTotalAPrecioDeVentaSinIva()).replace(',', '.'));
+                    jLabelTotalAPrecioDeVentaConIva.setText(df.format(compra.getTotalAPrecioDeVentaConIva()).replace(',', '.'));
+                    jLabelTotal.setText(df.format(compra.getTotal()).replace(',', '.'));
+                    
+                    modificoRenglon = true;
+                } catch (Exception ex) {
+                    String stakTrace = util.Util.obtenerStackTraceEnString(ex);
+                    SistemaUsuarios.getInstance().registrarExcepcion(ex.toString(), stakTrace);
+                    JOptionPane.showMessageDialog(IngresarCompras.this, Constantes.MensajeDeErrorGenerico, "Error", JOptionPane.ERROR_MESSAGE);
+                }
+
+            }
+
+        });
+        popupMenu.add(cambiarPrecioItem);
         
         jTableRenglones.setComponentPopupMenu(popupMenu);
     }
