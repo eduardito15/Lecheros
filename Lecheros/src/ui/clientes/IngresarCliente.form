@@ -710,6 +710,9 @@
       <Properties>
         <Property name="text" type="java.lang.String" value="1"/>
       </Properties>
+      <Events>
+        <EventHandler event="keyPressed" listener="java.awt.event.KeyListener" parameters="java.awt.event.KeyEvent" handler="jTextFieldSucursalPSKeyPressed"/>
+      </Events>
     </Component>
   </SubComponents>
 </Form>

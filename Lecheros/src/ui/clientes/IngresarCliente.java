@@ -406,6 +406,11 @@ public class IngresarCliente extends javax.swing.JFrame {
         jLabel13.setText("SucursalPS:");
 
         jTextFieldSucursalPS.setText("1");
+        jTextFieldSucursalPS.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyPressed(java.awt.event.KeyEvent evt) {
+                jTextFieldSucursalPSKeyPressed(evt);
+            }
+        });
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
@@ -1173,6 +1178,13 @@ public class IngresarCliente extends javax.swing.JFrame {
             jButtonGuardar.doClick();
         }
     }//GEN-LAST:event_jListProductosKeyPressed
+
+    private void jTextFieldSucursalPSKeyPressed(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_jTextFieldSucursalPSKeyPressed
+        // TODO add your handling code here:
+        if (evt.getKeyCode() == KeyEvent.VK_F10) {
+            jButtonGuardar.doClick();
+        }
+    }//GEN-LAST:event_jTextFieldSucursalPSKeyPressed
 
     private int devolverIndiceReparto(Reparto reparto) {
         for (int i = 0; i < this.repartos.size(); i++) {
