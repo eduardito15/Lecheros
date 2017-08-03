@@ -729,7 +729,7 @@ public class IngresarCliente extends javax.swing.JFrame {
                         if("".equals(jTextFieldSucursalPS.getText().trim())){
                             sucursalPS = 1;
                         } else {
-                            sucursalPS = Integer.parseInt(jTextFieldCodigoPS.getText().trim());
+                            sucursalPS = Integer.parseInt(jTextFieldSucursalPS.getText().trim());
                         }
                 try {
                     if (sis.agregarCliente(prorrateo, activo, cobraChofer, gc, r, nombre, razonSocial, rut, direccion, telefono, email, 0, 0, 0, "", 0, "",codigoPS, sucursalPS, prodsCliNuevo, "","")) {
