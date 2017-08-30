@@ -6,6 +6,7 @@ Lecheros/build
 Lecheros/build.xml
 Lecheros/manifest.mf
 Lecheros/dist/*
+Lecheros/nbproject/*
 Lecheros/src/hibernate.cfg.xml
 Lecheros/src/hibernate.properties
 Lecheros/src/config.properties
