@@ -54,6 +54,11 @@ public class MantenimientoFacturas extends javax.swing.JFrame {
 
     private boolean yaBusco;
     private boolean mostrarMensajeFechaIncorrecta = true;
+    private int ultimoIndiceSeleccionado = 0;
+    private int[] indicesEliminados;
+    private boolean actualizarTabla = false;
+    private boolean eliminoFactura = false;
+    private boolean eliminoFacturas = false;
 
     /**
      * Creates new form MantenimientoFacturas
@@ -315,9 +320,12 @@ public class MantenimientoFacturas extends javax.swing.JFrame {
                         IngresoFacturas vif = new IngresoFacturas(MantenimientoFacturas.this, false);
                         vif.setAccion("Modificar");
                         Factura f = facturas.get(jTableFacturas.getSelectedRow());
+                        actualizarTabla = true;
+                        ultimoIndiceSeleccionado = jTableFacturas.getSelectedRow();
                         vif.setFactura(f);
                         vif.setTipoDoc(f.getTipoDocumento());
                         vif.setVisible(true);
+                        System.out.println("Despues de modificar la factura pasa por aca. Podemos actualizar solo la factura modificada.");
                     } else {
                         JOptionPane.showMessageDialog(MantenimientoFacturas.this, Constantes.MensajeDeErrorDePermisos, "Permisos", JOptionPane.INFORMATION_MESSAGE);
                     }
@@ -337,22 +345,56 @@ public class MantenimientoFacturas extends javax.swing.JFrame {
                 //Que hacer cuando da eliminar en el menu con click derecho sobre la fila de la tabla
                 try {
                     if (SistemaUsuarios.getInstance().tienePermisos(Constantes.ActividadIngresarFacturas)) {  
-                        Factura f = facturas.get(jTableFacturas.getSelectedRow());
-                        int resp = JOptionPane.showConfirmDialog(MantenimientoFacturas.this, "Seguro que quiere eliminar la factura con el numero " + f.getNumero() + "?", "Pregunta", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE);
-                        if (resp == JOptionPane.YES_OPTION) {
-                            try {
-                                if (sisFacturas.eliminarFactura(f)) {
-                                    JOptionPane.showMessageDialog(MantenimientoFacturas.this, "La factura se elimino correctamente", "Información", JOptionPane.INFORMATION_MESSAGE);
-                                    //jButtonBuscar.doClick();
+                        Factura f = null;
+                        if(jTableFacturas.getSelectedRowCount() == 1) {
+                            f = facturas.get(jTableFacturas.getSelectedRow());
+                            int resp = JOptionPane.showConfirmDialog(MantenimientoFacturas.this, "Seguro que quiere eliminar la factura con el numero " + f.getNumero() + "?", "Pregunta", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE);
+                            
+                            if (resp == JOptionPane.YES_OPTION) {
+                                try {
+                                    if (sisFacturas.eliminarFactura(f)) {
+                                        actualizarTabla = true;
+                                        eliminoFactura = true;
+                                        ultimoIndiceSeleccionado = jTableFacturas.getSelectedRow();
+                                        JOptionPane.showMessageDialog(MantenimientoFacturas.this, "La factura se elimino correctamente", "Información", JOptionPane.INFORMATION_MESSAGE);
+                                        //jButtonBuscar.doClick();
+                                    }
+                                } catch (HibernateException he) {
+                                    JOptionPane.showMessageDialog(MantenimientoFacturas.this, "Error al eliminar la factura." + "\n\n" + he.toString(), "Error", JOptionPane.ERROR_MESSAGE);
+                                } catch (Exception exp) {
+                                    String stakTrace = util.Util.obtenerStackTraceEnString(exp);
+                                    SistemaUsuarios.getInstance().registrarExcepcion(exp.toString(), stakTrace);
+                                    JOptionPane.showMessageDialog(MantenimientoFacturas.this, Constantes.MensajeDeErrorGenerico, "Error", JOptionPane.ERROR_MESSAGE);
                                 }
-                            } catch (HibernateException he) {
-                                JOptionPane.showMessageDialog(MantenimientoFacturas.this, "Error al eliminar la factura." + "\n\n" + he.toString(), "Error", JOptionPane.ERROR_MESSAGE);
-                            } catch (Exception exp) {
-                                String stakTrace = util.Util.obtenerStackTraceEnString(exp);
-                                SistemaUsuarios.getInstance().registrarExcepcion(exp.toString(), stakTrace);
-                                JOptionPane.showMessageDialog(MantenimientoFacturas.this, Constantes.MensajeDeErrorGenerico, "Error", JOptionPane.ERROR_MESSAGE);
                             }
+                        } else {
+                            /*int[] facturasSeleccionadas = jTableFacturas.getSelectedRows();
+                            
+                            int resp = JOptionPane.showConfirmDialog(MantenimientoFacturas.this, "Seguro que quiere eliminar las facturas " +  "?", "Pregunta", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE);
+                            
+                            //ultimoIndiceSeleccionado = jTableFacturas.getSelectedRow();
+                            if (resp == JOptionPane.YES_OPTION) {
+                                try {
+                                    for (int seleccionada = 0; seleccionada < facturasSeleccionadas.length; seleccionada++) {
+                                        f = facturas.get(facturasSeleccionadas[seleccionada]);
+                                        sisFacturas.eliminarFactura(f);
+                                    }
+                                    actualizarTabla = true;
+                                    eliminoFacturas = true;
+                                    indicesEliminados = facturasSeleccionadas;
+                                    
+                                    JOptionPane.showMessageDialog(MantenimientoFacturas.this, "Las facturas se eliminaron correctamente", "Información", JOptionPane.INFORMATION_MESSAGE);
+                                        
+                                } catch (HibernateException he) {
+                                    JOptionPane.showMessageDialog(MantenimientoFacturas.this, "Error al eliminar la factura." + "\n\n" + he.toString(), "Error", JOptionPane.ERROR_MESSAGE);
+                                } catch (Exception exp) {
+                                    String stakTrace = util.Util.obtenerStackTraceEnString(exp);
+                                    SistemaUsuarios.getInstance().registrarExcepcion(exp.toString(), stakTrace);
+                                    JOptionPane.showMessageDialog(MantenimientoFacturas.this, Constantes.MensajeDeErrorGenerico, "Error", JOptionPane.ERROR_MESSAGE);
+                                }
+                            }*/
                         }
+                        
                     } else {
                         JOptionPane.showMessageDialog(MantenimientoFacturas.this, Constantes.MensajeDeErrorDePermisos, "Permisos", JOptionPane.INFORMATION_MESSAGE);
                     }
@@ -390,6 +432,8 @@ public class MantenimientoFacturas extends javax.swing.JFrame {
                     //Que hacer cuando da ver en el menu con click derecho sobre la fila de la tabla
                     VentanaCambiarTipoDeDocumentoFacturas vif = new VentanaCambiarTipoDeDocumentoFacturas(MantenimientoFacturas.this, false);
                     Factura f = facturas.get(jTableFacturas.getSelectedRow());
+                    actualizarTabla = true;
+                    ultimoIndiceSeleccionado = jTableFacturas.getSelectedRow();
                     vif.setFactura(f);
                     vif.setVisible(true);
                 }
@@ -430,6 +474,8 @@ public class MantenimientoFacturas extends javax.swing.JFrame {
         jLabelEspera = new javax.swing.JLabel();
         jScrollPane1 = new javax.swing.JScrollPane();
         jTableFacturas = new javax.swing.JTable();
+        jLabel2 = new javax.swing.JLabel();
+        jLabelCantDocumento = new javax.swing.JLabel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
         setTitle("Mantenimiento Facturas");
@@ -551,6 +597,12 @@ public class MantenimientoFacturas extends javax.swing.JFrame {
         });
         jScrollPane1.setViewportView(jTableFacturas);
 
+        jLabel2.setFont(new java.awt.Font("Lucida Grande", 1, 14)); // NOI18N
+        jLabel2.setText("Total de Documentos encontrados: ");
+
+        jLabelCantDocumento.setFont(new java.awt.Font("Lucida Grande", 1, 14)); // NOI18N
+        jLabelCantDocumento.setText("0");
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
@@ -576,25 +628,31 @@ public class MantenimientoFacturas extends javax.swing.JFrame {
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                                 .addComponent(jRadioButtonProrrateo))
                             .addComponent(jTextFieldNumero, javax.swing.GroupLayout.PREFERRED_SIZE, 200, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(jTextFieldCliente, javax.swing.GroupLayout.PREFERRED_SIZE, 200, javax.swing.GroupLayout.PREFERRED_SIZE)
                             .addComponent(jComboBoxReparto, javax.swing.GroupLayout.PREFERRED_SIZE, 200, javax.swing.GroupLayout.PREFERRED_SIZE)
                             .addGroup(layout.createSequentialGroup()
-                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                                     .addGroup(layout.createSequentialGroup()
-                                        .addComponent(jDateChooserDesdeFecha, javax.swing.GroupLayout.PREFERRED_SIZE, 200, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                        .addGap(18, 18, 18)
-                                        .addComponent(jButtonBuscar, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                                    .addGroup(layout.createSequentialGroup()
-                                        .addComponent(jDateChooserHastaFecha, javax.swing.GroupLayout.PREFERRED_SIZE, 200, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                        .addGap(18, 18, 18)
-                                        .addComponent(jButtonSalir, javax.swing.GroupLayout.PREFERRED_SIZE, 112, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(jLabelEspera)
+                                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                                            .addGroup(layout.createSequentialGroup()
+                                                .addComponent(jDateChooserDesdeFecha, javax.swing.GroupLayout.PREFERRED_SIZE, 200, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                                .addGap(18, 18, 18)
+                                                .addComponent(jButtonBuscar, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                                            .addGroup(layout.createSequentialGroup()
+                                                .addComponent(jDateChooserHastaFecha, javax.swing.GroupLayout.PREFERRED_SIZE, 200, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                                .addGap(18, 18, 18)
+                                                .addComponent(jButtonSalir, javax.swing.GroupLayout.PREFERRED_SIZE, 112, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                        .addComponent(jLabelEspera))
+                                    .addComponent(jTextFieldCliente, javax.swing.GroupLayout.PREFERRED_SIZE, 200, javax.swing.GroupLayout.PREFERRED_SIZE))
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                                     .addComponent(jLabelFechaIncorrecta)
-                                    .addComponent(jLabelHastaFechaIncorrecta))))
-                        .addGap(0, 187, Short.MAX_VALUE))
+                                    .addComponent(jLabelHastaFechaIncorrecta)
+                                    .addGroup(layout.createSequentialGroup()
+                                        .addComponent(jLabel2)
+                                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                        .addComponent(jLabelCantDocumento)))))
+                        .addGap(0, 183, Short.MAX_VALUE))
                     .addGroup(layout.createSequentialGroup()
                         .addGap(332, 332, 332)
                         .addComponent(jLabelTitulo)
@@ -639,7 +697,9 @@ public class MantenimientoFacturas extends javax.swing.JFrame {
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jTextFieldCliente, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jLabel6))
+                    .addComponent(jLabel6)
+                    .addComponent(jLabel2)
+                    .addComponent(jLabelCantDocumento))
                 .addGap(21, 21, 21)
                 .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 330, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap(25, Short.MAX_VALUE))
@@ -753,7 +813,12 @@ public class MantenimientoFacturas extends javax.swing.JFrame {
     private void jButtonBuscarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonBuscarActionPerformed
         // TODO add your handling code here:
         yaBusco = true;
+        ultimoIndiceSeleccionado = 0;
+        actualizarTabla = false;
+        eliminoFactura = false;
+        eliminoFacturas = false;
         inicializarTablaFacturas();
+        jLabelCantDocumento.setText(Integer.toString(0));
         facturas = new ArrayList<>();
         if ("".equals(jTextFieldNumero.getText().trim()) && jDateChooserDesdeFecha.getDate() == null && jDateChooserHastaFecha.getDate() == null && "".equals(jTextFieldCliente.getText().trim()) && jComboBoxReparto.getSelectedItem() == "") {
             JOptionPane.showMessageDialog(this, "Debe seleccionar al menos un filtro para la búsqueda.", "Información", JOptionPane.INFORMATION_MESSAGE);
@@ -765,6 +830,7 @@ public class MantenimientoFacturas extends javax.swing.JFrame {
                 try {
                     //No es vacio el numero. Entonces busco por numero y son vacios todos los demas
                     facturas = sisFacturas.devolverFacturasPorNumero(Long.parseLong(jTextFieldNumero.getText().trim()), jRadioButtonManual.isSelected());
+                    jLabelCantDocumento.setText(Integer.toString(facturas.size()));
                 } catch (Exception exp) {
                     String stakTrace = util.Util.obtenerStackTraceEnString(exp);
                     SistemaUsuarios.getInstance().registrarExcepcion(exp.toString(), stakTrace);
@@ -779,6 +845,7 @@ public class MantenimientoFacturas extends javax.swing.JFrame {
                     //Si es vacio el de reparto es por que no es vacio el de cliente. Busco por numero y cliente
                     Factura f = sisFacturas.devolverFacturaPorNumeroYCliente(Long.parseLong(jTextFieldNumero.getText().trim()), cliente, jRadioButtonManual.isSelected());
                     cargarFacturaEnTabla(f);
+                    jLabelCantDocumento.setText(Integer.toString(1));
                 } catch (Exception exp) {
                     String stakTrace = util.Util.obtenerStackTraceEnString(exp);
                     SistemaUsuarios.getInstance().registrarExcepcion(exp.toString(), stakTrace);
@@ -788,6 +855,7 @@ public class MantenimientoFacturas extends javax.swing.JFrame {
                 try {
                     //Si entra aca es vacio el tipo de documento y no el reparto. Busco por numero y reparto.
                     facturas = sisFacturas.devolverFacturaPorNumeroYReparto(Long.parseLong(jTextFieldNumero.getText().trim()), (Reparto) jComboBoxReparto.getSelectedItem(), jRadioButtonManual.isSelected());
+                    jLabelCantDocumento.setText(Integer.toString(facturas.size()));
                 } catch (Exception exp) {
                     String stakTrace = util.Util.obtenerStackTraceEnString(exp);
                     SistemaUsuarios.getInstance().registrarExcepcion(exp.toString(), stakTrace);
@@ -802,6 +870,7 @@ public class MantenimientoFacturas extends javax.swing.JFrame {
                     //Busco por los 3 numero, cliente y reparto
                     //Creo que no es necesario basta solo con los otros dos filtros.
                     Factura f = sisFacturas.devolverFacturaPorNumeroYCliente(Long.parseLong(jTextFieldNumero.getText().trim()), cliente, jRadioButtonManual.isSelected());
+                    jLabelCantDocumento.setText(Integer.toString(1));
                     cargarFacturaEnTabla(f);
                 } catch (Exception exp) {
                     String stakTrace = util.Util.obtenerStackTraceEnString(exp);
@@ -825,6 +894,7 @@ public class MantenimientoFacturas extends javax.swing.JFrame {
                 public void run() {
                     try {
                         facturas = sisFacturas.devolverFacturasEntreFechas(jDateChooserDesdeFecha.getDate(), jDateChooserHastaFecha.getDate(), jRadioButtonManual.isSelected());
+                        jLabelCantDocumento.setText(Integer.toString(facturas.size()));
                     } catch (Exception exp) {
                         String stakTrace = util.Util.obtenerStackTraceEnString(exp);
                         SistemaUsuarios.getInstance().registrarExcepcion(exp.toString(), stakTrace);
@@ -849,6 +919,7 @@ public class MantenimientoFacturas extends javax.swing.JFrame {
                 public void run() {
                     try {
                         facturas = sisFacturas.devolverFacturasEntreFechasYCliente(jDateChooserDesdeFecha.getDate(), jDateChooserHastaFecha.getDate(), cliente, jRadioButtonManual.isSelected());
+                        jLabelCantDocumento.setText(Integer.toString(facturas.size()));
                     } catch (Exception exp) {
                         String stakTrace = util.Util.obtenerStackTraceEnString(exp);
                         SistemaUsuarios.getInstance().registrarExcepcion(exp.toString(), stakTrace);
@@ -873,6 +944,7 @@ public class MantenimientoFacturas extends javax.swing.JFrame {
                 public void run() {
                     try {
                         facturas = sisFacturas.devolverFacturasEntreFechasYReparto(jDateChooserDesdeFecha.getDate(), jDateChooserHastaFecha.getDate(), (Reparto) jComboBoxReparto.getSelectedItem(), jRadioButtonManual.isSelected());
+                        jLabelCantDocumento.setText(Integer.toString(facturas.size()));
                     } catch (Exception exp) {
                         String stakTrace = util.Util.obtenerStackTraceEnString(exp);
                         SistemaUsuarios.getInstance().registrarExcepcion(exp.toString(), stakTrace);
@@ -897,6 +969,7 @@ public class MantenimientoFacturas extends javax.swing.JFrame {
                 public void run() {
                     try {
                         facturas = sisFacturas.devolverFacturasEntreFechasYClienteYRaparto(jDateChooserDesdeFecha.getDate(), jDateChooserHastaFecha.getDate(), cliente, (Reparto) jComboBoxReparto.getSelectedItem(), jRadioButtonManual.isSelected());
+                        jLabelCantDocumento.setText(Integer.toString(facturas.size()));
                     } catch (Exception exp) {
                         String stakTrace = util.Util.obtenerStackTraceEnString(exp);
                         SistemaUsuarios.getInstance().registrarExcepcion(exp.toString(), stakTrace);
@@ -949,7 +1022,58 @@ public class MantenimientoFacturas extends javax.swing.JFrame {
     private void formWindowActivated(java.awt.event.WindowEvent evt) {//GEN-FIRST:event_formWindowActivated
         // TODO add your handling code here:
         if(yaBusco) {
-            jButtonBuscar.doClick();
+            if(actualizarTabla) {
+                if(eliminoFactura) {
+                    facturas.remove(ultimoIndiceSeleccionado);
+                    modelo.removeRow(ultimoIndiceSeleccionado);
+                    eliminoFactura = false;
+                    actualizarTabla = false;
+                    eliminoFacturas = false;
+                    int indiceTabla = ultimoIndiceSeleccionado - 1;
+                    if(indiceTabla >= 0) {
+                        jTableFacturas.changeSelection(indiceTabla, 0, false, false);
+                    } else {
+                        jTableFacturas.changeSelection(0, 0, false, false);
+                    }
+                    ultimoIndiceSeleccionado = 0;
+                } else {
+                    if(eliminoFacturas) {
+                        for (int seleccionada = 0; seleccionada < indicesEliminados.length; seleccionada++) {
+                            facturas.remove(indicesEliminados[seleccionada]);
+                            modelo.removeRow(indicesEliminados[seleccionada]);
+                        }
+                        eliminoFactura = false;
+                        actualizarTabla = false;
+                        ultimoIndiceSeleccionado = 0;
+                        eliminoFacturas = false;
+                        int indiceTabla = indicesEliminados[0] - 1;
+                        if (indiceTabla >= 0) {
+                            jTableFacturas.changeSelection(indiceTabla, 0, false, false);
+                        } else {
+                            jTableFacturas.changeSelection(0, 0, false, false);
+                        }
+                    } else {
+                        Factura f = facturas.get(ultimoIndiceSeleccionado);
+                        modelo.setValueAt(f.getTipoDocumento(), ultimoIndiceSeleccionado, 0);
+                        modelo.setValueAt(f.getCliente(), ultimoIndiceSeleccionado, 1);
+                        modelo.setValueAt(f.getNumero(), ultimoIndiceSeleccionado, 2);
+                        SimpleDateFormat formatter;
+                        formatter = new SimpleDateFormat("dd-MM-yyyy");
+                        modelo.setValueAt(formatter.format(f.getFecha()), ultimoIndiceSeleccionado, 3);
+                        modelo.setValueAt(f.getReparto(), ultimoIndiceSeleccionado, 4);
+                        modelo.setValueAt(df.format(f.getSubtotal()).replace(',', '.'), ultimoIndiceSeleccionado, 5);
+                        modelo.setValueAt(df.format(f.getTotalMinimo()).replace(',', '.'), ultimoIndiceSeleccionado, 6);
+                        modelo.setValueAt(df.format(f.getTotalBasico()).replace(',', '.'), ultimoIndiceSeleccionado, 7);
+                        modelo.setValueAt(df.format(f.getTotal()).replace(',', '.'), ultimoIndiceSeleccionado, 8);
+                        jTableFacturas.changeSelection(ultimoIndiceSeleccionado, 0, false, false);
+                        eliminoFactura = false;
+                        actualizarTabla = false;
+                        ultimoIndiceSeleccionado = 0;
+                        eliminoFacturas = false;
+                    }
+                }
+            }
+            //jButtonBuscar.doClick();
         }
     }//GEN-LAST:event_formWindowActivated
 
@@ -964,6 +1088,8 @@ public class MantenimientoFacturas extends javax.swing.JFrame {
                         IngresoFacturas vif = new IngresoFacturas(MantenimientoFacturas.this, false);
                         vif.setAccion("Modificar");
                         Factura f = facturas.get(jTableFacturas.getSelectedRow());
+                        actualizarTabla = true;
+                        ultimoIndiceSeleccionado = jTableFacturas.getSelectedRow();
                         vif.setFactura(f);
                         vif.setTipoDoc(f.getTipoDocumento());
                         vif.setVisible(true);
@@ -1047,11 +1173,13 @@ public class MantenimientoFacturas extends javax.swing.JFrame {
     private com.toedter.calendar.JDateChooser jDateChooserDesdeFecha;
     private com.toedter.calendar.JDateChooser jDateChooserHastaFecha;
     private javax.swing.JLabel jLabel1;
+    private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel4;
     private javax.swing.JLabel jLabel6;
     private javax.swing.JLabel jLabel7;
     private javax.swing.JLabel jLabel8;
+    private javax.swing.JLabel jLabelCantDocumento;
     private javax.swing.JLabel jLabelEspera;
     private javax.swing.JLabel jLabelFechaIncorrecta;
     private javax.swing.JLabel jLabelHastaFechaIncorrecta;

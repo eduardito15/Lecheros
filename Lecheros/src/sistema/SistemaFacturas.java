@@ -75,6 +75,7 @@ public class SistemaFacturas {
     private static ImprimirFactura impresion;
 
     SimpleDateFormat formatter;
+    SimpleDateFormat formatterPS;
 
     DecimalFormat df;
     DecimalFormat df8decimales;
@@ -96,6 +97,7 @@ public class SistemaFacturas {
         formatter = new SimpleDateFormat("dd-MM-yyyy");
         df = new DecimalFormat("0.00");
         df8decimales = new DecimalFormat("0.00000000");
+        formatterPS = new SimpleDateFormat("dd/MM/yyyy");
     }
 
     /**
@@ -154,6 +156,35 @@ public class SistemaFacturas {
         Query consulta = session.createQuery("FROM Factura WHERE numero = " + numero + " and esManual = :man and tipoDocumento = :tipo");
         consulta.setBoolean("man", true);
         consulta.setEntity("tipo", tipoDocVenta);
+        fact = (Factura) consulta.uniqueResult();
+        if (fact != null) {
+            retorno = false;
+        }
+        session.getTransaction().commit();
+        session.close();
+        return retorno;
+    }
+    
+    /**
+     * Este metodo se fija el numero de boleta entre todos los numeros de
+     * boeltas marcadas como manuales. Aunque el encabezado dice movil. Es por
+     * que las boletas manuales son las que se hacen con el aparato de PS
+     *
+     * @param numero
+     * @param tipoDocVenta
+     * @return
+     * @throws java.lang.Exception
+     */
+    public boolean numeroDeFacturaMovilValidoConFecha(long numero, DocumentoDeVenta tipoDocVenta, Date fecha) throws Exception {
+        System.out.println("Numero:" + numero);
+        boolean retorno = true;
+        Factura fact;
+        Session session = GenericDAO.getGenericDAO().getSessionFactory().openSession();
+        session.beginTransaction();
+        Query consulta = session.createQuery("FROM Factura WHERE numero = " + numero + " and esManual = :man and tipoDocumento = :tipo and fecha = :f");
+        consulta.setBoolean("man", true);
+        consulta.setEntity("tipo", tipoDocVenta);
+        consulta.setDate("f", fecha);
         fact = (Factura) consulta.uniqueResult();
         if (fact != null) {
             retorno = false;
@@ -320,6 +351,20 @@ public class SistemaFacturas {
         session.close();
         return retorno;
     }
+    
+    public Factura devolverFacturaPorNumeroFechaTipoDeDocumentoDeVentaYTipo(long numero, DocumentoDeVenta tipoDoc, Date fecha, boolean esManual) throws Exception {
+        Factura retorno = null;
+        Session session = GenericDAO.getGenericDAO().getSessionFactory().openSession();
+        session.beginTransaction();
+        Query consulta = session.createQuery("FROM Factura WHERE numero = " + numero + " and esManual = :man and tipoDocumento = :tipo and fecha = :f");
+        consulta.setBoolean("man", esManual);
+        consulta.setEntity("tipo", tipoDoc);
+        consulta.setDate("f", fecha);
+        retorno = (Factura)consulta.uniqueResult();
+        session.getTransaction().commit();
+        session.close();
+        return retorno;
+    }
 
     public List<Factura> devolverFacturasEntreFechas(Date fechaDesde, Date fechaHasta, boolean esManual) throws Exception {
 
@@ -392,12 +437,45 @@ public class SistemaFacturas {
         session.close();
         return retorno;
     }
+    
+    public List<Factura> devolverFacturasEntreNumeroTipoDeDocumentoYReparto(long desdeNumero, long hastaNumero, Reparto r, DocumentoDeVenta dv, boolean esManual) throws Exception {
+        List<Factura> retorno = null;
+        Session session = GenericDAO.getGenericDAO().getSessionFactory().openSession();
+        session.beginTransaction();
+        Query consulta = session.createQuery("FROM Factura WHERE numero >= :desdeNum and numero <= :hastaNum and reparto = :r and tipoDocumento = :dv "  +  " and esManual = :man");
+        consulta.setLong("desdeNum", desdeNumero);
+        consulta.setLong("hastaNum", hastaNumero);
+        consulta.setEntity("dv", dv);
+        consulta.setEntity("r", r);
+        consulta.setBoolean("man", esManual);
+        retorno = consulta.list();
+        session.getTransaction().commit();
+        session.close();
+        return retorno;
+    }
+    
+    public List<Factura> devolverFacturasEntreNumeroYTipoDeDocumento(long desdeNumero, long hastaNumero, DocumentoDeVenta dv, boolean esManual) throws Exception {
+        List<Factura> retorno = null;
+        Session session = GenericDAO.getGenericDAO().getSessionFactory().openSession();
+        session.beginTransaction();
+        Query consulta = session.createQuery("FROM Factura WHERE numero >= :desdeNum and numero <= :hastaNum and tipoDocumento = :dv " + " and esManual = :man");
+        consulta.setLong("desdeNum", desdeNumero);
+        consulta.setLong("hastaNum", hastaNumero);
+        consulta.setEntity("dv", dv);
+        consulta.setBoolean("man", esManual);
+        retorno = consulta.list();
+        session.getTransaction().commit();
+        session.close();
+        return retorno;
+    }
 
     public List<String[]> ingresarFacturasDesdeArchivo(String ruta) throws Exception {
         List<String[]> retorno = new ArrayList<>();
         BufferedReader br = null;
         String line;
         String cvsSplitBy = "\\t";
+        
+        ConfiguracionFacturacion configFact = SistemaMantenimiento.getInstance().devolverConfiguracionFacturacion();
 
         int totalBoletasIngresadas = 0;
 
@@ -537,7 +615,13 @@ public class SistemaFacturas {
                             }
                         }
                         
-                        Factura f = this.devolverFacturaPorNumeroTipoDeDocumentoDeVentaYTipo(numeroFactura, tipoDocumento, true);
+                        Factura f = null;
+                        if(Lecheros.nombreEmpresa.equals(Constantes.nombreEmpresaGiamo)) {
+                            Date fecha = formatterPS.parse(FechaS);
+                            f = this.devolverFacturaPorNumeroFechaTipoDeDocumentoDeVentaYTipo(numeroFactura, tipoDocumento, fecha, true);
+                        } else {
+                            f = this.devolverFacturaPorNumeroTipoDeDocumentoDeVentaYTipo(numeroFactura, tipoDocumento, true);
+                        }
                         if(f == null) {
                             //No es valida la boleta continuo
                         } else {
@@ -564,7 +648,7 @@ public class SistemaFacturas {
 
                                 double cantidad = 0;
                                 try {
-                                    cantidad = Double.parseDouble(Cantidad);
+                                    cantidad = Math.abs(Double.parseDouble(Cantidad));
                                 } catch (NumberFormatException ne) {
                                     retornoPorFactura[5] = "La cantidad debe ser un número.";
                                     throw new Exception(retornoPorFactura[5]);
@@ -572,7 +656,7 @@ public class SistemaFacturas {
 
                                 double subtotal = 0;
                                 try {
-                                    subtotal = Double.parseDouble(Subtotal);
+                                    subtotal = Math.abs(Double.parseDouble(Subtotal));
                                 } catch (NumberFormatException ne) {
                                     retornoPorFactura[5] = "El subtotal debe ser un número.";
                                     throw new Exception(retornoPorFactura[5]);
@@ -580,7 +664,7 @@ public class SistemaFacturas {
 
                                 double descuento = 0;
                                 try {
-                                    descuento = Double.parseDouble(Descuentos);
+                                    descuento = Math.abs(Double.parseDouble(Descuentos));
                                 } catch (NumberFormatException ne) {
                                     retornoPorFactura[5] = "El descuento debe ser un número.";
                                     throw new Exception(retornoPorFactura[5]);
@@ -593,14 +677,35 @@ public class SistemaFacturas {
                                     //Me fijo si el precio es igual al guardado.
                                     double diferencia = precioDeLaBoleta - p.getPrecioVenta();
                                     if (diferencia > 0.05 || diferencia < -0.05) {
-                                        retornoPorFactura[5] = "El precio en el sistema para el artículo: " + art.getCodigo() + " difiere del de la boleta. Revisarlo y volver a intentar.";
-                                        throw new Exception(retornoPorFactura[5]);
+                                        if(configFact.isIngresarPreciosDeFacturasAlIngesarLasFacturas()) {
+                                            //Ingreso el nuevo precio.
+                                            SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
+                                            String fechaPrecio = sdf.format(p.getFecha());
+                                            String fechaHoy = sdf.format(f.getFecha());
+                                            if(fechaPrecio.equals(fechaHoy)) {
+                                                //El precio ya existe para la fecha. y es el precio p. Actualizamos el de venta y guardamos.
+                                                p.setPrecioVenta(precioDeLaBoleta);
+                                                GenericDAO.getGenericDAO().actualizar(p);
+                                            } else {
+                                                //Creamos un nuevo precio con el de compra para la fecha y el nuevo de venta.
+                                                Precio nuevoPrecio = new Precio();
+                                                nuevoPrecio.setArticulo(art);
+                                                nuevoPrecio.setFecha(f.getFecha());
+                                                nuevoPrecio.setPrecioCompra(p.getPrecioCompra());
+                                                nuevoPrecio.setPrecioVenta(precioDeLaBoleta);
+                                                GenericDAO.getGenericDAO().guardar(nuevoPrecio);
+                                            }
+                                        } else {
+                                            //Informo al usuario de la diferencia y no ingreso el precio. 
+                                            retornoPorFactura[5] = "El precio en el sistema para el artículo: " + art.getCodigo() + " difiere del de la boleta. Revisarlo y volver a intentar.";
+                                            throw new Exception(retornoPorFactura[5]);
+                                        }
                                     }
                                 }
 
                                 double impuesto = 0;
                                 try {
-                                    impuesto = Double.parseDouble(Impuesto);
+                                    impuesto = Math.abs(Double.parseDouble(Impuesto));
                                 } catch (NumberFormatException ne) {
                                     retornoPorFactura[5] = "El impuesto debe ser un número.";
                                     throw new Exception(retornoPorFactura[5]);
@@ -608,7 +713,7 @@ public class SistemaFacturas {
 
                                 double total = 0;
                                 try {
-                                    total = Double.parseDouble(Total);
+                                    total = Math.abs(Double.parseDouble(Total));
                                 } catch (NumberFormatException ne) {
                                     retornoPorFactura[5] = "El total debe ser un número.";
                                     throw new Exception(retornoPorFactura[5]);
@@ -785,8 +890,13 @@ public class SistemaFacturas {
                         }
 
                         //Verifico si existe una boleta manual con ese numero. 
-                        
-                        if (this.numeroDeFacturaMovilValido(numeroFactura, tipoDocumento)) {
+                        boolean facturaValida = false;
+                        if(Lecheros.nombreEmpresa.equals(Constantes.nombreEmpresaGiamo)) {
+                            facturaValida = this.numeroDeFacturaMovilValidoConFecha(numeroFactura, tipoDocumento, fecha);
+                        } else {
+                            facturaValida = this.numeroDeFacturaMovilValido(numeroFactura, tipoDocumento);
+                        }
+                        if (facturaValida) {
                             Cliente c = null;
 
                             try {
@@ -822,7 +932,7 @@ public class SistemaFacturas {
 
                                     double cantidad = 0;
                                     try {
-                                        cantidad = Double.parseDouble(Cantidad);
+                                        cantidad = Math.abs(Double.parseDouble(Cantidad));
                                     } catch (NumberFormatException ne) {
                                         retornoPorFactura[5] = "La cantidad debe ser un número.";
                                         throw new Exception(retornoPorFactura[5]);
@@ -830,7 +940,7 @@ public class SistemaFacturas {
 
                                     double subtotal = 0;
                                     try {
-                                        subtotal = Double.parseDouble(Subtotal);
+                                        subtotal = Math.abs(Double.parseDouble(Subtotal));
                                     } catch (NumberFormatException ne) {
                                         retornoPorFactura[5] = "El subtotal debe ser un número.";
                                         throw new Exception(retornoPorFactura[5]);
@@ -838,7 +948,7 @@ public class SistemaFacturas {
 
                                     double descuento = 0;
                                     try {
-                                        descuento = Double.parseDouble(Descuentos);
+                                        descuento = Math.abs(Double.parseDouble(Descuentos));
                                     } catch (NumberFormatException ne) {
                                         retornoPorFactura[5] = "El descuento debe ser un número.";
                                         throw new Exception(retornoPorFactura[5]);
@@ -851,14 +961,35 @@ public class SistemaFacturas {
                                         //Me fijo si el precio es igual al guardado.
                                         double diferencia = precioDeLaBoleta - p.getPrecioVenta();
                                         if (diferencia > 0.05 || diferencia < -0.05) {
-                                            retornoPorFactura[5] = "El precio en el sistema para el artículo: " + art.getCodigo() + " difiere del de la boleta. Revisarlo y volver a intentar.";
-                                            throw new Exception(retornoPorFactura[5]);
-                                        }
+                                            if (configFact.isIngresarPreciosDeFacturasAlIngesarLasFacturas()) {
+                                                //Ingreso el nuevo precio.
+                                                SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
+                                                String fechaPrecio = sdf.format(p.getFecha());
+                                                String fechaHoy = sdf.format(fecha);
+                                                if (fechaPrecio.equals(fechaHoy)) {
+                                                    //El precio ya existe para la fecha. y es el precio p. Actualizamos el de venta y guardamos.
+                                                    p.setPrecioVenta(precioDeLaBoleta);
+                                                    GenericDAO.getGenericDAO().actualizar(p);
+                                                } else {
+                                                    //Creamos un nuevo precio con el de compra para la fecha y el nuevo de venta.
+                                                    Precio nuevoPrecio = new Precio();
+                                                    nuevoPrecio.setArticulo(art);
+                                                    nuevoPrecio.setFecha(fecha);
+                                                    nuevoPrecio.setPrecioCompra(p.getPrecioCompra());
+                                                    nuevoPrecio.setPrecioVenta(precioDeLaBoleta);
+                                                    GenericDAO.getGenericDAO().guardar(nuevoPrecio);
+                                                }
+                                            } else {
+                                                //Informo al usuario de la diferencia y no ingreso el precio.
+                                                retornoPorFactura[5] = "El precio en el sistema para el artículo: " + art.getCodigo() + " difiere del de la boleta. Revisarlo y volver a intentar.";
+                                                throw new Exception(retornoPorFactura[5]);
+                                            }
+                                        }  
                                     }
 
                                     double impuesto = 0;
                                     try {
-                                        impuesto = Double.parseDouble(Impuesto);
+                                        impuesto = Math.abs(Double.parseDouble(Impuesto));
                                     } catch (NumberFormatException ne) {
                                         retornoPorFactura[5] = "El impuesto debe ser un número.";
                                         throw new Exception(retornoPorFactura[5]);
@@ -866,7 +997,7 @@ public class SistemaFacturas {
 
                                     double total = 0;
                                     try {
-                                        total = Double.parseDouble(Total);
+                                        total = Math.abs(Double.parseDouble(Total));
                                     } catch (NumberFormatException ne) {
                                         retornoPorFactura[5] = "El total debe ser un número.";
                                         throw new Exception(retornoPorFactura[5]);
@@ -1005,14 +1136,14 @@ public class SistemaFacturas {
                 String Impuesto = data[14];
                 String Total = data[15];
 
-                if (ultimoNumeroLeido.equals(Numero)) {
+                if (ultimoNumeroLeido.equals(Vendedor + Numero)) {
                     //Es una que ya existe
                     retornoPorFactura = retorno.get(retorno.size()-1);
                     if(retornoPorFactura[5].equals("Ingresada correctamente.")) {
                         //Es valida
                         long numeroFactura = 0;
                         try {
-                            numeroFactura = Long.parseLong(Numero);
+                            numeroFactura = Long.parseLong(Vendedor + Numero);
                         } catch (NumberFormatException ne) {
                             retornoPorFactura[5] = "El número de factura debe ser un número.";
                             throw new Exception(retornoPorFactura[5]);
@@ -1114,7 +1245,7 @@ public class SistemaFacturas {
 
                                 double cantidad = 0;
                                 try {
-                                    cantidad = Double.parseDouble(Cantidad);
+                                    cantidad = Math.abs(Double.parseDouble(Cantidad));
                                 } catch (NumberFormatException ne) {
                                     retornoPorFactura[5] = "La cantidad debe ser un número.";
                                     throw new Exception(retornoPorFactura[5]);
@@ -1122,7 +1253,7 @@ public class SistemaFacturas {
 
                                 double subtotal = 0;
                                 try {
-                                    subtotal = Double.parseDouble(Subtotal);
+                                    subtotal = Math.abs(Double.parseDouble(Subtotal));
                                 } catch (NumberFormatException ne) {
                                     retornoPorFactura[5] = "El subtotal debe ser un número.";
                                     throw new Exception(retornoPorFactura[5]);
@@ -1130,7 +1261,7 @@ public class SistemaFacturas {
 
                                 double descuento = 0;
                                 try {
-                                    descuento = Double.parseDouble(Descuentos);
+                                    descuento = Math.abs(Double.parseDouble(Descuentos));
                                 } catch (NumberFormatException ne) {
                                     retornoPorFactura[5] = "El descuento debe ser un número.";
                                     throw new Exception(retornoPorFactura[5]);
@@ -1150,7 +1281,7 @@ public class SistemaFacturas {
 
                                 double impuesto = 0;
                                 try {
-                                    impuesto = Double.parseDouble(Impuesto);
+                                    impuesto = Math.abs(Double.parseDouble(Impuesto));
                                 } catch (NumberFormatException ne) {
                                     retornoPorFactura[5] = "El impuesto debe ser un número.";
                                     throw new Exception(retornoPorFactura[5]);
@@ -1158,7 +1289,7 @@ public class SistemaFacturas {
 
                                 double total = 0;
                                 try {
-                                    total = Double.parseDouble(Total);
+                                    total = Math.abs(Double.parseDouble(Total));
                                 } catch (NumberFormatException ne) {
                                     retornoPorFactura[5] = "El total debe ser un número.";
                                     throw new Exception(retornoPorFactura[5]);
@@ -1204,7 +1335,7 @@ public class SistemaFacturas {
                     
                 } else {
                     try {
-                        ultimoNumeroLeido = Numero;
+                        ultimoNumeroLeido = Vendedor + Numero;
                         //Es una nueva
 
                         retornoPorFactura[0] = FechaS;
@@ -1303,7 +1434,7 @@ public class SistemaFacturas {
 
                         long numeroFactura = 0;
                         try {
-                            numeroFactura = Long.parseLong(Numero);
+                            numeroFactura = Long.parseLong(Vendedor + Numero);
                         } catch (NumberFormatException ne) {
                             retornoPorFactura[5] = "El número de factura debe ser un número.";
                             throw new Exception(retornoPorFactura[5]);
@@ -1347,7 +1478,7 @@ public class SistemaFacturas {
 
                                     double cantidad = 0;
                                     try {
-                                        cantidad = Double.parseDouble(Cantidad);
+                                        cantidad = Math.abs(Double.parseDouble(Cantidad));
                                     } catch (NumberFormatException ne) {
                                         retornoPorFactura[5] = "La cantidad debe ser un número.";
                                         throw new Exception(retornoPorFactura[5]);
@@ -1355,7 +1486,7 @@ public class SistemaFacturas {
 
                                     double subtotal = 0;
                                     try {
-                                        subtotal = Double.parseDouble(Subtotal);
+                                        subtotal = Math.abs(Double.parseDouble(Subtotal));
                                     } catch (NumberFormatException ne) {
                                         retornoPorFactura[5] = "El subtotal debe ser un número.";
                                         throw new Exception(retornoPorFactura[5]);
@@ -1363,7 +1494,7 @@ public class SistemaFacturas {
 
                                     double descuento = 0;
                                     try {
-                                        descuento = Double.parseDouble(Descuentos);
+                                        descuento = Math.abs(Double.parseDouble(Descuentos));
                                     } catch (NumberFormatException ne) {
                                         retornoPorFactura[5] = "El descuento debe ser un número.";
                                         throw new Exception(retornoPorFactura[5]);
@@ -1383,7 +1514,7 @@ public class SistemaFacturas {
 
                                     double impuesto = 0;
                                     try {
-                                        impuesto = Double.parseDouble(Impuesto);
+                                        impuesto = Math.abs(Double.parseDouble(Impuesto));
                                     } catch (NumberFormatException ne) {
                                         retornoPorFactura[5] = "El impuesto debe ser un número.";
                                         throw new Exception(retornoPorFactura[5]);
@@ -1391,7 +1522,7 @@ public class SistemaFacturas {
 
                                     double total = 0;
                                     try {
-                                        total = Double.parseDouble(Total);
+                                        total = Math.abs(Double.parseDouble(Total));
                                     } catch (NumberFormatException ne) {
                                         retornoPorFactura[5] = "El total debe ser un número.";
                                         throw new Exception(retornoPorFactura[5]);
@@ -4483,7 +4614,7 @@ public class SistemaFacturas {
         return retorno;
     }
     
-    public String[] facturarProrrateoIngresandoTotales(Date fechaDesde, Date fechaHasta, Reparto r, String[][] detallesPorArticuloParaFacturar, Double totalExcentoParaFacturar, Double totalMinimoParaFacturar, Double totalBasicoParaFacturar, boolean facturarLeche, boolean facturarProductos) {
+    public String[] facturarProrrateoIngresandoTotales(Date fechaDesde, Date fechaHasta, Reparto r, String[][] detallesPorArticuloParaFacturar, Double totalExcentoParaFacturar, Double totalMinimoParaFacturar, Double totalBasicoParaFacturar, boolean facturarLeche, boolean facturarProductos) throws Exception {
         String[] retorno = {""};
         try {
             
@@ -4525,10 +4656,6 @@ public class SistemaFacturas {
             double totalExcentoFacturas = 0;
             double totalMinimoFacturas = 0;
             double totalBasicoFacturas = 0;
-            
-            logger.info("Total Excento Facturas: " + totalExcentoFacturas);
-            logger.info("Total Minimo Facturas: " + totalMinimoFacturas);
-            logger.info("Total Basico Facturas: " + totalBasicoFacturas);
             
             for (Factura f : facturas) {
                 if (f.getTipoDocumento().isSuma()) {
@@ -4594,6 +4721,10 @@ public class SistemaFacturas {
                 }
             }
             
+            logger.info("Total Excento Facturas: " + totalExcentoFacturas);
+            logger.info("Total Minimo Facturas: " + totalMinimoFacturas);
+            logger.info("Total Basico Facturas: " + totalBasicoFacturas);
+            
             detallesPorArticuloParaFacturar[4][0] = "Totales";
             detallesPorArticuloParaFacturar[4][1] = Double.toString(Double.parseDouble(detallesPorArticuloParaFacturar[4][1]) - totalExcentoFacturas);
             detallesPorArticuloParaFacturar[4][2] = Double.toString(Double.parseDouble(detallesPorArticuloParaFacturar[4][2]) - totalMinimoFacturas);
@@ -4606,10 +4737,274 @@ public class SistemaFacturas {
             
             facturarProrrateoNoDetallado(fechaHasta, r, detallesPorArticuloParaFacturar, totalExcentoParaFacturar, totalMinimoParaFacturar, totalBasicoParaFacturar, facturarLeche, facturarProductos);
             
+            double litrosComunProrrateo = 0;
+            double litrosUltraProrrateo = 0;
+            double litrosUltraDiferenciadaProrrateo = 0;
+            double litrosDeslactosadaProrrateo = 0;
+            double excentoProrrateo = 0;
+            double minimoProrrateo = 0;
+            double basicoProrrateo = 0;
+            
+            if (r == null) {
+                facturas = new ArrayList<>();
+                List<Reparto> repartos = SistemaMantenimiento.getInstance().devolverRepartos();
+                for (Reparto rep : repartos) {
+                    facturas.addAll(this.devolverFacturasEntreFechasYReparto(fechaDesde, fechaHasta, rep, false));
+                }
+            } else {
+                facturas = this.devolverFacturasEntreFechasYReparto(fechaDesde, fechaHasta, r, false);
+            }
+            
+            for (Factura f : facturas) {
+                if (f.getTipoDocumento().isSuma()) {
+                    for (FacturaRenglon fr : f.getRenglones()) {
+                        if (!esEnvase(fr.getArticulo())) {
+                            if ("Excento".equals(fr.getArticulo().getIva().getNombre())) {
+                                excentoProrrateo = excentoProrrateo + fr.getSubtotal();
+                            }
+                            if ("Minimo".equals(fr.getArticulo().getIva().getNombre())) {
+                                minimoProrrateo = minimoProrrateo + fr.getSubtotal();
+                            }
+                            if ("Basico".equals(fr.getArticulo().getIva().getNombre())) {
+                                basicoProrrateo = basicoProrrateo + fr.getSubtotal();
+                            }
+                            if(esLeche(fr.getArticulo())) {
+                                /*if(grupoLecheComun.getArticulos().contains(fr.getArticulo())) {
+                                    detallesPorArticuloParaFacturar[0][4] = Double.toString(Double.parseDouble(detallesPorArticuloParaFacturar[0][4]) - fr.getCantidad());
+                                }
+                                if (grupoLecheUltra.getArticulos().contains(fr.getArticulo())) {
+                                    detallesPorArticuloParaFacturar[1][4] = Double.toString(Double.parseDouble(detallesPorArticuloParaFacturar[1][4]) - fr.getCantidad());
+                                }
+
+                                if (grupoLecheUltraDiferenciada.getArticulos().contains(fr.getArticulo())) {
+                                    detallesPorArticuloParaFacturar[2][4] = Double.toString(Double.parseDouble(detallesPorArticuloParaFacturar[2][4]) - fr.getCantidad());
+                                }
+
+                                if (grupoLecheDeslactosada.getArticulos().contains(fr.getArticulo())) {
+                                    detallesPorArticuloParaFacturar[3][4] = Double.toString(Double.parseDouble(detallesPorArticuloParaFacturar[3][4]) - fr.getCantidad());
+                                }*/
+                                if(esLecheComun(fr.getArticulo())) {
+                                    litrosComunProrrateo = litrosComunProrrateo + fr.getCantidad();
+                                }
+                                if (grupoLecheUltra.getArticulos().contains(fr.getArticulo())) {
+                                    litrosUltraProrrateo = litrosUltraProrrateo + fr.getCantidad();
+                                }
+
+                                if (grupoLecheUltraDiferenciada.getArticulos().contains(fr.getArticulo())) {
+                                    litrosUltraDiferenciadaProrrateo = litrosUltraDiferenciadaProrrateo + fr.getCantidad();
+                                }
+                                if(esLecheDeslactosada(fr.getArticulo())) {
+                                    litrosDeslactosadaProrrateo = litrosDeslactosadaProrrateo + fr.getCantidad();
+                                }
+                            }
+                        }
+                    }
+                } else {
+                    for (FacturaRenglon fr : f.getRenglones()) {
+                        if (!esEnvase(fr.getArticulo())) {
+                            if ("Excento".equals(fr.getArticulo().getIva().getNombre())) {
+                                excentoProrrateo = excentoProrrateo - fr.getSubtotal();
+                            }
+                            if ("Minimo".equals(fr.getArticulo().getIva().getNombre())) {
+                                minimoProrrateo = minimoProrrateo - fr.getSubtotal();
+                            }
+                            if ("Basico".equals(fr.getArticulo().getIva().getNombre())) {
+                                basicoProrrateo = basicoProrrateo - fr.getSubtotal();
+                            }
+                            if(esLeche(fr.getArticulo())) {
+                                if(grupoLecheComun.getArticulos().contains(fr.getArticulo())) {
+                                    //detallesPorArticuloParaFacturar[0][4] = Double.toString(Double.parseDouble(detallesPorArticuloParaFacturar[0][4]) + fr.getCantidad());
+                                    litrosComunProrrateo = litrosComunProrrateo - fr.getCantidad();
+                                }
+                                if (grupoLecheUltra.getArticulos().contains(fr.getArticulo())) {
+                                    //detallesPorArticuloParaFacturar[1][4] = Double.toString(Double.parseDouble(detallesPorArticuloParaFacturar[1][4]) + fr.getCantidad());
+                                    litrosUltraProrrateo = litrosUltraProrrateo - fr.getCantidad();
+                                }
+
+                                if (grupoLecheUltraDiferenciada.getArticulos().contains(fr.getArticulo())) {
+                                    litrosUltraDiferenciadaProrrateo = litrosUltraDiferenciadaProrrateo - fr.getCantidad();
+                                }
+
+                                if (grupoLecheDeslactosada.getArticulos().contains(fr.getArticulo())) {
+                                    litrosDeslactosadaProrrateo = litrosDeslactosadaProrrateo - fr.getCantidad();
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+            
+            logger.info("Total Excento Facturas Prorrateo: " + excentoProrrateo);
+            logger.info("Total Minimo Facturas Prorrateo: " + minimoProrrateo);
+            logger.info("Total Basico Facturas Prorrateo: " + basicoProrrateo);
+            logger.info("Total de litros comun en facturas de prorrateo: " + litrosComunProrrateo);
+            logger.info("Total de litros ultra en facturas de prorrateo: " + litrosUltraProrrateo);
+            logger.info("Total de litros ultra diferenciada en facturas de prorrateo: " + litrosUltraDiferenciadaProrrateo);
+            logger.info("Total de litros deslactosada en facturas de prorrateo: " + litrosDeslactosadaProrrateo);
+            
+            //El resto lo facturo a consumo final
+            double litrosComunConsumoFinal = Double.parseDouble(detallesPorArticuloParaFacturar[0][4]) - litrosComunProrrateo;
+            double litrosUltraConsumoFinal = Double.parseDouble(detallesPorArticuloParaFacturar[1][4]) - litrosUltraProrrateo;
+            double litrosUltraDiferenciadaConsumoFinal = Double.parseDouble(detallesPorArticuloParaFacturar[2][4]) - litrosUltraDiferenciadaProrrateo;
+            double litrosDeslactosadaConsumoFinal = Double.parseDouble(detallesPorArticuloParaFacturar[3][4]) - litrosDeslactosadaProrrateo;
+            double minimoConsumoFinal = totalMinimoParaFacturar - minimoProrrateo;
+            double basicoConsumoFinal = totalBasicoParaFacturar - basicoProrrateo;
+            HashMap<Articulo, Double> artsCantsConsumoFinal = new HashMap<>();
+            if(litrosComunConsumoFinal > 0 ) {
+                if(grupoLecheComun != null) {
+                    artsCantsConsumoFinal.put(grupoLecheComun.getArticulos().get(0), litrosComunConsumoFinal);
+                }
+            }
+            if (litrosUltraConsumoFinal > 0) {
+                if (grupoLecheUltra != null) {
+                    artsCantsConsumoFinal.put(grupoLecheUltra.getArticulos().get(0), litrosUltraConsumoFinal);
+                }
+            }
+            if (litrosUltraDiferenciadaConsumoFinal > 0) {
+                if (grupoLecheUltra != null) {
+                    artsCantsConsumoFinal.put(grupoLecheUltraDiferenciada.getArticulos().get(0), litrosUltraDiferenciadaConsumoFinal);
+                }
+            }
+            if (litrosDeslactosadaConsumoFinal > 0) {
+                if (grupoLecheDeslactosada != null) {
+                    artsCantsConsumoFinal.put(grupoLecheDeslactosada.getArticulos().get(0), litrosDeslactosadaConsumoFinal);
+                }
+            }
+            if (minimoConsumoFinal > 0) {
+                Articulo artMin = SistemaMantenimientoArticulos.getInstance().devolverArticuloPorCodigo(44444);
+                artsCantsConsumoFinal.put(artMin, minimoConsumoFinal);
+                
+            }
+            if (basicoConsumoFinal > 0) {
+                Articulo artBas = SistemaMantenimientoArticulos.getInstance().devolverArticuloPorCodigo(55555);
+                artsCantsConsumoFinal.put(artBas, basicoConsumoFinal);
+                
+            }
+            int ultimoIndiceLeido = 0;
+            ConfiguracionFacturacion configFact = SistemaMantenimiento.getInstance().devolverConfiguracionFacturacion();
+            Object[] arts = artsCantsConsumoFinal.keySet().toArray();
+            while (ultimoIndiceLeido < arts.length - 1) {
+                //Creo la factura nueva a consumo final
+                Factura fcf = new Factura();
+                fcf.setEsManual(false);
+                fcf.setFecha(fechaHasta);
+                fcf.setEstaPaga(true);
+                long numeroCF = configFact.getUltimoNumeroFactura();
+                numeroCF++;
+                configFact.setUltimoNumeroFactura(numeroCF);
+                fcf.setNumero(numeroCF);
+                List<FacturaRenglon> renglonesCF = new ArrayList<>();
+                fcf.setRenglones(renglonesCF);
+                Cliente cli = SistemaMantenimiento.getInstance().devolverClientePorCodigo("0.2");
+                fcf.setCliente(cli);
+                if (r != null) {
+                    fcf.setReparto(r);
+                } else {
+                    fcf.setReparto(cli.getReparto());
+                }
+                if (Lecheros.nombreEmpresa.equals("Relece")) {
+                    DocumentoDeVenta tipoDocVenta = SistemaMantenimiento.getInstance().devolverDocumentoDeVentaPorNombre("Contado Cerram");
+                    fcf.setTipoDocumento(tipoDocVenta);
+                } else {
+                    DocumentoDeVenta tipoDocVenta = SistemaMantenimiento.getInstance().devolverDocumentoDeVentaPorNombre("Contado");
+                    fcf.setTipoDocumento(tipoDocVenta);
+                }
+
+                for (int i = ultimoIndiceLeido; i < arts.length; i++) {
+                    Articulo a = (Articulo) arts[i];
+                    GrupoDeArticulos ga = SistemaMantenimientoArticulos.getInstance().devolverGrupoDeArticuloPorArticulo(a);
+                    int cantArt = 0;
+                    //Me fijo si se factura de a uno, de a dos o de a cuantos
+                    Double cant = (artsCantsConsumoFinal.get(a));
+                    //Double cant = (articuloCantidadParaFacturar.get(a));
+                    cantArt = cant.intValue();
+                    if (ga != null) {
+                        boolean esNumeroMultiploDeCantidadParaFacturar = cantArt % ga.getFacturarDeA() == 0;
+                        while (!esNumeroMultiploDeCantidadParaFacturar) {
+                            cantArt = cantArt - 1;
+                            esNumeroMultiploDeCantidadParaFacturar = cantArt % ga.getFacturarDeA() == 0;
+                        }
+                    }
+                    if (cantArt > 0) {
+                        FacturaRenglon fr = new FacturaRenglon();
+                        fr.setFactura(fcf);
+                        fr.setArticulo(a);
+                        fr.setCantidad(cantArt);
+                        Precio precio = SistemaMantenimientoArticulos.getInstance().devolverPrecioParaFechaPorArticulo(a, fcf.getFecha());
+                        fr.setPrecio(precio.getPrecioVenta());
+                        fr.setSubtotal(cantArt * precio.getPrecioVenta());
+                        fr.setIva((fr.getSubtotal() * a.getIva().getPorcentaje() / 100));
+                        fr.setTotal(fr.getSubtotal() + fr.getIva());
+
+                        //Agrego el renglon a la factura
+                        if ((fcf.getTotal() + fr.getTotal()) < configFact.getMaximoBoletaContadoFinal()) {
+
+                            ultimoIndiceLeido++;
+                            fcf.getRenglones().add(fr);
+
+                            //Agrego los totales
+                            fcf.setTotal(fcf.getTotal() + fr.getTotal());
+                            fcf.setSubtotal(fcf.getSubtotal() + fr.getSubtotal());
+                            if ("Minimo".equals(a.getIva().getNombre())) {
+                                fcf.setTotalMinimo(fcf.getTotalMinimo() + fr.getIva());
+                                //totalMinimoFacturado = totalMinimoFacturado + fr.getSubtotal();
+
+                            }
+                            if ("Basico".equals(a.getIva().getNombre())) {
+                                fcf.setTotalBasico(fcf.getTotalBasico() + fr.getIva());
+                                //totalBasicoFacturado = totalBasicoFacturado + fr.getSubtotal();
+                            }
+
+                        } else if (fcf.getRenglones().isEmpty()) {
+                            Double cantMaxima = configFact.getMaximoBoletaContadoFinal() / (precio.getPrecioVenta() + (precio.getPrecioVenta() * a.getIva().getPorcentaje() / 100));
+                            cantArt = cantMaxima.intValue();
+                            fr.setCantidad(cantArt);
+                            //precio = SistemaMantenimientoArticulos.getInstance().devolverPrecioParaFechaPorArticulo(a, fcf.getFecha());
+                            fr.setPrecio(precio.getPrecioVenta());
+                            fr.setSubtotal(cantArt * precio.getPrecioVenta());
+                            fr.setIva((fr.getSubtotal() * a.getIva().getPorcentaje() / 100));
+                            fr.setTotal(fr.getSubtotal() + fr.getIva());
+
+                            //Agrego el renglon a la factura
+                            if ((fcf.getTotal() + fr.getTotal()) < configFact.getMaximoBoletaContadoFinal()) {
+
+                                //ultimoIndiceLeido++;
+                                artsCantsConsumoFinal.replace(a, artsCantsConsumoFinal.get(a) - cantArt);
+                                fcf.getRenglones().add(fr);
+
+                                //Agrego los totales
+                                fcf.setTotal(fcf.getTotal() + fr.getTotal());
+                                fcf.setSubtotal(fcf.getSubtotal() + fr.getSubtotal());
+                                if ("Minimo".equals(a.getIva().getNombre())) {
+                                    fcf.setTotalMinimo(fcf.getTotalMinimo() + fr.getIva());
+                                    //totalMinimoFacturado = totalMinimoFacturado + fr.getSubtotal();
+
+                                }
+                                if ("Basico".equals(a.getIva().getNombre())) {
+                                    fcf.setTotalBasico(fcf.getTotalBasico() + fr.getIva());
+                                    //totalBasicoFacturado = totalBasicoFacturado + fr.getSubtotal();
+                                }
+
+                            }
+                            break;
+                        } else {
+                            break;
+                        }
+                    } else {
+                        ultimoIndiceLeido++;
+                    }
+                }
+
+                if (!fcf.getRenglones().isEmpty()) {
+                    GenericDAO.getGenericDAO().guardar(fcf);
+                }
+            }
+            
             SistemaUsuarios.getInstance().registrarOperacion(Constantes.ActividadFacturarProrrateo, "Facturo el prorrateo ");
         } catch (Exception exp) {
             String stakTrace = util.Util.obtenerStackTraceEnString(exp);
             SistemaUsuarios.getInstance().registrarExcepcion(exp.toString(), stakTrace);
+            throw exp;
         }
         return retorno;
     }
@@ -6337,5 +6732,223 @@ public class SistemaFacturas {
             //Logger.getLogger(Lecheros.class.getName()).log(Level.SEVERE, null, ex);
         }
         return retorno;
+    }
+    
+    public String[] crearFacturasParaAjusteDeContabilidad(Date fecha, double excento, double minimo, double basico) throws Exception {
+        String[] retorno = new String[3];
+        ConfiguracionFacturacion configFact = SistemaMantenimiento.getInstance().devolverConfiguracionFacturacion();
+        double maxConsumoFinal = configFact.getMaximoBoletaContadoFinal();
+        boolean hayParaFacturar = true;
+        while(hayParaFacturar) {
+            Factura f = new Factura();
+            f.setEsManual(false);
+            f.setFecha(fecha);
+            f.setEstaPaga(true);
+            long numeroCF = configFact.getUltimoNumeroFactura();
+            numeroCF++;
+            configFact.setUltimoNumeroFactura(numeroCF);
+            f.setNumero(numeroCF);
+            List<FacturaRenglon> renglonesCF = new ArrayList<>();
+            f.setRenglones(renglonesCF);
+            Cliente cli = SistemaMantenimiento.getInstance().devolverClientePorCodigo("0.2");
+            f.setCliente(cli);
+            f.setReparto(cli.getReparto());
+            
+            DocumentoDeVenta tipoDocVenta = SistemaMantenimiento.getInstance().devolverDocumentoDeVentaPorNombre("Contado");
+            f.setTipoDocumento(tipoDocVenta);
+            
+            if(excento > maxConsumoFinal) {
+                excento = excento - maxConsumoFinal;
+                FacturaRenglon fr = new FacturaRenglon();
+                fr.setFactura(f);
+                fr.setDescuento(0);
+                Articulo art = SistemaMantenimientoArticulos.getInstance().devolverArticuloPorCodigo(77777);
+                fr.setArticulo(art);
+                fr.setCantidad(maxConsumoFinal);
+                fr.setIva(0);
+                fr.setPrecio(1);
+                fr.setSubtotal(maxConsumoFinal);
+                fr.setTotal(maxConsumoFinal);
+
+                f.getRenglones().add(fr);
+
+                f.setSubtotal(maxConsumoFinal);
+                f.setTotal(maxConsumoFinal);
+                f.setTotalBasico(0);
+                f.setTotalMinimo(0);
+
+                GenericDAO.getGenericDAO().guardar(f);
+            } else {
+                if(excento > 0) {
+                    FacturaRenglon fr = new FacturaRenglon();
+                    fr.setFactura(f);
+                    fr.setDescuento(0);
+                    Articulo artExcento = SistemaMantenimientoArticulos.getInstance().devolverArticuloPorCodigo(77777);
+                    fr.setArticulo(artExcento);
+                    fr.setCantidad(excento);
+                    fr.setIva(0);
+                    fr.setPrecio(1);
+                    fr.setSubtotal(excento);
+                    fr.setTotal(excento);
+
+                    f.getRenglones().add(fr);
+
+                    f.setSubtotal(excento);
+                    f.setTotal(excento);
+                    f.setTotalBasico(0);
+                    f.setTotalMinimo(0);
+
+                    excento = 0;
+                }
+            }
+            
+            if(excento <= 0 && minimo + f.getTotal() > maxConsumoFinal) {
+                minimo = minimo - (maxConsumoFinal - f.getTotal());
+                FacturaRenglon frMinimo = new FacturaRenglon();
+                frMinimo.setFactura(f);
+                Articulo prodMinimo = SistemaMantenimientoArticulos.getInstance().devolverArticuloPorCodigo(44444);
+                frMinimo.setArticulo(prodMinimo);
+                frMinimo.setCantidad(maxConsumoFinal - f.getTotal());
+                frMinimo.setPrecio(1);
+                double iva = ((maxConsumoFinal - f.getTotal()) * 9.1) / 100;
+                frMinimo.setIva(iva);
+                frMinimo.setTotal(maxConsumoFinal - f.getTotal());
+                frMinimo.setSubtotal((maxConsumoFinal - f.getTotal()) - iva);
+                f.getRenglones().add(frMinimo);
+                
+                f.setSubtotal(f.getSubtotal()+frMinimo.getSubtotal());
+                f.setTotalMinimo(f.getTotalMinimo() + frMinimo.getIva());
+                f.setTotal(f.getTotal()+frMinimo.getTotal());
+                
+                GenericDAO.getGenericDAO().guardar(f);
+            } else {
+                if(excento <= 0) {
+                    if(minimo > 0) {
+                        FacturaRenglon frMinimo = new FacturaRenglon();
+                        frMinimo.setFactura(f);
+                        Articulo prodMinimo = SistemaMantenimientoArticulos.getInstance().devolverArticuloPorCodigo(44444);
+                        frMinimo.setArticulo(prodMinimo);
+                        frMinimo.setCantidad(minimo);
+                        frMinimo.setPrecio(1);
+                        double iva = (minimo * 9.1) / 100;
+                        frMinimo.setIva(iva);
+                        frMinimo.setTotal(minimo);
+                        frMinimo.setSubtotal(minimo - iva);
+                        f.getRenglones().add(frMinimo);
+
+                        f.setSubtotal(f.getSubtotal() + frMinimo.getSubtotal());
+                        f.setTotalMinimo(f.getTotalMinimo() + frMinimo.getIva());
+                        f.setTotal(f.getTotal() + frMinimo.getTotal());
+
+                        minimo = 0;
+                    }
+                }
+            }
+            
+            if (excento <= 0 && minimo <= 0 && basico + f.getTotal() > maxConsumoFinal) {
+                basico = basico - (maxConsumoFinal - f.getTotal());
+                FacturaRenglon frBasico = new FacturaRenglon();
+                frBasico.setFactura(f);
+                Articulo prodBasico = SistemaMantenimientoArticulos.getInstance().devolverArticuloPorCodigo(55555);
+                frBasico.setArticulo(prodBasico);
+                frBasico.setCantidad(maxConsumoFinal - f.getTotal());
+                frBasico.setPrecio(1);
+                double ivaBasico = ((maxConsumoFinal - f.getTotal()) * 18.03) / 100;
+                frBasico.setIva(ivaBasico);
+                frBasico.setTotal(maxConsumoFinal - f.getTotal());
+                frBasico.setSubtotal((maxConsumoFinal - f.getTotal()) - ivaBasico);
+                f.getRenglones().add(frBasico);
+
+                f.setSubtotal(f.getSubtotal() + frBasico.getSubtotal());
+                f.setTotalBasico(f.getTotalBasico() + frBasico.getIva());
+                f.setTotal(f.getTotal() + frBasico.getTotal());
+
+                GenericDAO.getGenericDAO().guardar(f);
+            } else {
+                if (excento <= 0 && minimo <= 0){
+                    FacturaRenglon frBasico = new FacturaRenglon();
+                    frBasico.setFactura(f);
+                    Articulo prodBasico = SistemaMantenimientoArticulos.getInstance().devolverArticuloPorCodigo(55555);
+                    frBasico.setArticulo(prodBasico);
+                    frBasico.setCantidad(basico);
+                    frBasico.setPrecio(1);
+                    double ivaBasico = (basico * 18.03) / 100;
+                    frBasico.setIva(ivaBasico);
+                    frBasico.setTotal(basico);
+                    frBasico.setSubtotal(basico - ivaBasico);
+                    f.getRenglones().add(frBasico);
+
+                    f.setSubtotal(f.getSubtotal() + frBasico.getSubtotal());
+                    f.setTotalBasico(f.getTotalMinimo() + frBasico.getIva());
+                    f.setTotal(f.getTotal() + frBasico.getTotal());
+
+                    GenericDAO.getGenericDAO().guardar(f);
+
+                    basico = 0;
+                    hayParaFacturar = false;
+                }
+            }
+             
+        }
+        return retorno;
+        
+    }
+    
+    public void restarDiferenciaExcentoDivididoEntreTodasLasFacturasProrrateo(Date fecha, double cantExcento) throws Exception {
+        List<Factura> facturas = this.devolverFacturasEntreFechas(fecha, fecha, false);
+        List<Factura> facturasConExcento = new ArrayList<Factura>();
+        for(Factura f : facturas) {
+            boolean tieneExcento = false;
+            for(FacturaRenglon fr : f.getRenglones()) {
+                if(esLeche(fr.getArticulo())) {
+                    tieneExcento = true;
+                    break;
+                }
+            }
+            if(tieneExcento) {
+                facturasConExcento.add(f);
+            }
+        }
+        double cantExcentoQueQueda = cantExcento;
+        double cantBoletasProcesadas = 0;
+        for(Factura f : facturasConExcento) {
+            double cantExcentoARestar = 0;
+            if(cantBoletasProcesadas < facturasConExcento.size()) {
+                cantExcentoARestar = cantExcentoQueQueda / (facturasConExcento.size() - cantBoletasProcesadas);
+            } else {
+                cantExcentoARestar = cantExcentoQueQueda;
+            }
+            for(FacturaRenglon fr : f.getRenglones()) {
+                if(esLeche(fr.getArticulo())) {
+                    if(fr.getTotal() > cantExcentoARestar) {
+                        //Resto la cantidad
+                        double cantidadRestada = 0;
+                        Precio p = SistemaMantenimientoArticulos.getInstance().devolverPrecioParaFechaPorArticulo(fr.getArticulo(), fecha);
+                        Double cantARestar = cantExcentoARestar / p.getPrecioVenta();
+                        int cantLitrosARestar = cantARestar.intValue();
+                        if(cantLitrosARestar > 0) {
+                            f.setSubtotal(f.getSubtotal() - fr.getSubtotal());
+                            f.setTotal(f.getTotal() - fr.getTotal());
+                            //Actualizo el renglon y el total de la factura
+                            fr.setCantidad(fr.getCantidad() - cantLitrosARestar);
+                        
+                            cantidadRestada = fr.getTotal() - (p.getPrecioVenta()*fr.getCantidad());
+                            
+                            cantExcentoQueQueda = cantExcentoQueQueda - cantidadRestada;
+                            
+                            fr.setSubtotal(p.getPrecioVenta()*fr.getCantidad());
+                            fr.setTotal(p.getPrecioVenta()*fr.getCantidad());
+
+                            f.setSubtotal(f.getSubtotal() + fr.getSubtotal());
+                            f.setTotal(f.getSubtotal() + fr.getSubtotal());
+                            cantBoletasProcesadas++;
+                            //GenericDAO.getGenericDAO().actualizar(fr);
+                            break;
+                        }
+                    }
+                }
+            }
+            GenericDAO.getGenericDAO().actualizar(f);
+        }
     }
 }
