@@ -20,6 +20,8 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.swing.JOptionPane;
 import javax.swing.JTextField;
 import javax.swing.SwingUtilities;
@@ -614,6 +616,8 @@ public class FacturarProrrateoIngresandoTotales extends javax.swing.JDialog {
 
             Articulo lecheUltraDiferenciada = null;
             Precio pLecheUltraDiferenciada = null;
+            detallesArticulosParaFacturacion[2][0] = "0";
+            detallesArticulosParaFacturacion[2][4] = "0";
             if ((grupoLecheUltraDiferenciada != null ? !grupoLecheUltraDiferenciada.getArticulos().isEmpty() : false)) {
                 lecheUltraDiferenciada = grupoLecheUltraDiferenciada.getArticulos().get(0);
                 pLecheUltraDiferenciada = SistemaMantenimientoArticulos.getInstance().devolverPrecioParaFechaPorArticulo(lecheUltraDiferenciada, jDateChooserHastaFecha.getDate());
@@ -664,9 +668,19 @@ public class FacturarProrrateoIngresandoTotales extends javax.swing.JDialog {
                     String[] facturarProrrateo;
                     
                     if (SistemaMantenimiento.getInstance().devolverConfiguracionFacturacion().isSoloLeche()) {
-                        facturarProrrateo = sisFacturas.facturarProrrateoIngresandoTotales(jDateChooserDesdeFecha.getDate(), jDateChooserHastaFecha.getDate(), r, detallesArticulosParaFacturacion, totExcento , prodsMinimo, prodsBasico, true, true);
+                        try {
+                            facturarProrrateo = sisFacturas.facturarProrrateoIngresandoTotales(jDateChooserDesdeFecha.getDate(), jDateChooserHastaFecha.getDate(), r, detallesArticulosParaFacturacion, totExcento , prodsMinimo, prodsBasico, true, true);
+                        } catch (Exception ex) {
+                            jLabelEspera.setVisible(false);
+                            JOptionPane.showMessageDialog(FacturarProrrateoIngresandoTotales.this, Constantes.MensajeDeErrorGenerico, "Error", JOptionPane.ERROR_MESSAGE);
+                        }
                     } else {
-                        facturarProrrateo = sisFacturas.facturarProrrateoIngresandoTotales(jDateChooserDesdeFecha.getDate(), jDateChooserHastaFecha.getDate(), r, detallesArticulosParaFacturacion, totExcento, prodsMinimo, prodsBasico, true, true);
+                        try {
+                            facturarProrrateo = sisFacturas.facturarProrrateoIngresandoTotales(jDateChooserDesdeFecha.getDate(), jDateChooserHastaFecha.getDate(), r, detallesArticulosParaFacturacion, totExcento, prodsMinimo, prodsBasico, true, true);
+                        } catch (Exception ex) {
+                            jLabelEspera.setVisible(false);
+                            JOptionPane.showMessageDialog(FacturarProrrateoIngresandoTotales.this, Constantes.MensajeDeErrorGenerico, "Error", JOptionPane.ERROR_MESSAGE);
+                        }
                     }
 
                     SwingUtilities.invokeLater(new Runnable() {
