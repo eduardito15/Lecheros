@@ -169,21 +169,40 @@ public class SistemaInformesGiamo {
                         Calendar calParaDia = Calendar.getInstance();
                         calParaDia.setTime(f.getFecha());
                         int dia = calParaDia.get(Calendar.DAY_OF_MONTH);
+                        
+                        if(f.getTipoDocumento().isSuma()) {
                        
-                        if (ventaExcenta != 0) {
-                            writer.write(dia + "," + "1111" + "," + "5111" + "," + "B Contado A " + f.getNumero() + "," + f.getCliente().getRut() + "," + "0" + "," + Double.toString(ventaExcenta).replace(",", ".") + "," + "0" + "," + "0" + "," + "0.0000000" + "," + "I");
-                            //String str = new String(System.getProperty("line.separator").getBytes(), StandardCharsets.UTF_8);
-                            writer.write(str);
-                        }
-                        if (ventaMinimo != 0) {
-                            writer.write(dia + "," + "1111" + "," + "5113" + "," + "B Contado A " + f.getNumero() + "," + f.getCliente().getRut() + "," + "0" + "," + Double.toString(ventaMinimo).replace(",", ".") + "," + "16" + "," + df.format(ventaIvaMinimo).replace(",", ".") + "," + "0.0000000" + "," + "I");
-                            //String str = new String(System.getProperty("line.separator").getBytes(), StandardCharsets.UTF_8);
-                            writer.write(str);
-                        }
-                        if (ventaBasico != 0) {
-                            writer.write(dia + "," + "1111" + "," + "5112" + "," + "B Contado A " + f.getNumero() + "," + f.getCliente().getRut() + "," + "0" + "," + df.format(ventaBasico).replace(",", ".") + "," + "17" + "," + df.format(ventaIvaBasico).replace(",", ".") + "," + "0.0000000" + "," + "I");   
-                            //String str = new String(System.getProperty("line.separator").getBytes(), StandardCharsets.UTF_8);
-                            writer.write(str);
+                            if (ventaExcenta != 0) {
+                                writer.write(dia + "," + "1111" + "," + "5111" + "," + "B Contado A " + f.getNumero() + "," + f.getCliente().getRut() + "," + "0" + "," + Double.toString(ventaExcenta).replace(",", ".") + "," + "0" + "," + "0" + "," + "0.0000000" + "," + "I");
+                                //String str = new String(System.getProperty("line.separator").getBytes(), StandardCharsets.UTF_8);
+                                writer.write(str);
+                            }
+                            if (ventaMinimo != 0) {
+                                writer.write(dia + "," + "1111" + "," + "5113" + "," + "B Contado A " + f.getNumero() + "," + f.getCliente().getRut() + "," + "0" + "," + Double.toString(ventaMinimo).replace(",", ".") + "," + "16" + "," + df.format(ventaIvaMinimo).replace(",", ".") + "," + "0.0000000" + "," + "I");
+                                //String str = new String(System.getProperty("line.separator").getBytes(), StandardCharsets.UTF_8);
+                                writer.write(str);
+                            }
+                            if (ventaBasico != 0) {
+                                writer.write(dia + "," + "1111" + "," + "5112" + "," + "B Contado A " + f.getNumero() + "," + f.getCliente().getRut() + "," + "0" + "," + df.format(ventaBasico).replace(",", ".") + "," + "17" + "," + df.format(ventaIvaBasico).replace(",", ".") + "," + "0.0000000" + "," + "I");   
+                                //String str = new String(System.getProperty("line.separator").getBytes(), StandardCharsets.UTF_8);
+                                writer.write(str);
+                            }
+                        } else {
+                            if (ventaExcenta != 0) {
+                                writer.write(dia + "," + "1111" + "," + "5111" + "," + "B Nota de Devolución A " + f.getNumero() + "," + f.getCliente().getRut() + "," + "0" + ",-" + Double.toString(ventaExcenta).replace(",", ".") + "," + "0" + "," + "0" + "," + "0.0000000" + "," + "I");
+                                //String str = new String(System.getProperty("line.separator").getBytes(), StandardCharsets.UTF_8);
+                                writer.write(str);
+                            }
+                            if (ventaMinimo != 0) {
+                                writer.write(dia + "," + "1111" + "," + "5113" + "," + "B Nota de Devolución A " + f.getNumero() + "," + f.getCliente().getRut() + "," + "0" + ",-" + Double.toString(ventaMinimo).replace(",", ".") + "," + "16" + ",-" + df.format(ventaIvaMinimo).replace(",", ".") + "," + "0.0000000" + "," + "I");
+                                //String str = new String(System.getProperty("line.separator").getBytes(), StandardCharsets.UTF_8);
+                                writer.write(str);
+                            }
+                            if (ventaBasico != 0) {
+                                writer.write(dia + "," + "1111" + "," + "5112" + "," + "B Nota de Devolución A " + f.getNumero() + "," + f.getCliente().getRut() + "," + "0" + ",-" + df.format(ventaBasico).replace(",", ".") + "," + "17" + ",-" + df.format(ventaIvaBasico).replace(",", ".") + "," + "0.0000000" + "," + "I");
+                                //String str = new String(System.getProperty("line.separator").getBytes(), StandardCharsets.UTF_8);
+                                writer.write(str);
+                            }
                         }
                     }
                 //}
