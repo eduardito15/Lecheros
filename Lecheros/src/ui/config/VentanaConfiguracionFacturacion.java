@@ -5,6 +5,10 @@
  */
 package ui.config;
 
+import java.awt.*;
+import javax.swing.*;
+import javax.swing.GroupLayout;
+import javax.swing.LayoutStyle;
 import dominio.ConfiguracionFacturacion;
 import javax.swing.JOptionPane;
 import sistema.SistemaMantenimiento;
@@ -48,159 +52,171 @@ public class VentanaConfiguracionFacturacion extends javax.swing.JDialog {
      */
     @SuppressWarnings("unchecked")
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
+    // Generated using JFormDesigner Evaluation license - Eduardo Vecino
     private void initComponents() {
+        jLabel1 = new JLabel();
+        jRadioButtonModoDetallado = new JRadioButton();
+        jRadioButtonModoNoDetallado = new JRadioButton();
+        jButtonGuardar = new JButton();
+        jButtonSalir = new JButton();
+        jRadioButtonSoloLeche = new JRadioButton();
+        jLabel2 = new JLabel();
+        jTextFieldProximoNumeroDeFactura = new JTextField();
+        jLabel3 = new JLabel();
+        jTextFieldporcentajeFacturacion = new JTextField();
+        jLabel4 = new JLabel();
+        jTextFieldMaximoBoletaConsumoFinal = new JTextField();
+        jLabel5 = new JLabel();
+        jRadioButtonDetalladoPorArt = new JRadioButton();
+        jRadioButtonDetalladoPorGrupo = new JRadioButton();
+        jRadioButtonIngresarPreciosAlIngresarFacturas = new JRadioButton();
 
-        buttonGroup1 = new javax.swing.ButtonGroup();
-        buttonGroup2 = new javax.swing.ButtonGroup();
-        jLabel1 = new javax.swing.JLabel();
-        jRadioButtonModoDetallado = new javax.swing.JRadioButton();
-        jRadioButtonModoNoDetallado = new javax.swing.JRadioButton();
-        jButtonGuardar = new javax.swing.JButton();
-        jButtonSalir = new javax.swing.JButton();
-        jRadioButtonSoloLeche = new javax.swing.JRadioButton();
-        jLabel2 = new javax.swing.JLabel();
-        jTextFieldProximoNumeroDeFactura = new javax.swing.JTextField();
-        jLabel3 = new javax.swing.JLabel();
-        jTextFieldporcentajeFacturacion = new javax.swing.JTextField();
-        jLabel4 = new javax.swing.JLabel();
-        jTextFieldMaximoBoletaConsumoFinal = new javax.swing.JTextField();
-        jLabel5 = new javax.swing.JLabel();
-        jRadioButtonDetalladoPorArt = new javax.swing.JRadioButton();
-        jRadioButtonDetalladoPorGrupo = new javax.swing.JRadioButton();
-        jRadioButtonIngresarPreciosAlIngresarFacturas = new javax.swing.JRadioButton();
+        //======== this ========
+        setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
+        setTitle("Configuraci\u00f3n de Facturaci\u00f3n");
+        Container contentPane = getContentPane();
 
-        setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
-        setTitle("Configuración de Facturación");
+        //---- jLabel1 ----
+        jLabel1.setFont(new Font("Lucida Grande", Font.BOLD, 14));
+        jLabel1.setText("Configuraci\u00f3n de Facturaci\u00f3n");
 
-        jLabel1.setFont(new java.awt.Font("Lucida Grande", 1, 14)); // NOI18N
-        jLabel1.setText("Configuración de Facturación");
-
-        buttonGroup1.add(jRadioButtonModoDetallado);
+        //---- jRadioButtonModoDetallado ----
         jRadioButtonModoDetallado.setSelected(true);
         jRadioButtonModoDetallado.setText("Detallado");
 
-        buttonGroup1.add(jRadioButtonModoNoDetallado);
+        //---- jRadioButtonModoNoDetallado ----
         jRadioButtonModoNoDetallado.setText("No Detallado ");
 
+        //---- jButtonGuardar ----
         jButtonGuardar.setText("Guardar");
-        jButtonGuardar.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jButtonGuardarActionPerformed(evt);
-            }
-        });
+        jButtonGuardar.addActionListener(e -> jButtonGuardarActionPerformed(e));
 
+        //---- jButtonSalir ----
         jButtonSalir.setText("Salir");
-        jButtonSalir.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jButtonSalirActionPerformed(evt);
-            }
-        });
+        jButtonSalir.addActionListener(e -> jButtonSalirActionPerformed(e));
 
+        //---- jRadioButtonSoloLeche ----
         jRadioButtonSoloLeche.setText("Solo Leche");
 
+        //---- jLabel2 ----
         jLabel2.setText("Proximo Numero de Factura:");
 
+        //---- jTextFieldProximoNumeroDeFactura ----
         jTextFieldProximoNumeroDeFactura.setText("1");
 
-        jLabel3.setText("Porcentaje de Facturación:");
+        //---- jLabel3 ----
+        jLabel3.setText("Porcentaje de Facturaci\u00f3n:");
 
+        //---- jTextFieldporcentajeFacturacion ----
         jTextFieldporcentajeFacturacion.setText("95");
 
+        //---- jLabel4 ----
         jLabel4.setText("%");
 
+        //---- jLabel5 ----
         jLabel5.setText("Maximo boleta CF:");
 
-        buttonGroup2.add(jRadioButtonDetalladoPorArt);
-        jRadioButtonDetalladoPorArt.setText("Por Artículo");
+        //---- jRadioButtonDetalladoPorArt ----
+        jRadioButtonDetalladoPorArt.setText("Por Art\u00edculo");
 
-        buttonGroup2.add(jRadioButtonDetalladoPorGrupo);
-        jRadioButtonDetalladoPorGrupo.setText("Por Grupo de Artículo");
+        //---- jRadioButtonDetalladoPorGrupo ----
+        jRadioButtonDetalladoPorGrupo.setText("Por Grupo de Art\u00edculo");
 
+        //---- jRadioButtonIngresarPreciosAlIngresarFacturas ----
         jRadioButtonIngresarPreciosAlIngresarFacturas.setText("Ingresar Precios de Venta al ingresar Facturas");
 
-        javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
-        getContentPane().setLayout(layout);
-        layout.setHorizontalGroup(
-            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(layout.createSequentialGroup()
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(layout.createSequentialGroup()
-                        .addGap(39, 39, 39)
-                        .addComponent(jLabel1))
-                    .addGroup(layout.createSequentialGroup()
-                        .addGap(96, 96, 96)
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                            .addComponent(jButtonGuardar, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                            .addComponent(jButtonSalir, javax.swing.GroupLayout.PREFERRED_SIZE, 93, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                    .addGroup(layout.createSequentialGroup()
-                        .addGap(29, 29, 29)
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addGroup(layout.createSequentialGroup()
-                                .addComponent(jRadioButtonDetalladoPorArt)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(jRadioButtonDetalladoPorGrupo))
-                            .addGroup(layout.createSequentialGroup()
-                                .addComponent(jRadioButtonModoDetallado)
-                                .addGap(18, 18, 18)
-                                .addComponent(jRadioButtonModoNoDetallado))))
-                    .addGroup(layout.createSequentialGroup()
-                        .addContainerGap()
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(jRadioButtonIngresarPreciosAlIngresarFacturas)
-                            .addGroup(layout.createSequentialGroup()
-                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                                    .addComponent(jLabel2)
-                                    .addComponent(jLabel5)
-                                    .addComponent(jRadioButtonSoloLeche)
-                                    .addComponent(jLabel3))
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                                    .addComponent(jTextFieldMaximoBoletaConsumoFinal)
-                                    .addComponent(jTextFieldProximoNumeroDeFactura)
-                                    .addComponent(jTextFieldporcentajeFacturacion, javax.swing.GroupLayout.DEFAULT_SIZE, 100, Short.MAX_VALUE))
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(jLabel4)))))
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+        GroupLayout contentPaneLayout = new GroupLayout(contentPane);
+        contentPane.setLayout(contentPaneLayout);
+        contentPaneLayout.setHorizontalGroup(
+            contentPaneLayout.createParallelGroup()
+                .addGroup(contentPaneLayout.createSequentialGroup()
+                    .addGroup(contentPaneLayout.createParallelGroup()
+                        .addGroup(contentPaneLayout.createSequentialGroup()
+                            .addGap(39, 39, 39)
+                            .addComponent(jLabel1))
+                        .addGroup(contentPaneLayout.createSequentialGroup()
+                            .addGap(96, 96, 96)
+                            .addGroup(contentPaneLayout.createParallelGroup(GroupLayout.Alignment.LEADING, false)
+                                .addComponent(jButtonGuardar, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                .addComponent(jButtonSalir, GroupLayout.PREFERRED_SIZE, 93, GroupLayout.PREFERRED_SIZE)))
+                        .addGroup(contentPaneLayout.createSequentialGroup()
+                            .addGap(29, 29, 29)
+                            .addGroup(contentPaneLayout.createParallelGroup()
+                                .addGroup(contentPaneLayout.createSequentialGroup()
+                                    .addComponent(jRadioButtonDetalladoPorArt)
+                                    .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
+                                    .addComponent(jRadioButtonDetalladoPorGrupo))
+                                .addGroup(contentPaneLayout.createSequentialGroup()
+                                    .addComponent(jRadioButtonModoDetallado)
+                                    .addGap(18, 18, 18)
+                                    .addComponent(jRadioButtonModoNoDetallado))))
+                        .addGroup(contentPaneLayout.createSequentialGroup()
+                            .addContainerGap()
+                            .addGroup(contentPaneLayout.createParallelGroup()
+                                .addComponent(jRadioButtonIngresarPreciosAlIngresarFacturas)
+                                .addGroup(contentPaneLayout.createSequentialGroup()
+                                    .addGroup(contentPaneLayout.createParallelGroup(GroupLayout.Alignment.TRAILING)
+                                        .addComponent(jLabel2)
+                                        .addComponent(jLabel5)
+                                        .addComponent(jRadioButtonSoloLeche)
+                                        .addComponent(jLabel3))
+                                    .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
+                                    .addGroup(contentPaneLayout.createParallelGroup(GroupLayout.Alignment.LEADING, false)
+                                        .addComponent(jTextFieldMaximoBoletaConsumoFinal)
+                                        .addComponent(jTextFieldProximoNumeroDeFactura)
+                                        .addComponent(jTextFieldporcentajeFacturacion, GroupLayout.DEFAULT_SIZE, 100, Short.MAX_VALUE))
+                                    .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
+                                    .addComponent(jLabel4)))))
+                    .addContainerGap(GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
-        layout.setVerticalGroup(
-            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(layout.createSequentialGroup()
-                .addContainerGap()
-                .addComponent(jLabel1)
-                .addGap(18, 18, 18)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jRadioButtonModoDetallado)
-                    .addComponent(jRadioButtonModoNoDetallado))
-                .addGap(18, 18, 18)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jRadioButtonDetalladoPorArt)
-                    .addComponent(jRadioButtonDetalladoPorGrupo))
-                .addGap(18, 18, 18)
-                .addComponent(jRadioButtonSoloLeche)
-                .addGap(18, 18, 18)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jLabel2)
-                    .addComponent(jTextFieldProximoNumeroDeFactura, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jLabel3)
-                    .addComponent(jTextFieldporcentajeFacturacion, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jLabel4))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jTextFieldMaximoBoletaConsumoFinal, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jLabel5))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jRadioButtonIngresarPreciosAlIngresarFacturas)
-                .addGap(18, 22, Short.MAX_VALUE)
-                .addComponent(jButtonGuardar)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jButtonSalir)
-                .addGap(20, 20, 20))
+        contentPaneLayout.setVerticalGroup(
+            contentPaneLayout.createParallelGroup()
+                .addGroup(contentPaneLayout.createSequentialGroup()
+                    .addContainerGap()
+                    .addComponent(jLabel1)
+                    .addGap(18, 18, 18)
+                    .addGroup(contentPaneLayout.createParallelGroup(GroupLayout.Alignment.BASELINE)
+                        .addComponent(jRadioButtonModoDetallado)
+                        .addComponent(jRadioButtonModoNoDetallado))
+                    .addGap(18, 18, 18)
+                    .addGroup(contentPaneLayout.createParallelGroup(GroupLayout.Alignment.BASELINE)
+                        .addComponent(jRadioButtonDetalladoPorArt)
+                        .addComponent(jRadioButtonDetalladoPorGrupo))
+                    .addGap(18, 18, 18)
+                    .addComponent(jRadioButtonSoloLeche)
+                    .addGap(18, 18, 18)
+                    .addGroup(contentPaneLayout.createParallelGroup(GroupLayout.Alignment.BASELINE)
+                        .addComponent(jLabel2)
+                        .addComponent(jTextFieldProximoNumeroDeFactura, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
+                    .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
+                    .addGroup(contentPaneLayout.createParallelGroup(GroupLayout.Alignment.BASELINE)
+                        .addComponent(jLabel3)
+                        .addComponent(jTextFieldporcentajeFacturacion, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
+                        .addComponent(jLabel4))
+                    .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
+                    .addGroup(contentPaneLayout.createParallelGroup(GroupLayout.Alignment.BASELINE)
+                        .addComponent(jTextFieldMaximoBoletaConsumoFinal, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
+                        .addComponent(jLabel5))
+                    .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
+                    .addComponent(jRadioButtonIngresarPreciosAlIngresarFacturas)
+                    .addGap(18, 22, Short.MAX_VALUE)
+                    .addComponent(jButtonGuardar)
+                    .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
+                    .addComponent(jButtonSalir)
+                    .addGap(20, 20, 20))
         );
-
         pack();
         setLocationRelativeTo(null);
+
+        //---- buttonGroup1 ----
+        ButtonGroup buttonGroup1 = new ButtonGroup();
+        buttonGroup1.add(jRadioButtonModoDetallado);
+        buttonGroup1.add(jRadioButtonModoNoDetallado);
+
+        //---- buttonGroup2 ----
+        ButtonGroup buttonGroup2 = new ButtonGroup();
+        buttonGroup2.add(jRadioButtonDetalladoPorArt);
+        buttonGroup2.add(jRadioButtonDetalladoPorGrupo);
     }// </editor-fold>//GEN-END:initComponents
 
     private void jButtonGuardarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonGuardarActionPerformed
@@ -277,23 +293,22 @@ public class VentanaConfiguracionFacturacion extends javax.swing.JDialog {
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.ButtonGroup buttonGroup1;
-    private javax.swing.ButtonGroup buttonGroup2;
-    private javax.swing.JButton jButtonGuardar;
-    private javax.swing.JButton jButtonSalir;
-    private javax.swing.JLabel jLabel1;
-    private javax.swing.JLabel jLabel2;
-    private javax.swing.JLabel jLabel3;
-    private javax.swing.JLabel jLabel4;
-    private javax.swing.JLabel jLabel5;
-    private javax.swing.JRadioButton jRadioButtonDetalladoPorArt;
-    private javax.swing.JRadioButton jRadioButtonDetalladoPorGrupo;
-    private javax.swing.JRadioButton jRadioButtonIngresarPreciosAlIngresarFacturas;
-    private javax.swing.JRadioButton jRadioButtonModoDetallado;
-    private javax.swing.JRadioButton jRadioButtonModoNoDetallado;
-    private javax.swing.JRadioButton jRadioButtonSoloLeche;
-    private javax.swing.JTextField jTextFieldMaximoBoletaConsumoFinal;
-    private javax.swing.JTextField jTextFieldProximoNumeroDeFactura;
-    private javax.swing.JTextField jTextFieldporcentajeFacturacion;
+    // Generated using JFormDesigner Evaluation license - Eduardo Vecino
+    private JLabel jLabel1;
+    private JRadioButton jRadioButtonModoDetallado;
+    private JRadioButton jRadioButtonModoNoDetallado;
+    private JButton jButtonGuardar;
+    private JButton jButtonSalir;
+    private JRadioButton jRadioButtonSoloLeche;
+    private JLabel jLabel2;
+    private JTextField jTextFieldProximoNumeroDeFactura;
+    private JLabel jLabel3;
+    private JTextField jTextFieldporcentajeFacturacion;
+    private JLabel jLabel4;
+    private JTextField jTextFieldMaximoBoletaConsumoFinal;
+    private JLabel jLabel5;
+    private JRadioButton jRadioButtonDetalladoPorArt;
+    private JRadioButton jRadioButtonDetalladoPorGrupo;
+    private JRadioButton jRadioButtonIngresarPreciosAlIngresarFacturas;
     // End of variables declaration//GEN-END:variables
 }

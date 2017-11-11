@@ -224,6 +224,7 @@ public class IngresarFacturasMovilRelece extends javax.swing.JDialog {
 
     private void jButtonIngresarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonIngresarActionPerformed
         // TODO add your handling code here:
+        inicializarTableResultado();
         if("".equals(jTextFieldRutaArchivo.getText().trim())){
             //Es vacio el campo que lleva la ruta del archivo
             JOptionPane.showMessageDialog(this, "Debe seleccionar un archivo .xml del cual ingresar las boletas. El archivo debe ser descargado desde el sistema de PS", "Información", JOptionPane.INFORMATION_MESSAGE);
@@ -234,6 +235,8 @@ public class IngresarFacturasMovilRelece extends javax.swing.JDialog {
                 jTextFieldRutaArchivo.setEnabled(false);
                 jButtonBuscar.setEnabled(false);
                 jLabelEspera.setVisible(true);
+                jButtonSalir.setEnabled(false);
+                jButtonIngresar.setEnabled(false);
                 Thread worker = new Thread() {
                     public void run() {
 
@@ -245,6 +248,8 @@ public class IngresarFacturasMovilRelece extends javax.swing.JDialog {
                                     jTextFieldRutaArchivo.setEnabled(true);
                                     jButtonBuscar.setEnabled(true);
                                     jLabelEspera.setVisible(false);
+                                    jButtonSalir.setEnabled(true);
+                                    jButtonIngresar.setEnabled(true);
                                     if(!resultado.isEmpty()){
                                         String[] cantIngresadasCorrectamente = resultado.get(resultado.size()-1);
                                         jLabelCantiIngresadasCorrectamente.setText(cantIngresadasCorrectamente[0]);

@@ -25,7 +25,7 @@ public class Login extends javax.swing.JFrame {
      */
     public Login() {
         initComponents();
-        jLabelVersion.setText(Lecheros.nombreEmpresa + " Versión 3.11");
+        jLabelVersion.setText(Lecheros.nombreEmpresa + " Versión 3.13");
         jLabelEspera.setVisible(false);
         jTextFieldNombre.requestFocus();
         jTextFieldNombre.selectAll();

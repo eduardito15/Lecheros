@@ -32,6 +32,7 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.logging.Level;
 import org.apache.log4j.Logger;
 import org.hibernate.Query;
 import org.hibernate.Session;
@@ -1091,5 +1092,39 @@ public class SistemaMantenimiento {
         retCantIngresadas[0] = "Ingresados correctamente : " + totalClientesIngresados;
         retorno.add(retCantIngresadas);
         return retorno;
+    }
+    
+    public void respaldarBaseDeDatos(String rutaRespaldo) {
+        try {
+            rutaRespaldo = rutaRespaldo + "lecheros.sql";
+            String executeCmd = "mysqldump -u" + "root" + " -p" + "root" + " " + "lecheros" + " -r " + rutaRespaldo;
+            
+            /*NOTE: Executing the command here*/
+            final String cmd = "cmd /c C:\\ && dir && cd C:\\Program Files\\MySQL\\MySQL Server 5.7\\bin && " + executeCmd;
+            //Process runtimeProcess = Runtime.getRuntime().exec("cmd /c start cmd.exe  \" cd C:\\Program Files\\MySQL\\MySQL Server 5.7\\bin &&  " + executeCmd +" && echo end\"");
+            Process runtimeProcess = Runtime.getRuntime().exec(cmd);
+            int processComplete = runtimeProcess.waitFor();
+            
+            /*NOTE: processComplete=0 if correctly executed, will contain other values if not*/
+            if (processComplete == 0) {
+                System.out.println("Backup Complete");
+            } else {
+                System.out.println("Backup Failure");
+            }
+            /*ProcessBuilder pb = new ProcessBuilder(executeCmd);
+            pb.directory(new File("C:\\Program Files\\MySQL\\MySQL Server 5.7\\bin"));
+            pb.inheritIO();
+            Process p = pb.start();
+            try {
+                p.waitFor();
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }*/
+        } catch (IOException ex) {
+            java.util.logging.Logger.getLogger(SistemaMantenimiento.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (InterruptedException ex) {
+            java.util.logging.Logger.getLogger(SistemaMantenimiento.class.getName()).log(Level.SEVERE, null, ex);
+        } 
+
     }
 }
