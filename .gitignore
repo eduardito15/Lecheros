@@ -10,7 +10,7 @@ Lecheros/nbproject/*
 Lecheros/src/hibernate.cfg.xml
 Lecheros/src/hibernate.properties
 Lecheros/src/config.properties
-.idea
+Lecheros/.idea
 
 # Log file
 *.log
