@@ -101,6 +101,7 @@ import ui.mantenimiento.IngresoAutomaticoDePreciosDePromociones;
 import ui.mantenimiento.MantenimientoCoeficientesUtilidadCompras;
 import ui.mantenimiento.MantenimientoGruposDeArticulos;
 import ui.mantenimiento.MantenimientoRepartosCompuestos;
+import ui.mantenimiento.Respaldar;
 import ui.usuarios.Constantes;
 import ui.usuarios.ConsultarLogDeOperaciones;
 import ui.usuarios.MantenimientoRoles;
@@ -165,6 +166,7 @@ public class MenuPrincipal extends javax.swing.JFrame {
         jMenuItem2 = new javax.swing.JMenuItem();
         jMenuItem41 = new javax.swing.JMenuItem();
         jMenuItemCoeficientes = new javax.swing.JMenuItem();
+        jMenuItem40 = new javax.swing.JMenuItem();
         jMenu2 = new javax.swing.JMenu();
         jMenuItem8 = new javax.swing.JMenuItem();
         jMenuItem10 = new javax.swing.JMenuItem();
@@ -429,6 +431,14 @@ public class MenuPrincipal extends javax.swing.JFrame {
             }
         });
         jMenu1.add(jMenuItemCoeficientes);
+
+        jMenuItem40.setText("Respaldar");
+        jMenuItem40.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jMenuItem40ActionPerformed(evt);
+            }
+        });
+        jMenu1.add(jMenuItem40);
 
         jMenuBar1.add(jMenu1);
 
@@ -1910,6 +1920,12 @@ public class MenuPrincipal extends javax.swing.JFrame {
         vredtfp.setVisible(true);
     }//GEN-LAST:event_jMenuItemRestarExcentoDeFacturasActionPerformed
 
+    private void jMenuItem40ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem40ActionPerformed
+        // TODO add your handling code here:
+        Respaldar vr = new Respaldar(this, false);
+        vr.setVisible(true);
+    }//GEN-LAST:event_jMenuItem40ActionPerformed
+
     private void cargarMenuCompras() {
         //jMenuItem1 = new javax.swing.JMenuItem();
         List<DocumentoDeCompra> tiposDocs;
@@ -2062,7 +2078,7 @@ public class MenuPrincipal extends javax.swing.JFrame {
             jMenuItemIngresarFacturasMovilRelece.setVisible(false);
             jMenuItemIngresarFacturasManualesGiamoDesdeArchivo.setVisible(false);
             jMenuItemInformeContadorCerramFacturas.setVisible(false);
-            jMenuItemIngresarClientesPSDesdeArchivo.setVisible(false);
+            //jMenuItemIngresarClientesPSDesdeArchivo.setVisible(false);
             jMenuItemAjustarFacturacion.setVisible(false);
             jMenuItemImprimirGrupoDeFacturasManuales.setVisible(false);
             jMenuItemRestarExcentoDeFacturas.setVisible(false);
@@ -2170,6 +2186,7 @@ public class MenuPrincipal extends javax.swing.JFrame {
     private javax.swing.JMenuItem jMenuItem38;
     private javax.swing.JMenuItem jMenuItem39;
     private javax.swing.JMenuItem jMenuItem4;
+    private javax.swing.JMenuItem jMenuItem40;
     private javax.swing.JMenuItem jMenuItem41;
     private javax.swing.JMenuItem jMenuItem42;
     private javax.swing.JMenuItem jMenuItem43;
