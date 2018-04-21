@@ -24,6 +24,8 @@ import javax.swing.JTextField;
 import sistema.SistemaLiquidaciones;
 import sistema.SistemaMantenimiento;
 import sistema.SistemaUsuarios;
+import ui.clientes.VentanaBuscadorClientePorReparto;
+import ui.facturas.IngresoFacturas;
 import ui.usuarios.Constantes;
 
 /**
@@ -60,7 +62,8 @@ public class IngresoCheque extends javax.swing.JFrame {
         for (Reparto c : repartos) {
             jComboBoxReparto.addItem(c);
         }
-        jTextFieldCliente.requestFocus();
+        jComboBoxReparto.requestFocus();
+        //jTextFieldCliente.requestFocus();
     }
     
     public final void agregarEnterCampoFecha(){
@@ -345,6 +348,12 @@ public class IngresoCheque extends javax.swing.JFrame {
         jLabelFechaIncorrecta.setForeground(new java.awt.Color(255, 51, 51));
         jLabelFechaIncorrecta.setText("Fecha Incorrecta. Ingrese DiaDiaMesMesAñoAño");
 
+        jComboBoxReparto.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyPressed(java.awt.event.KeyEvent evt) {
+                jComboBoxRepartoKeyPressed(evt);
+            }
+        });
+
         jLabel6.setText("Reparto:");
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
@@ -392,11 +401,11 @@ public class IngresoCheque extends javax.swing.JFrame {
             .addGroup(layout.createSequentialGroup()
                 .addGap(17, 17, 17)
                 .addComponent(jLabelTitulo1)
-                .addGap(30, 30, 30)
+                .addGap(35, 35, 35)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jComboBoxReparto, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jLabel6))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel1)
                     .addComponent(jTextFieldCliente, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
@@ -406,7 +415,7 @@ public class IngresoCheque extends javax.swing.JFrame {
                     .addComponent(jDateChooserFecha, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jLabelFechaIncorrecta, javax.swing.GroupLayout.PREFERRED_SIZE, 16, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 7, Short.MAX_VALUE)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(jLabel3)
                     .addComponent(jDateChooserFechaVto, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
@@ -430,9 +439,15 @@ public class IngresoCheque extends javax.swing.JFrame {
     private void jTextFieldClienteKeyPressed(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_jTextFieldClienteKeyPressed
         // TODO add your handling code here:
         if (evt.getKeyCode() == KeyEvent.VK_ENTER) {
+            if (jComboBoxReparto.getSelectedIndex() == 0) {
+                JOptionPane.showMessageDialog(this, "Primero debe seleccionar un reparto.", "Información", JOptionPane.INFORMATION_MESSAGE);
+                jComboBoxReparto.requestFocus();
+            } else {
             if("".equals(jTextFieldCliente.getText().trim())){
                 //Es vacio. Le habro el buscador
-                VentanaBuscadorClienteTodos vbc = new VentanaBuscadorClienteTodos(IngresoCheque.this, true);
+                //VentanaBuscadorClienteTodos vbc = new VentanaBuscadorClienteTodos(IngresoCheque.this, true);
+                VentanaBuscadorClientePorReparto vbc = new VentanaBuscadorClientePorReparto(IngresoCheque.this, true);
+                vbc.setReparto((Reparto) jComboBoxReparto.getSelectedItem());
                 vbc.setVisible(true);
                 this.cliente = vbc.getCliente();
                 jTextFieldCliente.setText(cliente.getNombre());
@@ -456,7 +471,9 @@ public class IngresoCheque extends javax.swing.JFrame {
                     } else {
                         int resp = JOptionPane.showConfirmDialog(this, "No existe un cliente que contenga en el rut: " + fraccionDelRut + " . Desea abrir el buscador de clientes?  ", "Pregunta", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE);
                         if (resp == JOptionPane.YES_OPTION) {
-                            VentanaBuscadorClienteTodos vbc = new VentanaBuscadorClienteTodos(IngresoCheque.this, true);
+                            //VentanaBuscadorClienteTodos vbc = new VentanaBuscadorClienteTodos(IngresoCheque.this, true);
+                            VentanaBuscadorClientePorReparto vbc = new VentanaBuscadorClientePorReparto(IngresoCheque.this, true);
+                            vbc.setReparto((Reparto) jComboBoxReparto.getSelectedItem());
                             vbc.setVisible(true);
                             this.cliente = vbc.getCliente();
                             jTextFieldCliente.setText(cliente.getNombre());
@@ -468,6 +485,7 @@ public class IngresoCheque extends javax.swing.JFrame {
                         }
                     }
                 }
+            }
             }
         }
     }//GEN-LAST:event_jTextFieldClienteKeyPressed
@@ -586,6 +604,19 @@ public class IngresoCheque extends javax.swing.JFrame {
             }
         }
     }//GEN-LAST:event_jTextFieldImporteKeyPressed
+
+    private void jComboBoxRepartoKeyPressed(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_jComboBoxRepartoKeyPressed
+        // TODO add your handling code here:
+        if (evt.getKeyCode() == KeyEvent.VK_ENTER) {
+            if (jComboBoxReparto.getSelectedIndex() == 0) {
+                JOptionPane.showMessageDialog(this, "Debe seleccionar un reparto.", "Información", JOptionPane.INFORMATION_MESSAGE);
+                jComboBoxReparto.requestFocus();
+            } else {
+                jTextFieldCliente.requestFocus();
+                jTextFieldCliente.selectAll();
+            }
+        }
+    }//GEN-LAST:event_jComboBoxRepartoKeyPressed
 
     /**
      * @param args the command line arguments
