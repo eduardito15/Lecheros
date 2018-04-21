@@ -5,7 +5,6 @@
  */
 package ui.liquidaciones;
 
-import ui.clientes.VentanaBuscadorClienteTodos;
 import dominio.Cheque;
 import dominio.Cliente;
 import dominio.Reparto;
@@ -25,7 +24,6 @@ import sistema.SistemaLiquidaciones;
 import sistema.SistemaMantenimiento;
 import sistema.SistemaUsuarios;
 import ui.clientes.VentanaBuscadorClientePorReparto;
-import ui.facturas.IngresoFacturas;
 import ui.usuarios.Constantes;
 
 /**
