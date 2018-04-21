@@ -367,11 +367,11 @@ public class SistemaCompras {
                                 a.setFamilia(SistemaMantenimiento.getInstance().devolverFamiliaPorCodigo(100));
                                 SistemaMantenimientoArticulos.getInstance().actualizarArticulo(a);
                             }
-                            if(a.getFamilia().getCodigo() == 24 || a.getFamilia().getCodigo() == 25 || a.getFamilia().getCodigo() == 26 || a.getCodigo() == 921){
+                            //if(a.getFamilia().getCodigo() == 24 || a.getFamilia().getCodigo() == 25 || a.getFamilia().getCodigo() == 26 || a.getCodigo() == 921){
                                 if(a.getCodigo() != 849 && a.getCodigo() != 835 && a.getCodigo() != 1816 && a.getCodigo() != 868 && a.getCodigo() != 921){
                                     cantidad = eElementCR.getElementsByTagName("Peso").item(0).getTextContent();
                                 } 
-                            }
+                            //}
                             //Aca me fijo si es una boleta con codigo especial que va sin reparto.
                             if("170118".equals(codArt) || "170080".equals(codArt) || "170081".equals(codArt) || "170082".equals(codArt) || "170084".equals(codArt) || "170126".equals(codArt) || "170185".equals(codArt)  ){
                                 Reparto r = SistemaMantenimiento.getInstance().devolverRepartoPorCodigo(0);
