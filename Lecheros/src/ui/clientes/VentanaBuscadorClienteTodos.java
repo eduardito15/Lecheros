@@ -185,6 +185,10 @@ public class VentanaBuscadorClienteTodos extends javax.swing.JDialog {
             if(evt.getKeyCode() == KeyEvent.VK_ENTER){
                  jListResultados.requestFocus();
             }
+            if(evt.getKeyCode() == KeyEvent.VK_DOWN) {
+                jListResultados.requestFocus();
+                jListResultados.setSelectedIndex(0);
+            }
         }
         
     }//GEN-LAST:event_jTextFieldBuscarKeyPressed
@@ -216,6 +220,11 @@ public class VentanaBuscadorClienteTodos extends javax.swing.JDialog {
         if(jListResultados.getSelectedIndex() != -1){
             if (evt.getKeyCode() == KeyEvent.VK_ENTER) {
                 jButtonSeleccionar.doClick();
+            }
+            if(jListResultados.getSelectedIndex() == 0) {
+                if(evt.getKeyCode() == KeyEvent.VK_UP) {
+                    jTextFieldBuscar.requestFocus();
+                }
             }
         }
     }//GEN-LAST:event_jListResultadosKeyPressed

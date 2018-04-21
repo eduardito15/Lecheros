@@ -5,9 +5,9 @@
  */
 package ui.liquidaciones;
 
-import ui.clientes.VentanaBuscadorClienteTodos;
 import dominio.Cheque;
 import dominio.Cliente;
+import dominio.Reparto;
 import java.awt.event.FocusEvent;
 import java.awt.event.FocusListener;
 import java.awt.event.KeyEvent;
@@ -17,11 +17,13 @@ import java.awt.event.MouseListener;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
+import java.util.List;
 import javax.swing.JOptionPane;
 import javax.swing.JTextField;
 import sistema.SistemaLiquidaciones;
 import sistema.SistemaMantenimiento;
 import sistema.SistemaUsuarios;
+import ui.clientes.VentanaBuscadorClientePorReparto;
 import ui.usuarios.Constantes;
 
 /**
@@ -38,6 +40,9 @@ public class IngresoCheque extends javax.swing.JFrame {
     private final SistemaMantenimiento sisMantenimiento;
     private final SistemaLiquidaciones sisLiquidaciones;
     
+    List<Reparto> repartos;
+    
+    
     private boolean mostrarMensajeFechaIncorrecta;
     /**
      * Creates new form IngresoCheque
@@ -50,7 +55,13 @@ public class IngresoCheque extends javax.swing.JFrame {
         mostrarMensajeFechaIncorrecta = true;
         agregarEnterCampoFecha();
         agregarEnterCampoFechaVto();
-        jTextFieldCliente.requestFocus();
+        jComboBoxReparto.addItem("");
+        repartos = sisMantenimiento.devolverRepartos();
+        for (Reparto c : repartos) {
+            jComboBoxReparto.addItem(c);
+        }
+        jComboBoxReparto.requestFocus();
+        //jTextFieldCliente.requestFocus();
     }
     
     public final void agregarEnterCampoFecha(){
@@ -260,6 +271,8 @@ public class IngresoCheque extends javax.swing.JFrame {
         jTextFieldImporte = new javax.swing.JTextField();
         jLabel5 = new javax.swing.JLabel();
         jLabelFechaIncorrecta = new javax.swing.JLabel();
+        jComboBoxReparto = new javax.swing.JComboBox();
+        jLabel6 = new javax.swing.JLabel();
 
         jLabel2.setText("jLabel2");
 
@@ -333,6 +346,14 @@ public class IngresoCheque extends javax.swing.JFrame {
         jLabelFechaIncorrecta.setForeground(new java.awt.Color(255, 51, 51));
         jLabelFechaIncorrecta.setText("Fecha Incorrecta. Ingrese DiaDiaMesMesAñoAño");
 
+        jComboBoxReparto.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyPressed(java.awt.event.KeyEvent evt) {
+                jComboBoxRepartoKeyPressed(evt);
+            }
+        });
+
+        jLabel6.setText("Reparto:");
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
@@ -341,39 +362,48 @@ public class IngresoCheque extends javax.swing.JFrame {
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(layout.createSequentialGroup()
                         .addGap(160, 160, 160)
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
-                            .addComponent(jButtonSalir, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                            .addComponent(jLabelTitulo1, javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(jButtonGuardar, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
+                        .addComponent(jLabelTitulo1))
                     .addGroup(layout.createSequentialGroup()
-                        .addGap(45, 45, 45)
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                            .addComponent(jLabelFechaIncorrecta)
-                            .addComponent(jLabelFechaVtoIncorrecta)
+                        .addGap(25, 25, 25)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addGroup(layout.createSequentialGroup()
-                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                                    .addComponent(jLabel4)
-                                    .addComponent(jLabel1))
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                                    .addComponent(jDateChooserFecha, javax.swing.GroupLayout.DEFAULT_SIZE, 258, Short.MAX_VALUE)
-                                    .addComponent(jTextFieldCliente)))
-                            .addGroup(layout.createSequentialGroup()
-                                .addComponent(jLabel3)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(jDateChooserFechaVto, javax.swing.GroupLayout.PREFERRED_SIZE, 258, javax.swing.GroupLayout.PREFERRED_SIZE))
-                            .addGroup(layout.createSequentialGroup()
-                                .addComponent(jLabel5)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(jTextFieldImporte, javax.swing.GroupLayout.PREFERRED_SIZE, 258, javax.swing.GroupLayout.PREFERRED_SIZE)))))
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                                .addGap(115, 115, 115)
+                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
+                                    .addComponent(jButtonSalir, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                    .addComponent(jButtonGuardar)))
+                            .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                                .addComponent(jLabelFechaIncorrecta)
+                                .addComponent(jLabelFechaVtoIncorrecta)
+                                .addGroup(layout.createSequentialGroup()
+                                    .addComponent(jLabel3)
+                                    .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                    .addComponent(jDateChooserFechaVto, javax.swing.GroupLayout.PREFERRED_SIZE, 258, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                .addGroup(layout.createSequentialGroup()
+                                    .addComponent(jLabel5)
+                                    .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                    .addComponent(jTextFieldImporte, javax.swing.GroupLayout.PREFERRED_SIZE, 258, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                .addGroup(layout.createSequentialGroup()
+                                    .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                                        .addComponent(jLabel4)
+                                        .addComponent(jLabel1)
+                                        .addComponent(jLabel6))
+                                    .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                    .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                                        .addComponent(jDateChooserFecha, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                        .addComponent(jTextFieldCliente)
+                                        .addComponent(jComboBoxReparto, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 258, javax.swing.GroupLayout.PREFERRED_SIZE)))))))
+                .addContainerGap(26, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
                 .addGap(17, 17, 17)
                 .addComponent(jLabelTitulo1)
-                .addGap(18, 18, 18)
+                .addGap(35, 35, 35)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jComboBoxReparto, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jLabel6))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel1)
                     .addComponent(jTextFieldCliente, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
@@ -383,7 +413,7 @@ public class IngresoCheque extends javax.swing.JFrame {
                     .addComponent(jDateChooserFecha, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jLabelFechaIncorrecta, javax.swing.GroupLayout.PREFERRED_SIZE, 16, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 7, Short.MAX_VALUE)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(jLabel3)
                     .addComponent(jDateChooserFechaVto, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
@@ -397,7 +427,7 @@ public class IngresoCheque extends javax.swing.JFrame {
                 .addComponent(jButtonGuardar)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jButtonSalir)
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addContainerGap())
         );
 
         pack();
@@ -407,9 +437,15 @@ public class IngresoCheque extends javax.swing.JFrame {
     private void jTextFieldClienteKeyPressed(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_jTextFieldClienteKeyPressed
         // TODO add your handling code here:
         if (evt.getKeyCode() == KeyEvent.VK_ENTER) {
+            if (jComboBoxReparto.getSelectedIndex() == 0) {
+                JOptionPane.showMessageDialog(this, "Primero debe seleccionar un reparto.", "Información", JOptionPane.INFORMATION_MESSAGE);
+                jComboBoxReparto.requestFocus();
+            } else {
             if("".equals(jTextFieldCliente.getText().trim())){
                 //Es vacio. Le habro el buscador
-                VentanaBuscadorClienteTodos vbc = new VentanaBuscadorClienteTodos(IngresoCheque.this, true);
+                //VentanaBuscadorClienteTodos vbc = new VentanaBuscadorClienteTodos(IngresoCheque.this, true);
+                VentanaBuscadorClientePorReparto vbc = new VentanaBuscadorClientePorReparto(IngresoCheque.this, true);
+                vbc.setReparto((Reparto) jComboBoxReparto.getSelectedItem());
                 vbc.setVisible(true);
                 this.cliente = vbc.getCliente();
                 jTextFieldCliente.setText(cliente.getNombre());
@@ -433,7 +469,9 @@ public class IngresoCheque extends javax.swing.JFrame {
                     } else {
                         int resp = JOptionPane.showConfirmDialog(this, "No existe un cliente que contenga en el rut: " + fraccionDelRut + " . Desea abrir el buscador de clientes?  ", "Pregunta", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE);
                         if (resp == JOptionPane.YES_OPTION) {
-                            VentanaBuscadorClienteTodos vbc = new VentanaBuscadorClienteTodos(IngresoCheque.this, true);
+                            //VentanaBuscadorClienteTodos vbc = new VentanaBuscadorClienteTodos(IngresoCheque.this, true);
+                            VentanaBuscadorClientePorReparto vbc = new VentanaBuscadorClientePorReparto(IngresoCheque.this, true);
+                            vbc.setReparto((Reparto) jComboBoxReparto.getSelectedItem());
                             vbc.setVisible(true);
                             this.cliente = vbc.getCliente();
                             jTextFieldCliente.setText(cliente.getNombre());
@@ -445,6 +483,7 @@ public class IngresoCheque extends javax.swing.JFrame {
                         }
                     }
                 }
+            }
             }
         }
     }//GEN-LAST:event_jTextFieldClienteKeyPressed
@@ -564,6 +603,19 @@ public class IngresoCheque extends javax.swing.JFrame {
         }
     }//GEN-LAST:event_jTextFieldImporteKeyPressed
 
+    private void jComboBoxRepartoKeyPressed(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_jComboBoxRepartoKeyPressed
+        // TODO add your handling code here:
+        if (evt.getKeyCode() == KeyEvent.VK_ENTER) {
+            if (jComboBoxReparto.getSelectedIndex() == 0) {
+                JOptionPane.showMessageDialog(this, "Debe seleccionar un reparto.", "Información", JOptionPane.INFORMATION_MESSAGE);
+                jComboBoxReparto.requestFocus();
+            } else {
+                jTextFieldCliente.requestFocus();
+                jTextFieldCliente.selectAll();
+            }
+        }
+    }//GEN-LAST:event_jComboBoxRepartoKeyPressed
+
     /**
      * @param args the command line arguments
      */
@@ -609,6 +661,7 @@ public class IngresoCheque extends javax.swing.JFrame {
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton jButtonGuardar;
     private javax.swing.JButton jButtonSalir;
+    private javax.swing.JComboBox jComboBoxReparto;
     private com.toedter.calendar.JDateChooser jDateChooserFecha;
     private com.toedter.calendar.JDateChooser jDateChooserFechaVto;
     private javax.swing.JLabel jLabel1;
@@ -616,6 +669,7 @@ public class IngresoCheque extends javax.swing.JFrame {
     private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel4;
     private javax.swing.JLabel jLabel5;
+    private javax.swing.JLabel jLabel6;
     private javax.swing.JLabel jLabelFechaIncorrecta;
     private javax.swing.JLabel jLabelFechaVtoIncorrecta;
     private javax.swing.JLabel jLabelTitulo1;

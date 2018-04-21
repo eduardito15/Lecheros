@@ -39,6 +39,7 @@ import sistema.SistemaMantenimiento;
 import sistema.SistemaMantenimientoArticulos;
 import sistema.SistemaUsuarios;
 import ui.usuarios.Login;
+import util.Util;
 
 /**
  *
@@ -93,6 +94,39 @@ public class Lecheros {
         SistemaUsuarios.getInstance();
         Login login = new Login();
         login.setVisible(true);
+    }
+    
+    public void borrarFacturasMal() throws Exception {
+        List<Factura> facturas = SistemaFacturas.getInstance().devolverFacturas();
+        DocumentoDeVenta dvc = SistemaMantenimiento.getInstance().devolverDocumentoDeVentaPorNombre("Contado Cerram");
+        DocumentoDeVenta dvr = SistemaMantenimiento.getInstance().devolverDocumentoDeVentaPorNombre("Contado Relece");
+        int cantMal = 0;
+        for(Factura f : facturas) {
+            if(f.getTipoDocumento().equals(dvc)) {
+                //Es un documento de Cerram
+                for(FacturaRenglon fr : f.getRenglones()) {
+                    if(Util.esLeche(fr.getArticulo())) {
+                        cantMal++;
+                        System.out.println("------- Factura de Cerram con leche");
+                        System.out.println("Numero: " + f.getNumero());
+                        break;
+                    }
+                }
+            }
+            if(f.getTipoDocumento().equals(dvr)) {
+                //Es un documento de Relece
+                for(FacturaRenglon fr : f.getRenglones()) {
+                    if(!Util.esLeche(fr.getArticulo())) {
+                        cantMal++;
+                        System.out.println("------- Factura de Relece con productos");
+                        System.out.println("Numero: " + f.getNumero());
+                        break;
+                    }
+                }
+            }
+        }
+        
+        System.out.println("Resumen, cantidad mal: " + cantMal);
     }
     
     public static void codigoCualquiera() {

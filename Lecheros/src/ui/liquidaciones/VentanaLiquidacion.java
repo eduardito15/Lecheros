@@ -110,6 +110,9 @@ public class VentanaLiquidacion extends javax.swing.JFrame {
                 if (e.getKeyCode() == KeyEvent.VK_ENTER) {
                     jComboBoxReparto.requestFocus();
                 }
+                if (e.getKeyCode() == KeyEvent.VK_ESCAPE) {
+                    VentanaLiquidacion.this.dispose();
+                }
             }
 
             @Override
@@ -550,6 +553,11 @@ public class VentanaLiquidacion extends javax.swing.JFrame {
                 jButtonVerComprasActionPerformed(evt);
             }
         });
+        jButtonVerCompras.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyPressed(java.awt.event.KeyEvent evt) {
+                jButtonVerComprasKeyPressed(evt);
+            }
+        });
 
         jLabel5.setText("Compras: ");
 
@@ -571,6 +579,11 @@ public class VentanaLiquidacion extends javax.swing.JFrame {
         jButtonVerGastos.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jButtonVerGastosActionPerformed(evt);
+            }
+        });
+        jButtonVerGastos.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyPressed(java.awt.event.KeyEvent evt) {
+                jButtonVerGastosKeyPressed(evt);
             }
         });
 
@@ -613,6 +626,11 @@ public class VentanaLiquidacion extends javax.swing.JFrame {
         jButtonVerInventario.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jButtonVerInventarioActionPerformed(evt);
+            }
+        });
+        jButtonVerInventario.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyPressed(java.awt.event.KeyEvent evt) {
+                jButtonVerInventarioKeyPressed(evt);
             }
         });
 
@@ -686,6 +704,11 @@ public class VentanaLiquidacion extends javax.swing.JFrame {
         jDateChooserFecha.setDateFormatString("dd/MM/yyyy");
         jDateChooserFecha.setMaxSelectableDate(new java.util.Date(4102455690000L));
         jDateChooserFecha.setMinSelectableDate(new java.util.Date(946699264000L));
+        jDateChooserFecha.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyPressed(java.awt.event.KeyEvent evt) {
+                jDateChooserFechaKeyPressed(evt);
+            }
+        });
 
         jLabelFechaIncorrecta.setForeground(new java.awt.Color(255, 0, 51));
         jLabelFechaIncorrecta.setText("Fecha Incorrecta. Ingrese DiaDiaMesMesAñoAño");
@@ -1023,6 +1046,9 @@ public class VentanaLiquidacion extends javax.swing.JFrame {
                 }
             }
         }
+        if (evt.getKeyCode() == KeyEvent.VK_ESCAPE) {
+            this.dispose();
+        }
     }//GEN-LAST:event_jComboBoxRepartoKeyPressed
 
     private void jButtonVerComprasActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonVerComprasActionPerformed
@@ -1096,6 +1122,9 @@ public class VentanaLiquidacion extends javax.swing.JFrame {
                 }
             }
         }
+        if (evt.getKeyCode() == KeyEvent.VK_ESCAPE) {
+            this.dispose();
+        }
     }//GEN-LAST:event_jTextFieldEntregaEfectivoKeyPressed
 
     private void jTextFieldCorrecionDeDiferenciaKeyPressed(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_jTextFieldCorrecionDeDiferenciaKeyPressed
@@ -1121,6 +1150,9 @@ public class VentanaLiquidacion extends javax.swing.JFrame {
                 JOptionPane.showMessageDialog(this, Constantes.MensajeDeErrorGenerico, "Error", JOptionPane.ERROR_MESSAGE);
             }
 
+        }
+        if (evt.getKeyCode() == KeyEvent.VK_ESCAPE) {
+            this.dispose();
         }
     }//GEN-LAST:event_jTextFieldCorrecionDeDiferenciaKeyPressed
 
@@ -1188,6 +1220,9 @@ public class VentanaLiquidacion extends javax.swing.JFrame {
                 }
             }
 
+        }
+        if (evt.getKeyCode() == KeyEvent.VK_ESCAPE) {
+            this.dispose();
         }
     }//GEN-LAST:event_jComboBoxChoferesKeyPressed
 
@@ -1518,6 +1553,31 @@ public class VentanaLiquidacion extends javax.swing.JFrame {
             }
         }
     }//GEN-LAST:event_jTextFieldEntregaChequesKeyPressed
+
+    private void jDateChooserFechaKeyPressed(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_jDateChooserFechaKeyPressed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_jDateChooserFechaKeyPressed
+
+    private void jButtonVerComprasKeyPressed(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_jButtonVerComprasKeyPressed
+        // TODO add your handling code here:
+        if (evt.getKeyCode() == KeyEvent.VK_ESCAPE) {
+            this.dispose();
+        }
+    }//GEN-LAST:event_jButtonVerComprasKeyPressed
+
+    private void jButtonVerInventarioKeyPressed(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_jButtonVerInventarioKeyPressed
+        // TODO add your handling code here:
+        if (evt.getKeyCode() == KeyEvent.VK_ESCAPE) {
+            this.dispose();
+        }
+    }//GEN-LAST:event_jButtonVerInventarioKeyPressed
+
+    private void jButtonVerGastosKeyPressed(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_jButtonVerGastosKeyPressed
+        // TODO add your handling code here:
+        if (evt.getKeyCode() == KeyEvent.VK_ESCAPE) {
+            this.dispose();
+        }
+    }//GEN-LAST:event_jButtonVerGastosKeyPressed
 
     /**
      * @param args the command line arguments

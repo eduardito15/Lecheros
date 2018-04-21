@@ -36,21 +36,23 @@
                   <Group type="102" alignment="1" attributes="0">
                       <EmptySpace max="-2" attributes="0"/>
                       <Group type="103" groupAlignment="0" attributes="0">
-                          <Component id="jLabelDeuda" alignment="1" min="-2" max="-2" attributes="0"/>
-                          <Component id="jLabel6" alignment="1" min="-2" max="-2" attributes="0"/>
                           <Component id="jLabel5" alignment="1" min="-2" max="-2" attributes="0"/>
                           <Component id="jLabelFiadoChofer1" alignment="1" min="-2" max="-2" attributes="0"/>
+                          <Component id="jLabel6" alignment="1" min="-2" max="-2" attributes="0"/>
+                          <Component id="jLabelDeuda" alignment="1" min="-2" max="-2" attributes="0"/>
+                          <Component id="jLabel13" alignment="1" min="-2" max="-2" attributes="0"/>
                       </Group>
                   </Group>
               </Group>
               <Group type="103" groupAlignment="0" attributes="0">
                   <Group type="102" alignment="0" attributes="0">
-                      <EmptySpace min="-2" pref="22" max="-2" attributes="0"/>
+                      <EmptySpace min="-2" pref="21" max="-2" attributes="0"/>
                       <Group type="103" groupAlignment="1" attributes="0">
                           <Component id="jLabel2" alignment="1" min="-2" max="-2" attributes="0"/>
                           <Component id="jLabelCamion" alignment="1" min="-2" max="-2" attributes="0"/>
                           <Component id="jLabel3" alignment="1" min="-2" max="-2" attributes="0"/>
                           <Component id="jLabel1" alignment="1" min="-2" max="-2" attributes="0"/>
+                          <Component id="jLabel14" min="-2" max="-2" attributes="0"/>
                       </Group>
                       <EmptySpace max="-2" attributes="0"/>
                       <Group type="103" groupAlignment="0" attributes="0">
@@ -60,10 +62,11 @@
                               <Component id="jLabelFechaIncorrecta" min="-2" max="-2" attributes="0"/>
                           </Group>
                           <Group type="102" alignment="0" attributes="0">
-                              <Group type="103" groupAlignment="0" max="-2" attributes="0">
+                              <Group type="103" groupAlignment="1" max="-2" attributes="0">
+                                  <Component id="jTextFieldKilometros" alignment="0" max="32767" attributes="0"/>
                                   <Component id="jComboBoxReparto" alignment="0" max="32767" attributes="0"/>
                                   <Component id="jComboBoxChoferes" alignment="0" max="32767" attributes="0"/>
-                                  <Component id="jComboBoxCamiones" alignment="0" min="-2" pref="215" max="-2" attributes="0"/>
+                                  <Component id="jComboBoxCamiones" alignment="0" pref="215" max="32767" attributes="0"/>
                               </Group>
                               <Group type="103" groupAlignment="0" attributes="0">
                                   <Group type="102" attributes="0">
@@ -80,28 +83,36 @@
                           </Group>
                       </Group>
                   </Group>
-                  <Group type="102" attributes="0">
+                  <Group type="102" alignment="0" attributes="0">
                       <Group type="103" groupAlignment="1" attributes="0">
                           <Group type="103" groupAlignment="0" attributes="0">
                               <Group type="102" attributes="0">
-                                  <Group type="103" groupAlignment="0" attributes="0">
-                                      <Group type="102" alignment="0" attributes="0">
-                                          <Component id="jTextFieldInventarioAnterior" min="-2" pref="185" max="-2" attributes="0"/>
-                                          <EmptySpace max="-2" attributes="0"/>
-                                          <Component id="jButtonVerInventario1" min="-2" pref="157" max="-2" attributes="0"/>
+                                  <Group type="103" groupAlignment="0" max="-2" attributes="0">
+                                      <Group type="102" attributes="0">
+                                          <Group type="103" groupAlignment="0" attributes="0">
+                                              <Group type="102" alignment="0" attributes="0">
+                                                  <Component id="jTextFieldInventarioAnterior" min="-2" pref="185" max="-2" attributes="0"/>
+                                                  <EmptySpace max="-2" attributes="0"/>
+                                                  <Component id="jButtonVerInventario1" min="-2" pref="157" max="-2" attributes="0"/>
+                                              </Group>
+                                              <Group type="102" alignment="0" attributes="0">
+                                                  <Component id="jTextFieldCompras" min="-2" pref="185" max="-2" attributes="0"/>
+                                                  <EmptySpace max="-2" attributes="0"/>
+                                                  <Component id="jButtonVerCompras" min="-2" pref="157" max="-2" attributes="0"/>
+                                              </Group>
+                                              <Group type="102" alignment="0" attributes="0">
+                                                  <Component id="jTextFieldFiadoChoferAnterior" min="-2" pref="185" max="-2" attributes="0"/>
+                                                  <EmptySpace max="-2" attributes="0"/>
+                                                  <Component id="jButtonVerFiadoChofer1" min="-2" pref="157" max="-2" attributes="0"/>
+                                              </Group>
+                                          </Group>
+                                          <EmptySpace type="separate" max="-2" attributes="0"/>
                                       </Group>
-                                      <Group type="102" alignment="0" attributes="0">
-                                          <Component id="jTextFieldCompras" min="-2" pref="185" max="-2" attributes="0"/>
-                                          <EmptySpace max="-2" attributes="0"/>
-                                          <Component id="jButtonVerCompras" min="-2" pref="157" max="-2" attributes="0"/>
-                                      </Group>
-                                      <Group type="102" alignment="0" attributes="0">
-                                          <Component id="jTextFieldFiadoChoferAnterior" min="-2" pref="185" max="-2" attributes="0"/>
-                                          <EmptySpace max="-2" attributes="0"/>
-                                          <Component id="jButtonVerFiadoChofer1" min="-2" pref="157" max="-2" attributes="0"/>
+                                      <Group type="102" attributes="0">
+                                          <Component id="jTextFieldPinchadasSuma" max="32767" attributes="0"/>
+                                          <EmptySpace min="-2" pref="181" max="-2" attributes="0"/>
                                       </Group>
                                   </Group>
-                                  <EmptySpace type="separate" min="-2" max="-2" attributes="0"/>
                                   <Group type="103" groupAlignment="0" attributes="0">
                                       <Component id="jLabelRemitoPinchadas" alignment="1" min="-2" max="-2" attributes="0"/>
                                       <Component id="jLabel7" alignment="1" min="-2" max="-2" attributes="0"/>
@@ -114,6 +125,7 @@
                                       <Component id="jLabelInau" alignment="1" min="-2" max="-2" attributes="0"/>
                                       <Component id="jLabelEntregaCheques" alignment="1" min="-2" max="-2" attributes="0"/>
                                       <Component id="jLabel8" alignment="1" min="-2" max="-2" attributes="0"/>
+                                      <Component id="jLabel11" alignment="1" min="-2" max="-2" attributes="0"/>
                                   </Group>
                               </Group>
                               <Component id="jTextFieldUtilidad" min="-2" pref="185" max="-2" attributes="0"/>
@@ -133,6 +145,7 @@
                       </Group>
                       <EmptySpace min="-2" max="-2" attributes="0"/>
                       <Group type="103" groupAlignment="0" max="-2" attributes="0">
+                          <Component id="jTextFieldCantPinchadasDia" max="32767" attributes="0"/>
                           <Component id="jTextFieldEntregaCheques" pref="185" max="32767" attributes="0"/>
                           <Component id="jTextFieldRemitoPinchadas" max="32767" attributes="0"/>
                           <Component id="jTextFieldGastos" max="32767" attributes="0"/>
@@ -205,104 +218,121 @@
                   <Component id="jLabelCamion" alignment="3" min="-2" max="-2" attributes="0"/>
                   <Component id="jComboBoxCamiones" alignment="3" min="-2" max="-2" attributes="0"/>
               </Group>
-              <EmptySpace min="-2" pref="27" max="-2" attributes="0"/>
-              <Group type="103" groupAlignment="3" attributes="0">
-                  <Component id="jLabel4" alignment="3" min="-2" max="-2" attributes="0"/>
-                  <Component id="jLabel10" alignment="3" min="-2" max="-2" attributes="0"/>
-              </Group>
-              <EmptySpace max="-2" attributes="0"/>
-              <Group type="103" groupAlignment="3" attributes="0">
-                  <Component id="jLabelRemitoPinchadas" alignment="3" min="-2" max="-2" attributes="0"/>
-                  <Component id="jTextFieldRemitoPinchadas" alignment="3" min="-2" max="-2" attributes="0"/>
-                  <Component id="jTextFieldInventarioAnterior" alignment="3" min="-2" max="-2" attributes="0"/>
-                  <Component id="jLabel9" alignment="3" min="-2" max="-2" attributes="0"/>
-                  <Component id="jButtonVerInventario1" alignment="3" min="-2" max="-2" attributes="0"/>
-              </Group>
-              <EmptySpace max="-2" attributes="0"/>
-              <Group type="103" groupAlignment="3" attributes="0">
-                  <Component id="jLabel7" alignment="3" min="-2" max="-2" attributes="0"/>
-                  <Component id="jTextFieldGastos" alignment="3" min="-2" max="-2" attributes="0"/>
-                  <Component id="jButtonVerGastos" alignment="3" min="-2" max="-2" attributes="0"/>
-                  <Component id="jLabelFiadoChofer1" alignment="3" min="-2" max="-2" attributes="0"/>
-                  <Component id="jTextFieldFiadoChoferAnterior" alignment="3" min="-2" max="-2" attributes="0"/>
-                  <Component id="jButtonVerFiadoChofer1" alignment="3" min="-2" max="-2" attributes="0"/>
-              </Group>
-              <EmptySpace max="-2" attributes="0"/>
-              <Group type="103" groupAlignment="3" attributes="0">
-                  <Component id="jLabel8" alignment="3" min="-2" max="-2" attributes="0"/>
-                  <Component id="jTextFieldEntregaEfectivo" alignment="3" min="-2" max="-2" attributes="0"/>
-                  <Component id="jLabel5" alignment="3" min="-2" max="-2" attributes="0"/>
-                  <Component id="jTextFieldCompras" alignment="3" min="-2" max="-2" attributes="0"/>
-                  <Component id="jButtonVerCompras" alignment="3" min="-2" max="-2" attributes="0"/>
-              </Group>
               <EmptySpace max="-2" attributes="0"/>
               <Group type="103" groupAlignment="0" attributes="0">
                   <Group type="102" attributes="0">
+                      <Component id="jTextFieldKilometros" min="-2" max="-2" attributes="0"/>
+                      <EmptySpace min="-2" pref="22" max="-2" attributes="0"/>
                       <Group type="103" groupAlignment="3" attributes="0">
-                          <Component id="jTextFieldEntregaCheques" alignment="3" min="-2" max="-2" attributes="0"/>
-                          <Component id="jButtonVerCheques" alignment="3" min="-2" max="-2" attributes="0"/>
-                          <Component id="jLabelEntregaCheques" alignment="3" min="-2" max="-2" attributes="0"/>
+                          <Component id="jLabel4" alignment="3" min="-2" max="-2" attributes="0"/>
+                          <Component id="jLabel10" alignment="3" min="-2" max="-2" attributes="0"/>
                       </Group>
                       <EmptySpace max="-2" attributes="0"/>
                       <Group type="103" groupAlignment="3" attributes="0">
-                          <Component id="jTextFieldCorrecionDeDiferencia" alignment="3" min="-2" max="-2" attributes="0"/>
-                          <Component id="jLabelCoreecionDeDiferencia" alignment="3" min="-2" max="-2" attributes="0"/>
+                          <Component id="jLabelRemitoPinchadas" alignment="3" min="-2" max="-2" attributes="0"/>
+                          <Component id="jTextFieldRemitoPinchadas" alignment="3" min="-2" max="-2" attributes="0"/>
+                          <Component id="jTextFieldInventarioAnterior" alignment="3" min="-2" max="-2" attributes="0"/>
+                          <Component id="jLabel9" alignment="3" min="-2" max="-2" attributes="0"/>
+                          <Component id="jButtonVerInventario1" alignment="3" min="-2" max="-2" attributes="0"/>
                       </Group>
                       <EmptySpace max="-2" attributes="0"/>
                       <Group type="103" groupAlignment="3" attributes="0">
-                          <Component id="jTextFieldRetenciones" alignment="3" min="-2" max="-2" attributes="0"/>
-                          <Component id="jButtonVerRetenciones" alignment="3" min="-2" max="-2" attributes="0"/>
-                          <Component id="jLabelRetenciones" alignment="3" min="-2" max="-2" attributes="0"/>
+                          <Component id="jLabel7" alignment="3" min="-2" max="-2" attributes="0"/>
+                          <Component id="jTextFieldGastos" alignment="3" min="-2" max="-2" attributes="0"/>
+                          <Component id="jButtonVerGastos" alignment="3" min="-2" max="-2" attributes="0"/>
+                          <Component id="jLabelFiadoChofer1" alignment="3" min="-2" max="-2" attributes="0"/>
+                          <Component id="jTextFieldFiadoChoferAnterior" alignment="3" min="-2" max="-2" attributes="0"/>
+                          <Component id="jButtonVerFiadoChofer1" alignment="3" min="-2" max="-2" attributes="0"/>
                       </Group>
                       <EmptySpace max="-2" attributes="0"/>
                       <Group type="103" groupAlignment="3" attributes="0">
-                          <Component id="jTextFieldInventario" alignment="3" min="-2" max="-2" attributes="0"/>
-                          <Component id="jButtonVerInventario" alignment="3" min="-2" max="-2" attributes="0"/>
-                          <Component id="jLabel12" alignment="3" min="-2" max="-2" attributes="0"/>
+                          <Component id="jLabel8" alignment="3" min="-2" max="-2" attributes="0"/>
+                          <Component id="jTextFieldEntregaEfectivo" alignment="3" min="-2" max="-2" attributes="0"/>
+                          <Component id="jLabel5" alignment="3" min="-2" max="-2" attributes="0"/>
+                          <Component id="jTextFieldCompras" alignment="3" min="-2" max="-2" attributes="0"/>
+                          <Component id="jButtonVerCompras" alignment="3" min="-2" max="-2" attributes="0"/>
                       </Group>
                       <EmptySpace max="-2" attributes="0"/>
-                      <Group type="103" groupAlignment="3" attributes="0">
-                          <Component id="jTextFieldFiadoChofer" alignment="3" min="-2" max="-2" attributes="0"/>
-                          <Component id="jButtonVerFiadoChofer" alignment="3" min="-2" max="-2" attributes="0"/>
-                          <Component id="jLabelFiadoChofer" alignment="3" min="-2" max="-2" attributes="0"/>
-                      </Group>
-                      <EmptySpace max="-2" attributes="0"/>
-                      <Group type="103" groupAlignment="3" attributes="0">
-                          <Component id="jTextFieldFiadoEmpresa" alignment="3" min="-2" max="-2" attributes="0"/>
-                          <Component id="jButtonVerFiadoEmpresa" alignment="3" min="-2" max="-2" attributes="0"/>
-                          <Component id="jLabelFiadoEmpresa" alignment="3" min="-2" max="-2" attributes="0"/>
-                      </Group>
-                      <EmptySpace max="-2" attributes="0"/>
-                      <Group type="103" groupAlignment="3" attributes="0">
-                          <Component id="jTextFieldAnep" alignment="3" min="-2" max="-2" attributes="0"/>
-                          <Component id="jLabelAnep" alignment="3" min="-2" max="-2" attributes="0"/>
-                          <Component id="jButtonVerAnep" alignment="3" min="-2" max="-2" attributes="0"/>
-                      </Group>
-                      <EmptySpace max="-2" attributes="0"/>
-                      <Group type="103" groupAlignment="3" attributes="0">
-                          <Component id="jLabelInau" alignment="3" min="-2" max="-2" attributes="0"/>
-                          <Component id="jTextFieldInau" alignment="3" min="-2" max="-2" attributes="0"/>
-                          <Component id="jButtonVerInau" alignment="3" min="-2" max="-2" attributes="0"/>
-                      </Group>
-                      <EmptySpace min="-2" pref="28" max="-2" attributes="0"/>
-                      <Group type="103" groupAlignment="3" attributes="0">
-                          <Component id="jTextFieldDiferencia" alignment="3" min="-2" max="-2" attributes="0"/>
-                          <Component id="jLabelDiderencia" alignment="3" min="-2" max="-2" attributes="0"/>
+                      <Group type="103" groupAlignment="0" attributes="0">
+                          <Group type="102" attributes="0">
+                              <Group type="103" groupAlignment="3" attributes="0">
+                                  <Component id="jTextFieldEntregaCheques" alignment="3" min="-2" max="-2" attributes="0"/>
+                                  <Component id="jButtonVerCheques" alignment="3" min="-2" max="-2" attributes="0"/>
+                                  <Component id="jLabelEntregaCheques" alignment="3" min="-2" max="-2" attributes="0"/>
+                              </Group>
+                              <EmptySpace max="-2" attributes="0"/>
+                              <Group type="103" groupAlignment="3" attributes="0">
+                                  <Component id="jTextFieldCorrecionDeDiferencia" alignment="3" min="-2" max="-2" attributes="0"/>
+                                  <Component id="jLabelCoreecionDeDiferencia" alignment="3" min="-2" max="-2" attributes="0"/>
+                              </Group>
+                              <EmptySpace max="-2" attributes="0"/>
+                              <Group type="103" groupAlignment="3" attributes="0">
+                                  <Component id="jTextFieldRetenciones" alignment="3" min="-2" max="-2" attributes="0"/>
+                                  <Component id="jButtonVerRetenciones" alignment="3" min="-2" max="-2" attributes="0"/>
+                                  <Component id="jLabelRetenciones" alignment="3" min="-2" max="-2" attributes="0"/>
+                              </Group>
+                              <EmptySpace max="-2" attributes="0"/>
+                              <Group type="103" groupAlignment="3" attributes="0">
+                                  <Component id="jTextFieldInventario" alignment="3" min="-2" max="-2" attributes="0"/>
+                                  <Component id="jButtonVerInventario" alignment="3" min="-2" max="-2" attributes="0"/>
+                                  <Component id="jLabel12" alignment="3" min="-2" max="-2" attributes="0"/>
+                              </Group>
+                              <EmptySpace max="-2" attributes="0"/>
+                              <Group type="103" groupAlignment="3" attributes="0">
+                                  <Component id="jTextFieldFiadoChofer" alignment="3" min="-2" max="-2" attributes="0"/>
+                                  <Component id="jButtonVerFiadoChofer" alignment="3" min="-2" max="-2" attributes="0"/>
+                                  <Component id="jLabelFiadoChofer" alignment="3" min="-2" max="-2" attributes="0"/>
+                              </Group>
+                              <EmptySpace max="-2" attributes="0"/>
+                              <Group type="103" groupAlignment="3" attributes="0">
+                                  <Component id="jTextFieldFiadoEmpresa" alignment="3" min="-2" max="-2" attributes="0"/>
+                                  <Component id="jButtonVerFiadoEmpresa" alignment="3" min="-2" max="-2" attributes="0"/>
+                                  <Component id="jLabelFiadoEmpresa" alignment="3" min="-2" max="-2" attributes="0"/>
+                              </Group>
+                              <EmptySpace max="-2" attributes="0"/>
+                              <Group type="103" groupAlignment="3" attributes="0">
+                                  <Component id="jTextFieldAnep" alignment="3" min="-2" max="-2" attributes="0"/>
+                                  <Component id="jLabelAnep" alignment="3" min="-2" max="-2" attributes="0"/>
+                                  <Component id="jButtonVerAnep" alignment="3" min="-2" max="-2" attributes="0"/>
+                              </Group>
+                              <EmptySpace max="-2" attributes="0"/>
+                              <Group type="103" groupAlignment="3" attributes="0">
+                                  <Component id="jLabelInau" alignment="3" min="-2" max="-2" attributes="0"/>
+                                  <Component id="jTextFieldInau" alignment="3" min="-2" max="-2" attributes="0"/>
+                                  <Component id="jButtonVerInau" alignment="3" min="-2" max="-2" attributes="0"/>
+                              </Group>
+                              <EmptySpace max="-2" attributes="0"/>
+                              <Group type="103" groupAlignment="3" attributes="0">
+                                  <Component id="jTextFieldCantPinchadasDia" alignment="3" min="-2" max="-2" attributes="0"/>
+                                  <Component id="jLabel11" alignment="3" min="-2" max="-2" attributes="0"/>
+                              </Group>
+                              <EmptySpace min="-2" pref="86" max="-2" attributes="0"/>
+                              <Group type="103" groupAlignment="3" attributes="0">
+                                  <Component id="jTextFieldDiferencia" alignment="3" min="-2" max="-2" attributes="0"/>
+                                  <Component id="jLabelDiderencia" alignment="3" min="-2" max="-2" attributes="0"/>
+                              </Group>
+                          </Group>
+                          <Group type="102" alignment="0" attributes="0">
+                              <Group type="103" groupAlignment="3" attributes="0">
+                                  <Component id="jLabel6" alignment="3" min="-2" max="-2" attributes="0"/>
+                                  <Component id="jTextFieldUtilidad" alignment="3" min="-2" max="-2" attributes="0"/>
+                              </Group>
+                              <EmptySpace max="-2" attributes="0"/>
+                              <Group type="103" groupAlignment="3" attributes="0">
+                                  <Component id="jTextFieldPinchadasSuma" alignment="3" min="-2" max="-2" attributes="0"/>
+                                  <Component id="jLabel13" alignment="3" min="-2" max="-2" attributes="0"/>
+                              </Group>
+                              <EmptySpace min="-2" pref="68" max="-2" attributes="0"/>
+                              <Group type="103" groupAlignment="3" attributes="0">
+                                  <Component id="jTextFieldDeuda" alignment="3" min="-2" max="-2" attributes="0"/>
+                                  <Component id="jLabelDeuda" alignment="3" min="-2" max="-2" attributes="0"/>
+                              </Group>
+                          </Group>
                       </Group>
                   </Group>
-                  <Group type="102" alignment="0" attributes="0">
-                      <Group type="103" groupAlignment="3" attributes="0">
-                          <Component id="jLabel6" alignment="3" min="-2" max="-2" attributes="0"/>
-                          <Component id="jTextFieldUtilidad" alignment="3" min="-2" max="-2" attributes="0"/>
-                      </Group>
-                      <EmptySpace max="-2" attributes="0"/>
-                      <Group type="103" groupAlignment="3" attributes="0">
-                          <Component id="jLabelDeuda" alignment="3" min="-2" max="-2" attributes="0"/>
-                          <Component id="jTextFieldDeuda" alignment="3" min="-2" max="-2" attributes="0"/>
-                      </Group>
-                  </Group>
+                  <Component id="jLabel14" min="-2" max="-2" attributes="0"/>
               </Group>
-              <EmptySpace pref="20" max="32767" attributes="0"/>
+              <EmptySpace max="32767" attributes="0"/>
           </Group>
       </Group>
     </DimensionLayout>
@@ -712,6 +742,39 @@
       <Events>
         <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="jButtonCerrarLiquidacionActionPerformed"/>
       </Events>
+    </Component>
+    <Component class="javax.swing.JTextField" name="jTextFieldCantPinchadasDia">
+      <Events>
+        <EventHandler event="keyPressed" listener="java.awt.event.KeyListener" parameters="java.awt.event.KeyEvent" handler="jTextFieldCantPinchadasDiaKeyPressed"/>
+      </Events>
+    </Component>
+    <Component class="javax.swing.JLabel" name="jLabel11">
+      <Properties>
+        <Property name="text" type="java.lang.String" value="Pinchadas:"/>
+      </Properties>
+    </Component>
+    <Component class="javax.swing.JTextField" name="jTextFieldPinchadasSuma">
+      <Properties>
+        <Property name="editable" type="boolean" value="false"/>
+      </Properties>
+    </Component>
+    <Component class="javax.swing.JLabel" name="jLabel13">
+      <Properties>
+        <Property name="text" type="java.lang.String" value="Pinchadas:"/>
+      </Properties>
+    </Component>
+    <Component class="javax.swing.JTextField" name="jTextFieldKilometros">
+      <Properties>
+        <Property name="text" type="java.lang.String" value="0"/>
+      </Properties>
+      <Events>
+        <EventHandler event="keyPressed" listener="java.awt.event.KeyListener" parameters="java.awt.event.KeyEvent" handler="jTextFieldKilometrosKeyPressed"/>
+      </Events>
+    </Component>
+    <Component class="javax.swing.JLabel" name="jLabel14">
+      <Properties>
+        <Property name="text" type="java.lang.String" value="Km:"/>
+      </Properties>
     </Component>
   </SubComponents>
 </Form>

@@ -72,6 +72,7 @@ import sistema.SistemaUsuarios;
 import ui.clientes.IngresarClientesDesdePS;
 import ui.clientes.ResumenDeComprasPorCliente;
 import ui.clientes.VentanaEstadoDeCuenta;
+import ui.compras.VerificarComprasConArchivo;
 import ui.config.VentanaConfiguracionFacturacion;
 import ui.facturas.AjustarFacturacionIngresandoTotales;
 import ui.facturas.FacturarProrrateoIngresandoTotales;
@@ -170,6 +171,7 @@ public class MenuPrincipal extends javax.swing.JFrame {
         jMenu2 = new javax.swing.JMenu();
         jMenuItem8 = new javax.swing.JMenuItem();
         jMenuItem10 = new javax.swing.JMenuItem();
+        jMenuItem47 = new javax.swing.JMenuItem();
         jMenu3 = new javax.swing.JMenu();
         jMenuItem11 = new javax.swing.JMenuItem();
         jMenuItem13 = new javax.swing.JMenuItem();
@@ -459,6 +461,14 @@ public class MenuPrincipal extends javax.swing.JFrame {
             }
         });
         jMenu2.add(jMenuItem10);
+
+        jMenuItem47.setText("Verificar Compras con Archivo");
+        jMenuItem47.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jMenuItem47ActionPerformed(evt);
+            }
+        });
+        jMenu2.add(jMenuItem47);
 
         jMenuBar1.add(jMenu2);
 
@@ -1926,6 +1936,12 @@ public class MenuPrincipal extends javax.swing.JFrame {
         vr.setVisible(true);
     }//GEN-LAST:event_jMenuItem40ActionPerformed
 
+    private void jMenuItem47ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem47ActionPerformed
+        // TODO add your handling code here:
+        VerificarComprasConArchivo vvcca = new VerificarComprasConArchivo(this, false);
+        vvcca.setVisible(true);
+    }//GEN-LAST:event_jMenuItem47ActionPerformed
+
     private void cargarMenuCompras() {
         //jMenuItem1 = new javax.swing.JMenuItem();
         List<DocumentoDeCompra> tiposDocs;
@@ -2057,7 +2073,7 @@ public class MenuPrincipal extends javax.swing.JFrame {
             jMenuItemInformeContadorGiamo.setVisible(false);
             jMenuItemIngresarFacturasMovil.setVisible(false);
             jMenuItemIngresarFacturasManualesGiamoDesdeArchivo.setVisible(false);
-            jMenuItemIngresarClientesPSDesdeArchivo.setVisible(false);
+            jMenuItemIngresarClientesPSDesdeArchivo.setVisible(true);
             jMenuItemAjustarFacturacion.setVisible(false);
             jMenuItemRestarExcentoDeFacturas.setVisible(false);
         }
@@ -2193,6 +2209,7 @@ public class MenuPrincipal extends javax.swing.JFrame {
     private javax.swing.JMenuItem jMenuItem44;
     private javax.swing.JMenuItem jMenuItem45;
     private javax.swing.JMenuItem jMenuItem46;
+    private javax.swing.JMenuItem jMenuItem47;
     private javax.swing.JMenuItem jMenuItem5;
     private javax.swing.JMenuItem jMenuItem6;
     private javax.swing.JMenuItem jMenuItem7;

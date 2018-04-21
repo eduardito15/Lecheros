@@ -173,7 +173,9 @@ public class ImprimirInventarioImp implements ImprimirInventario, Printable {
                 
                 PDDocument documentToPrint = PDDocument.load(new File(cfg.getRutaInforme(),  "Inventario" + inventario.getReparto() + inventario.getFecha() + ".pdf"));
 
-                PrintService myPrintService = findPrintService("Samsung M2020 Series (USB001)");
+                ConfiguracionGeneral cgral = SistemaMantenimiento.getInstance().devolverConfiguracionGeneral();
+                
+                PrintService myPrintService = findPrintService(cgral.getNombreImpresora());
 
                 PrinterJob job = PrinterJob.getPrinterJob();
                 job.setPageable(new PDFPageable(documentToPrint));

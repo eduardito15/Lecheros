@@ -96,6 +96,9 @@ public class IngresoGasto extends javax.swing.JFrame {
                 if (e.getKeyCode() == KeyEvent.VK_ENTER) {
                     jComboBoxReparto.requestFocus();
                 }
+                if (e.getKeyCode() == KeyEvent.VK_ESCAPE) {
+                    IngresoGasto.this.dispose();
+                }
             }
 
             @Override
@@ -716,6 +719,9 @@ public class IngresoGasto extends javax.swing.JFrame {
         if (evt.getKeyCode() == KeyEvent.VK_F10) {
             jButtonGuardar.doClick();
         }
+        if (evt.getKeyCode() == KeyEvent.VK_ESCAPE) {
+            this.dispose();
+        }
     }//GEN-LAST:event_jTextFieldRubroGastoKeyPressed
 
     private void jTextFieldImporteGastoKeyPressed(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_jTextFieldImporteGastoKeyPressed
@@ -740,6 +746,9 @@ public class IngresoGasto extends javax.swing.JFrame {
 
     private void jComboBoxRepartoKeyPressed(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_jComboBoxRepartoKeyPressed
         // TODO add your handling code here:
+        if (evt.getKeyCode() == KeyEvent.VK_ESCAPE) {
+            this.dispose();
+        }
         if (evt.getKeyCode() == KeyEvent.VK_ENTER) {
             if (jComboBoxReparto.getSelectedIndex() == 0) {
                 JOptionPane.showMessageDialog(this, "Debe seleccionar un reparto.", "Información", JOptionPane.INFORMATION_MESSAGE);
@@ -849,6 +858,9 @@ public class IngresoGasto extends javax.swing.JFrame {
         // TODO add your handling code here:
         if (evt.getKeyCode() == KeyEvent.VK_F10) {
             jButtonGuardar.doClick();
+        }
+        if (evt.getKeyCode() == KeyEvent.VK_ESCAPE) {
+            this.dispose();
         }
     }//GEN-LAST:event_jTableRenglonesKeyPressed
 

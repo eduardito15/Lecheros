@@ -85,6 +85,7 @@ public class VerFiadoEmpresaDeLiquidacion extends javax.swing.JFrame {
                 vif.setAccion("Ver");
                 Factura f = facturas.get(jTableFacturas.getSelectedRow());
                 vif.setFactura(f);
+                vif.setTipoDoc(f.getTipoDocumento());
                 vif.setVisible(true);
             }
         });
@@ -97,6 +98,7 @@ public class VerFiadoEmpresaDeLiquidacion extends javax.swing.JFrame {
                 IngresoFacturas vif = new IngresoFacturas(VerFiadoEmpresaDeLiquidacion.this, false);
                 vif.setAccion("Modificar");
                 Factura f = facturas.get(jTableFacturas.getSelectedRow());
+                vif.setTipoDoc(f.getTipoDocumento());
                 vif.setFactura(f);
                 vif.setVisible(true);
             }

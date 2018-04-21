@@ -129,7 +129,15 @@ public class VentanaBuscadorClientePorReparto extends javax.swing.JDialog {
         // TODO add your handling code here:
         char ch = evt.getKeyChar();
         if(Character.isLetter(ch) || Character.isDigit(ch) || Character.isSpaceChar(ch)){
-            textoBusqueda = textoBusqueda + ch;
+            if(!textoBusqueda.isEmpty()) {
+                if(textoBusqueda.charAt(0) != jTextFieldBuscar.getText().trim().charAt(0)) {
+                    textoBusqueda = jTextFieldBuscar.getText().trim() + ch;
+                } else {
+                    textoBusqueda = textoBusqueda + ch;
+                }
+            } else {
+                textoBusqueda = textoBusqueda + ch;
+            }
             DefaultListModel modelo = new DefaultListModel();
             for(Cliente c : clientes){
                 if(c.getNombre().toLowerCase().indexOf(textoBusqueda.toLowerCase()) != -1 || c.getRazonSocial().toLowerCase().indexOf(textoBusqueda.toLowerCase()) != -1){
@@ -140,6 +148,9 @@ public class VentanaBuscadorClientePorReparto extends javax.swing.JDialog {
             jListResultados.setSelectedIndex(0);
         } else {
             if(evt.getKeyCode() == KeyEvent.VK_BACK_SPACE){
+                if(jTextFieldBuscar.getText().trim().equals("")) {
+                    textoBusqueda = "";
+                }
                 textoBusqueda = jTextFieldBuscar.getText().trim().substring(0, (jTextFieldBuscar.getText().trim().length()-1));
                 if(!"".equals(textoBusqueda)){
                     DefaultListModel modelo = new DefaultListModel();
@@ -154,6 +165,10 @@ public class VentanaBuscadorClientePorReparto extends javax.swing.JDialog {
             }
             if(evt.getKeyCode() == KeyEvent.VK_ENTER){
                  jListResultados.requestFocus();
+            }
+            if(evt.getKeyCode() == KeyEvent.VK_DOWN) {
+                jListResultados.requestFocus();
+                jListResultados.setSelectedIndex(0);
             }
         }
         
@@ -186,6 +201,11 @@ public class VentanaBuscadorClientePorReparto extends javax.swing.JDialog {
         if(jListResultados.getSelectedIndex() != -1){
             if (evt.getKeyCode() == KeyEvent.VK_ENTER) {
                 jButtonSeleccionar.doClick();
+            }
+            if(jListResultados.getSelectedIndex() == 0) {
+                if(evt.getKeyCode() == KeyEvent.VK_UP) {
+                    jTextFieldBuscar.requestFocus();
+                }
             }
         }
     }//GEN-LAST:event_jListResultadosKeyPressed

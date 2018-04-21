@@ -89,4 +89,13 @@ public class Constantes {
     public static String frecuencia7VecesPosSemana = "7 Veces por Semana";
     public static String frecuenciaCada15Dias = "Cada 15 Dias";
     public static String frecuencia1VezPorMes = "1 vez por Mes";
+    
+    public static String FACTURA_RELECE = "Factura Relece";
+    public static String FACTURA_CERRAM = "Factura Cerram";
+    public static String NOTA_DE_CREDITO_RELECE = "Nota de Credito Relece";
+    public static String NOTA_DE_CREDITO_CERRAM = "Nota de Credito Cerram";
+    public static String FACTURA = "Factura";
+    public static String NOTA_DE_CREDITO = "Nota de Credito";
+    public static String REMITO_DEVOLUCION = "Remito Devolución";
+    
 }

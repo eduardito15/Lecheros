@@ -32,6 +32,7 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.logging.Level;
 import org.apache.log4j.Logger;
 import org.hibernate.Query;
@@ -761,7 +762,7 @@ public class SistemaMantenimiento {
         Cliente retorno;
         Session session = GenericDAO.getGenericDAO().getSessionFactory().openSession();
         session.beginTransaction();
-        Query consulta = session.createQuery("FROM Cliente where codigo = " + codigo + "AND activo = :est");
+        Query consulta = session.createQuery("FROM Cliente where codigo = '" + codigo + "' AND activo = :est");
         consulta.setBoolean("est", true);
         retorno = (Cliente) consulta.uniqueResult();
         session.getTransaction().commit();
@@ -790,6 +791,44 @@ public class SistemaMantenimiento {
         retorno = (Cliente) consulta.uniqueResult();
         session.getTransaction().commit();
         session.close();
+        return retorno;
+    }
+    
+    public List<Cliente> devolverListaClientesActivoPorCodigoYSucursalPS(long codigoPS, int sucursalPS) {
+        List<Cliente> retorno;
+        Session session = GenericDAO.getGenericDAO().getSessionFactory().openSession();
+        session.beginTransaction();
+        Query consulta = session.createQuery("FROM Cliente where codigoPS = " + codigoPS + " AND sucursalPS = " + sucursalPS +  " AND activo = :est");
+        consulta.setBoolean("est", true);
+        retorno = consulta.list();
+        session.getTransaction().commit();
+        session.close();
+        return retorno;
+    }
+    
+    public Cliente devolverClienteActivoPorCodigoSucursalPSYReparto(long codigoPS, int sucursalPS, Reparto r) {
+        Cliente retorno;
+        Session session = GenericDAO.getGenericDAO().getSessionFactory().openSession();
+        session.beginTransaction();
+        Query consulta = session.createQuery("FROM Cliente where codigoPS = " + codigoPS + " AND sucursalPS = " + sucursalPS +  " AND activo = :est");
+        consulta.setBoolean("est", true);
+        List<Cliente> clis = consulta.list();
+        session.getTransaction().commit();
+        session.close();
+        if(clis.size() == 1) {
+            retorno = clis.get(0);
+        } else {
+            Optional<Cliente> cli = clis.stream().filter(c->c.getReparto().equals(r)).findFirst();
+            if(cli.isPresent()) {
+                retorno = cli.get();
+            } else {
+                if(!clis.isEmpty()) {
+                    retorno = clis.get(0);
+                } else {
+                    retorno = null;
+                }
+            }
+        }
         return retorno;
     }
 
@@ -1048,8 +1087,8 @@ public class SistemaMantenimiento {
                     retornoPorFactura[5] = "El codigo altenativo debe ser un número.";
                     //throw new Exception(retornoPorFactura[5]);
                 }
-                
-                Cliente aux = SistemaMantenimiento.getInstance().devolverClienteActivoPorCodigoYSucursalPS(codigoAlternativo, codigoSuc);
+            
+                List<Cliente> aux = SistemaMantenimiento.getInstance().devolverListaClientesActivoPorCodigoYSucursalPS(codigoAlternativo, codigoSuc);
                 if(aux == null) {
                     //No existe el cliente.
                     //Si no existe lo agrego.
@@ -1060,8 +1099,18 @@ public class SistemaMantenimiento {
                         }
                     }
                 } else {
+                    if(aux.isEmpty()) {
+                        //si es vacia aux lo agrego
+                        if(retornoPorFactura[5].equals("")) {
+                            if(SistemaMantenimiento.getInstance().agregarCliente(false, true, true, null, r, Nombre, Razon, Rut, Direccion, "", "", 0, 0, 0, "", 0, "", codigoAlternativo, codigoSuc, null, "", "")) {
+                                totalClientesIngresados++;
+                                retornoPorFactura[5] = "Ingresado correctamente.";
+                            }
+                        }   
+                    } else {
                     //Es un cliente que ya existe.
-                    retornoPorFactura[5] = "Ya existe un cliente con ese codigo y sucursal.";
+                        retornoPorFactura[5] = "Ya existe un cliente con ese codigo y sucursal.";
+                    }
                 }
                 
                 logger.info("Cliente : " + retornoPorFactura[0] + " " + retornoPorFactura[1] + " " + retornoPorFactura[2] + " " + retornoPorFactura[3] + " " + retornoPorFactura[4] + " " + retornoPorFactura[5] + " ");

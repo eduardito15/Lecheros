@@ -302,6 +302,17 @@ public class SistemaFacturas {
         session.close();
         return retorno;
     }
+    
+    public List<Factura> devolverFacturas() throws Exception {
+        List<Factura> retorno = null;
+        Session session = GenericDAO.getGenericDAO().getSessionFactory().openSession();
+        session.beginTransaction();
+        Query consulta = session.createQuery("FROM Factura ");
+        retorno = consulta.list();
+        session.getTransaction().commit();
+        session.close();
+        return retorno;
+    }
 
     public Factura devolverFacturaPorNumeroYCliente(long numero, Cliente c, boolean esManual) throws Exception {
         Factura retorno = null;
@@ -645,6 +656,13 @@ public class SistemaFacturas {
                                         retornoPorFactura[4] = "";
                                         throw new Exception(retornoPorFactura[5]);
                                     }
+                                    if(Lecheros.nombreEmpresa.equals("Relece")) {
+                                        if(Util.esLecheParaFacturas(art)) {
+                                            retornoPorFactura[5] = "Cerram no puede facturar leche. " + Articulo + ".";
+                                            retornoPorFactura[4] = "";
+                                            throw new Exception(retornoPorFactura[5]);
+                                        }
+                                    }
                                 } catch (NumberFormatException ne) {
                                     retornoPorFactura[5] = "El codigo de artículo debe ser un número.";
                                     retornoPorFactura[4] = "";
@@ -935,7 +953,7 @@ public class SistemaFacturas {
                                 if(cliSuc.length == 2) {
                                     Long codigoClientePS = Long.parseLong(cliSuc[0]);
                                     int sucursalPS = Integer.parseInt(cliSuc[1]);
-                                    c = SistemaMantenimiento.getInstance().devolverClienteActivoPorCodigoYSucursalPS(codigoClientePS, sucursalPS);
+                                    c = SistemaMantenimiento.getInstance().devolverClienteActivoPorCodigoSucursalPSYReparto(codigoClientePS, sucursalPS, r);
                                 }
                                 if (c == null) {
                                     retornoPorFactura[5] = "No existe el cliente con ese codigo.";
@@ -951,6 +969,13 @@ public class SistemaFacturas {
                                             retornoPorFactura[5] = "No existe un artículo con el codigo " + Articulo + ".";
                                             retornoPorFactura[4] = "";
                                             throw new Exception(retornoPorFactura[5]);
+                                        }
+                                        if(Lecheros.nombreEmpresa.equals("Relece")) {
+                                            if (Util.esLecheParaFacturas(art)) {
+                                                retornoPorFactura[5] = "Cerram no puede facturar leche. " + Articulo + ".";
+                                                retornoPorFactura[4] = "";
+                                                throw new Exception(retornoPorFactura[5]);
+                                            }
                                         }
                                     } catch (NumberFormatException ne) {
                                         retornoPorFactura[5] = "El codigo de artículo debe ser un número.";
@@ -1275,6 +1300,11 @@ public class SistemaFacturas {
                                         retornoPorFactura[5] = "No existe un artículo con el codigo " + Articulo + ".";
                                         throw new Exception(retornoPorFactura[5]);
                                     }
+                                    if (!Util.esLecheParaFacturas(art)) {
+                                        retornoPorFactura[5] = "Relece no puede facturar productos. " + Articulo + ".";
+                                        retornoPorFactura[4] = "";
+                                        throw new Exception(retornoPorFactura[5]);
+                                    }
                                 } catch (NumberFormatException ne) {
                                     retornoPorFactura[5] = "El codigo de artículo debe ser un número.";
                                     throw new Exception(retornoPorFactura[5]);
@@ -1493,7 +1523,7 @@ public class SistemaFacturas {
                                 if(cliSuc.length == 2) {
                                     Long codigoClientePS = Long.parseLong(cliSuc[0]);
                                     int sucursalClientePS = Integer.parseInt(cliSuc[1]);
-                                    c = SistemaMantenimiento.getInstance().devolverClienteActivoPorCodigoYSucursalPS(codigoClientePS, sucursalClientePS);
+                                    c = SistemaMantenimiento.getInstance().devolverClienteActivoPorCodigoSucursalPSYReparto(codigoClientePS, sucursalClientePS, r);
                                 }
                                 if (c == null) {
                                     retornoPorFactura[5] = "No existe el cliente con ese codigo.";
@@ -1506,6 +1536,11 @@ public class SistemaFacturas {
                                         art = SistemaMantenimientoArticulos.getInstance().devolverArticuloPorCodigo(codArt);
                                         if (art == null) {
                                             retornoPorFactura[5] = "No existe un artículo con el codigo " + Articulo + ".";
+                                            throw new Exception(retornoPorFactura[5]);
+                                        }
+                                        if (!Util.esLecheParaFacturas(art)) {
+                                            retornoPorFactura[5] = "Relece no puede facturar productos. " + Articulo + ".";
+                                            retornoPorFactura[4] = "";
                                             throw new Exception(retornoPorFactura[5]);
                                         }
                                     } catch (NumberFormatException ne) {
