@@ -5,6 +5,7 @@
  */
 package impresion.Facturas;
 
+import dominio.ConfiguracionGeneral;
 import dominio.DocumentoDeVenta;
 import dominio.Factura;
 import dominio.FacturaRenglon;
@@ -55,8 +56,10 @@ public class ImprimirFacturaRelece implements ImprimirFactura, Printable, Pageab
             aset.add(new PageRanges(1, 1));
             aset.add(new Copies(1));
             //PrintService printService = PrintServiceLookup.lookupDefaultPrintService();
+            
+            ConfiguracionGeneral cg = SistemaMantenimiento.getInstance().devolverConfiguracionGeneral();
 
-            PrintService myPrintService = findPrintService("Samsung M2020 Series (USB001)");
+            PrintService myPrintService = findPrintService(cg.getNombreImpresora());
 
             PrinterJob printJob = PrinterJob.getPrinterJob();
 
@@ -87,7 +90,7 @@ public class ImprimirFacturaRelece implements ImprimirFactura, Printable, Pageab
             aset.add(new Copies(1));
             //PrintService printService = PrintServiceLookup.lookupDefaultPrintService();
 
-            myPrintService = findPrintService("Samsung M2020 Series (USB001)");
+            myPrintService = findPrintService(cg.getNombreImpresora());
 
             printJob = PrinterJob.getPrinterJob();
 
@@ -115,8 +118,10 @@ public class ImprimirFacturaRelece implements ImprimirFactura, Printable, Pageab
             aset.add(new PageRanges(1, 1));
             aset.add(new Copies(1));
             //PrintService printService = PrintServiceLookup.lookupDefaultPrintService();
+            
+            ConfiguracionGeneral cg = SistemaMantenimiento.getInstance().devolverConfiguracionGeneral();
 
-            PrintService myPrintService = findPrintService("Samsung M2020 Series (USB001)");
+            PrintService myPrintService = findPrintService(cg.getNombreImpresora());
 
             PrinterJob printJob = PrinterJob.getPrinterJob();
 

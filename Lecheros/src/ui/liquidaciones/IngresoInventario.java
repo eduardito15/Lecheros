@@ -99,6 +99,9 @@ public class IngresoInventario extends javax.swing.JFrame {
                 if (e.getKeyCode() == KeyEvent.VK_ENTER) {
                     jComboBoxReparto.requestFocus();
                 }
+                if (e.getKeyCode() == KeyEvent.VK_ESCAPE) {
+                    IngresoInventario.this.dispose();
+                }
             }
 
             @Override
@@ -431,6 +434,11 @@ public class IngresoInventario extends javax.swing.JFrame {
         jTableRenglones.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
                 jTableRenglonesMouseClicked(evt);
+            }
+        });
+        jTableRenglones.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyPressed(java.awt.event.KeyEvent evt) {
+                jTableRenglonesKeyPressed(evt);
             }
         });
         jScrollPane1.setViewportView(jTableRenglones);
@@ -819,6 +827,9 @@ public class IngresoInventario extends javax.swing.JFrame {
                 jTableRenglones.changeSelection(jTableRenglones.getSelectedRow() + 1, 0, false, false);
             }
         }
+        if (evt.getKeyCode() == KeyEvent.VK_ESCAPE) {
+            this.dispose();
+        }
     }//GEN-LAST:event_jTextFieldCodigoArticuloKeyPressed
 
     private void jTextFieldCantidadRenglonKeyPressed(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_jTextFieldCantidadRenglonKeyPressed
@@ -859,12 +870,15 @@ public class IngresoInventario extends javax.swing.JFrame {
                 jTextFieldCodigoArticulo.selectAll();
             }
         }
+        if (evt.getKeyCode() == KeyEvent.VK_ESCAPE) {
+            this.dispose();
+        }
     }//GEN-LAST:event_jComboBoxRepartoKeyPressed
 
     private void jButtonGuardarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonGuardarActionPerformed
         // TODO add your handling code here:
         try {
-            if (SistemaUsuarios.getInstance().tienePermisos(Constantes.ActividadIngresarCompras)) { 
+            if (SistemaUsuarios.getInstance().tienePermisos(Constantes.ActividadIngresarInventario)) { 
                 if (!esNuevo) {
                 //compra.setReparto((Reparto)jComboBoxReparto.getSelectedItem());
                 //compra.setNumero(Long.parseLong(jTextFieldNumero.getText().trim()));
@@ -1090,6 +1104,13 @@ public class IngresoInventario extends javax.swing.JFrame {
             }
         }
     }//GEN-LAST:event_jButtonEliminarActionPerformed
+
+    private void jTableRenglonesKeyPressed(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_jTableRenglonesKeyPressed
+        // TODO add your handling code here:
+        if (evt.getKeyCode() == KeyEvent.VK_ESCAPE) {
+            this.dispose();
+        }
+    }//GEN-LAST:event_jTableRenglonesKeyPressed
 
     public void cargarRenglonesInventario() {
         Collections.sort(this.inventario.getRenglones());

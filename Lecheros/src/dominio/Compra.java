@@ -226,6 +226,13 @@ public class Compra extends ObjetoPersistente {
     public String toString(){
         return this.tipoDocumento.getTipoDocumento() + " " + this.getNumero();
     }
+    
+    @Override
+    public boolean equals(Object obj) {
+        if(obj == null) return false;
+        else if (!(obj instanceof Compra)) return false;
+        else return ((Compra)obj).getTipoDocumento().equals(this.getTipoDocumento()) && ((Compra)obj).getFecha().equals(this.getFecha()) && ((Compra)obj).getReparto().equals(this.getReparto()) && ((Compra)obj).getTotal() == this.getTotal();
+    }
 
     /**
      * @return the fechaLiquidacion

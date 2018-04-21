@@ -5,12 +5,15 @@
  */
 package dominio;
 
+import java.util.Date;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToOne;
+import javax.persistence.Temporal;
+import javax.persistence.TemporalType;
 
 /**
  *
@@ -30,6 +33,13 @@ public class FiadoChoferRenglon extends ObjetoPersistente {
     
     @Column
     private int envases;
+    
+    @Temporal(TemporalType.DATE)
+    private Date fechaRenglon;
+    
+    public FiadoChoferRenglon() {
+        this.fechaRenglon = new Date();
+    }
 
     /**
      * @return the fiadoChofer
@@ -91,5 +101,21 @@ public class FiadoChoferRenglon extends ObjetoPersistente {
     public void setEnvases(int envases) {
         this.envases = envases;
     }
+
+    /**
+     * @return the fechaRenglon
+     */
+    public Date getFechaRenglon() {
+        return fechaRenglon;
+    }
+
+    /**
+     * @param fechaRenglon the fechaRenglon to set
+     */
+    public void setFechaRenglon(Date fechaRenglon) {
+        this.fechaRenglon = fechaRenglon;
+    }
+    
+    
     
 }

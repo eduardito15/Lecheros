@@ -53,6 +53,11 @@ public class DocumentoDeVenta extends ObjetoPersistente {
         return this.getTipoDocumento();
     }
 
+    @Override
+    public boolean equals(Object obj) {
+        return this.getId() == ((DocumentoDeVenta)obj).getId() && this.getTipoDocumento().equals(((DocumentoDeVenta)obj).getTipoDocumento()); //To change body of generated methods, choose Tools | Templates.
+    }
+
     /**
      * @return the activo
      */

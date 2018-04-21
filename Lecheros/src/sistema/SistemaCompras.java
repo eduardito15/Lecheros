@@ -22,6 +22,8 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
+import java.util.Optional;
+import java.util.stream.Collectors;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
@@ -545,6 +547,245 @@ public class SistemaCompras {
             retorno.add(codigosSinPrecio);
         }
         SistemaUsuarios.getInstance().registrarOperacion(Constantes.ActividadIngresarCompras, "Ingreso Compras desde Archivo");
+        return retorno;
+    }
+    
+    public List<String[]> verificarComprasConArchivo(String rutaArchivoCerram, String rutaArchivoRelece, Reparto rep, Date fechaLiq) throws SAXException, IOException, ParseException, Exception {
+        List<String[]> retorno = new ArrayList<String[]>();
+        List<String[]> retornoCerram = verificarFacturasConArchivo(rutaArchivoCerram, rep, fechaLiq);
+        for(String[] s : retornoCerram) {
+            if(!s[1].equals(Constantes.FACTURA_RELECE) && !s[1].equals(Constantes.NOTA_DE_CREDITO_RELECE) && !s[1].equals(Constantes.REMITO_DEVOLUCION)) {
+                retorno.add(s);
+            }
+        }
+        List<String[]> retornoRelece = verificarFacturasConArchivo(rutaArchivoRelece, rep, fechaLiq);
+        for(String[] s : retornoRelece) {
+            if(!s[1].equals(Constantes.FACTURA_CERRAM) && !s[1].equals(Constantes.NOTA_DE_CREDITO_CERRAM) && !s[1].equals(Constantes.FACTURA) && !s[1].equals(Constantes.NOTA_DE_CREDITO)) {
+                retorno.add(s);
+            }
+        }
+        return retorno;
+    }
+    
+    public List<String[]> verificarFacturasConArchivo(String rutaArchivo, Reparto rep, Date fechaLiq) throws ParserConfigurationException, SAXException, IOException, ParseException, Exception {
+        List<String[]> retorno = new ArrayList<String[]>();
+        File fXmlFile = new File(rutaArchivo);
+        DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
+        DocumentBuilder dBuilder = dbFactory.newDocumentBuilder();
+        Document doc = dBuilder.parse(fXmlFile);
+
+        doc.getDocumentElement().normalize();
+
+        NodeList nList = doc.getElementsByTagName("Sdt_FacSap");
+        DecimalFormat df;
+        df = new DecimalFormat("0.000");
+        
+        List<Compra> comprasArchivo = new ArrayList<>();
+        
+        for (int temp = 0; temp < nList.getLength(); temp++) {
+            Compra c = new Compra();
+            Node nNode = nList.item(temp);
+            if (nNode.getNodeType() == Node.ELEMENT_NODE) {
+
+                Element eElement = (Element) nNode;
+                String numero = eElement.getElementsByTagName("FacNro").item(0).getTextContent();
+                String fecha = eElement.getElementsByTagName("FacFec").item(0).getTextContent();
+                SimpleDateFormat formatter;
+                formatter = new SimpleDateFormat("yyyy-MM-dd");
+                Date fechaCompra = formatter.parse(fecha);
+                String cliCod = eElement.getElementsByTagName("DesMerCod").item(0).getTextContent();
+                long cliCodSinCeros = Long.parseLong(cliCod);
+                String tipoDoc = eElement.getElementsByTagName("TipDocDsc").item(0).getTextContent();
+                DocumentoDeCompra tipoDocumento = SistemaMantenimiento.getInstance().devolverDocumentoDeCompraPorNumeroDeDestinatarioyTipoDocConaprole(cliCodSinCeros, tipoDoc);
+                if (tipoDocumento != null) {
+                    Reparto reparto = SistemaMantenimiento.getInstance().devolverCamionPorNumeroDeDestinatario(cliCodSinCeros);
+                    
+                    if(rep != null && reparto.equals(rep)) {
+                    
+                    double subTotal = Double.parseDouble(eElement.getElementsByTagName("ImpNeto").item(0).getTextContent());
+                    double total = Double.parseDouble(eElement.getElementsByTagName("ImpTotal").item(0).getTextContent());
+
+                    c.setTipoDocumento(tipoDocumento);
+                    c.setNumero(Long.parseLong(numero));
+                    c.setFecha(fechaCompra);
+                    c.setReparto(reparto);
+                    c.setSubtotal(subTotal);
+                    c.setTotal(total);
+                    
+                    double ivaMinimo = 0;
+                    double ivaBasico = 0;
+
+                    double totalPrecioDeVentaSinIva = 0;
+                    double totalPrecioDeVentaConIva = 0;
+                    NodeList listaRenglones = eElement.getElementsByTagName("Sdt_FacSap.Lineas");
+                    for (int temp2 = 0; temp2 < listaRenglones.getLength(); temp2++) {
+                        CompraRenglon cr = new CompraRenglon();
+                        Node nNodeCR = listaRenglones.item(temp2);
+                        if (nNodeCR.getNodeType() == Node.ELEMENT_NODE) {
+                            Element eElementCR = (Element) nNodeCR;
+                            String codArt = eElementCR.getElementsByTagName("MatCod").item(0).getTextContent();
+                            String cantidad = eElementCR.getElementsByTagName("MatCnt").item(0).getTextContent();
+                            String ivaLetraRenglon = eElementCR.getElementsByTagName("IvaLet").item(0).getTextContent();
+                            Articulo a = SistemaMantenimientoArticulos.getInstance().devolverArticuloPorCodigo(Integer.parseInt(codArt));
+                            if (a == null) {
+                                /*a = new Articulo();
+                                a.setCodigo(Integer.parseInt(codArt));
+                                String descripcion = eElementCR.getElementsByTagName("MatDes").item(0).getTextContent();
+                                a.setDescripcion(descripcion);
+                                if ("B".equals(ivaLetraRenglon)) {
+                                    //Es iva basico
+                                    a.setIva(SistemaMantenimiento.getInstance().devovlerIvaPorNombre("Basico"));
+                                }
+                                if ("M".equals(ivaLetraRenglon)) {
+                                    //Es iva minimo
+                                    a.setIva(SistemaMantenimiento.getInstance().devovlerIvaPorNombre("Minimo"));
+                                }
+                                if ("E".equals(ivaLetraRenglon)) {
+                                    //Es excento
+                                    a.setIva(SistemaMantenimiento.getInstance().devovlerIvaPorNombre("Excento"));
+                                }
+                                a.setFamilia(SistemaMantenimiento.getInstance().devolverFamiliaPorCodigo(100));
+                                SistemaMantenimientoArticulos.getInstance().actualizarArticulo(a);*/
+                            }
+                            if (a.getFamilia().getCodigo() == 24 || a.getFamilia().getCodigo() == 25 || a.getFamilia().getCodigo() == 26 || a.getCodigo() == 921) {
+                                if (a.getCodigo() != 849 && a.getCodigo() != 835 && a.getCodigo() != 1816 && a.getCodigo() != 868 && a.getCodigo() != 921) {
+                                    cantidad = eElementCR.getElementsByTagName("Peso").item(0).getTextContent();
+                                }
+                            }
+                            //Aca me fijo si es una boleta con codigo especial que va sin reparto.
+                            if ("170118".equals(codArt) || "170080".equals(codArt) || "170081".equals(codArt) || "170082".equals(codArt) || "170084".equals(codArt) || "170126".equals(codArt) || "170185".equals(codArt)) {
+                                //Reparto r = SistemaMantenimiento.getInstance().devolverRepartoPorCodigo(0);
+                                //c.setReparto(r);
+                            }
+                            double ivaRenglon = 0;
+                            String subTotalRenglon = eElementCR.getElementsByTagName("ImpNeto").item(0).getTextContent();
+                            double totalRenglon = 0;
+                            if ("B".equals(ivaLetraRenglon)) {
+                                //Es iva basico
+                                ivaRenglon = (Double.parseDouble(subTotalRenglon) * a.getIva().getPorcentaje()) / 100;
+                                totalRenglon = Double.parseDouble(subTotalRenglon) + ivaRenglon;
+                                ivaBasico = ivaBasico + ivaRenglon;
+                            }
+                            if ("M".equals(ivaLetraRenglon)) {
+                                //Es iva minimo
+                                ivaRenglon = (Double.parseDouble(subTotalRenglon) * a.getIva().getPorcentaje()) / 100;
+                                totalRenglon = Double.parseDouble(subTotalRenglon) + ivaRenglon;
+                                ivaMinimo = ivaMinimo + ivaRenglon;
+                            }
+                            if ("E".equals(ivaLetraRenglon)) {
+                                //Es excento
+                                ivaRenglon = 0;
+                                totalRenglon = Double.parseDouble(subTotalRenglon);
+                            }
+                            
+                            Precio p = SistemaMantenimientoArticulos.getInstance().devolverPrecioParaFechaPorArticulo(a, fechaCompra);
+                            double precioDeLaBoleta = Double.parseDouble(subTotalRenglon) / Double.parseDouble(cantidad);
+
+                            double totalRenglonVentaSinIva = 0;
+                            double totalRenglonVentaConIva = 0;
+                                        
+                            if(p != null) {
+                                totalRenglonVentaSinIva = p.getPrecioVenta() * Double.parseDouble(cantidad);
+                                totalRenglonVentaConIva = totalRenglonVentaSinIva + ((p.getPrecioVenta() * Double.parseDouble(cantidad)) * p.getArticulo().getIva().getPorcentaje() / 100);
+
+                                totalPrecioDeVentaSinIva = totalPrecioDeVentaSinIva + totalRenglonVentaSinIva;
+                                totalPrecioDeVentaConIva = totalPrecioDeVentaConIva + totalRenglonVentaConIva;
+                            }
+                            
+                            cr.setCompra(c);
+                            cr.setArticulo(a);
+                            cr.setCantidad(Double.parseDouble(cantidad));
+                            cr.setPrecio(precioDeLaBoleta);
+                            cr.setSubtotal(Double.parseDouble(subTotalRenglon));
+                            cr.setIva(ivaRenglon);
+                            cr.setTotal(totalRenglon);
+                            cr.setTotalPrecioVentaSinIva(totalRenglonVentaSinIva);
+                            cr.setTotalPrecioVentaConIva(totalRenglonVentaConIva);
+                            c.getRenglones().add(cr);
+
+                        }
+                    }
+                    
+                    c.setTotalMinimo(ivaMinimo);
+                    c.setTotalBasico(ivaBasico);
+                    c.setTotalAPrecioDeVentaSinIva(totalPrecioDeVentaSinIva);
+                    c.setTotalAPrecioDeVentaConIva(totalPrecioDeVentaConIva);
+                    
+                    comprasArchivo.add(c);
+                    
+                    }   
+                }
+            }
+        }
+        
+        List<Compra> comprasDeLiquidaciones = new ArrayList<>();
+        if(rep == null) {
+            //Cargo las de todos lo repartos
+            List<Reparto> repartos = new ArrayList<Reparto>();
+            repartos = SistemaMantenimiento.getInstance().devolverRepartos();
+            for(Reparto repa : repartos) {
+                comprasDeLiquidaciones.addAll(SistemaLiquidaciones.getInstance().devolverComprasParaFechaYReparto(fechaLiq, repa));
+            }
+            //sisLiquidaciones.devolverComprasParaFechaYReparto(l.getFecha(), l.getReparto());
+        } else {
+            //Cargo solo las del reparto recibido por parametro
+            comprasDeLiquidaciones.addAll(SistemaLiquidaciones.getInstance().devolverComprasParaFechaYReparto(fechaLiq, rep));
+        }
+        
+        //List<Compra> deRepDeArchivo = comprasArchivo.stream().filter(c -> c.getReparto().equals(rep)).collect(Collectors.toList());
+        
+        retorno = compararComprasDeReparto(comprasArchivo, comprasDeLiquidaciones);
+        
+        return retorno;
+    }
+    
+    public List<String[]> compararComprasDeReparto(List<Compra> comprasArchivo, List<Compra> comprasLiquidaciones) {
+        List<String[]> retorno = new ArrayList<String[]>();
+        
+        double minimaDiferenciaAceptada = 2;
+        SimpleDateFormat formatter;
+        formatter = new SimpleDateFormat("dd-MM-yyyyy");
+        
+        for(Compra ca : comprasArchivo) {
+            Optional<Compra> compraLiq = comprasLiquidaciones.stream().filter(c -> c.getTipoDocumento().equals(ca.getTipoDocumento()) && (ca.getTotal() - c.getTotal() > 0 ? ca.getTotal() - c.getTotal() <= minimaDiferenciaAceptada : c.getTotal() - ca.getTotal() <=minimaDiferenciaAceptada)).findFirst();
+            if(compraLiq.isPresent()) {
+                //Encontro en las compras de la liquidacion una con el mismo tipo y precio.
+                Compra comp = compraLiq.get();
+                String[] resp = new String[7];
+                resp[0] = formatter.format(ca.getFecha());
+                resp[1] = comp.getTipoDocumento().getTipoDocumento();
+                resp[2] = Long.toString(ca.getNumero());
+                resp[3] = Long.toString(comp.getNumero());
+                resp[4] = Double.toString(ca.getTotal());
+                resp[5] = Double.toString(comp.getTotal());
+                resp[6] = "Ok";
+                comprasLiquidaciones.remove(comp);
+                retorno.add(resp);
+            } else {
+                //No se encontro en la liquidacion una compra de este tipo y precio. 
+                String[] resp = new String[7];
+                resp[0] = formatter.format(ca.getFecha());
+                resp[1] = ca.getTipoDocumento().getTipoDocumento();
+                resp[2] = Long.toString(ca.getNumero());
+                resp[3] = "";
+                resp[4] = Double.toString(ca.getTotal());
+                resp[5] = "";
+                resp[6] = "La boleta se encuentra en el archivo pero no en las liquidaciones.";
+                retorno.add(resp);
+            }
+        }
+        //Por ultimo agrego las que estan en la liquidacion pero no en el archivo.
+        for(Compra ca : comprasLiquidaciones) {
+            String[] resp = new String[7];
+            resp[0] = formatter.format(ca.getFecha());
+            resp[1] = ca.getTipoDocumento().getTipoDocumento();
+            resp[2] = "";
+            resp[3] = Long.toString(ca.getNumero());
+            resp[4] = "";
+            resp[5] = Double.toString(ca.getTotal());
+            resp[6] = "La boleta se encuentra en en las liquidaciones pero no en el archivo.";
+            retorno.add(resp);
+        }
         return retorno;
     }
 }

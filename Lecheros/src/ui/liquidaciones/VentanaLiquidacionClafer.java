@@ -12,6 +12,7 @@ import dominio.FiadoChofer;
 import dominio.Gasto;
 import dominio.Inventario;
 import dominio.Liquidacion;
+import dominio.LiquidacionClafer;
 import dominio.Reparto;
 import java.awt.event.FocusEvent;
 import java.awt.event.FocusListener;
@@ -26,9 +27,12 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.swing.JOptionPane;
 import javax.swing.JTextField;
 import sistema.SistemaLiquidaciones;
+import sistema.SistemaLiquidacionesClafer;
 import sistema.SistemaMantenimiento;
 import sistema.SistemaUsuarios;
 import ui.usuarios.Constantes;
@@ -40,8 +44,9 @@ import ui.usuarios.Constantes;
 public class VentanaLiquidacionClafer extends javax.swing.JFrame {
 
     private final SistemaMantenimiento sisMantenimiento;
-    private final SistemaLiquidaciones sisLiquidaciones;
+    private final SistemaLiquidacionesClafer sisLiquidaciones;
     private Liquidacion liquidacion;
+    private LiquidacionClafer liquidacionClafer;
 
     private final DecimalFormat df;
     private boolean mostrarMensajeFechaIncorrecta = true;
@@ -54,6 +59,7 @@ public class VentanaLiquidacionClafer extends javax.swing.JFrame {
     private boolean tocoVerFiadoEmpresa = false;
     private boolean tocoVerInau = false;
     private boolean tocoVerAnep = false;
+    private boolean tocoVerCompras = false;
 
     /**
      * Creates new form VentanaLiquidacionClafer
@@ -62,7 +68,7 @@ public class VentanaLiquidacionClafer extends javax.swing.JFrame {
         //super(parent, modal);
         initComponents();
         sisMantenimiento = SistemaMantenimiento.getInstance();
-        sisLiquidaciones = SistemaLiquidaciones.getInstance();
+        sisLiquidaciones = SistemaLiquidacionesClafer.getInstance();
         inicializarMuestraLiquidacion();
         agregarEnterCampoFecha();
         jComboBoxReparto.addItem("");
@@ -229,6 +235,7 @@ public class VentanaLiquidacionClafer extends javax.swing.JFrame {
             Reparto repartoLiq = (Reparto) jComboBoxReparto.getSelectedItem();
             Chofer chofer = (Chofer) jComboBoxChoferes.getSelectedItem();
             liquidacion = sisLiquidaciones.devolverLiquidacion(fechaLiq, repartoLiq, chofer);
+            liquidacionClafer = sisLiquidaciones.devolverLiquidacionClafer(fechaLiq, repartoLiq);
             if (jComboBoxCamiones.getSelectedIndex() == 0) {
                 liquidacion.setCamion(null);
             } else {
@@ -267,6 +274,9 @@ public class VentanaLiquidacionClafer extends javax.swing.JFrame {
             jTextFieldAnep.setText(df.format(liquidacion.getAnep()).replace(',', '.'));
             jTextFieldInventario.setText(df.format(liquidacion.getInventario()).replace(',', '.'));
             jTextFieldRetenciones.setText(df.format(liquidacion.getRetenciones()).replace(',', '.'));
+            jTextFieldPinchadasSuma.setText("" + liquidacionClafer.getCantPinchadasCobradas() + " $ " + liquidacionClafer.getTotalPinchadasCobradas());
+            jTextFieldCantPinchadasDia.setText("" + liquidacionClafer.getCantPichadasPagadas() + " $ " + liquidacionClafer.getTotalPinchadasPagadas());
+            jTextFieldKilometros.setText(Integer.toString(liquidacionClafer.getKilometros()));
             if(liquidacion.getCerrada()) {
                 jButtonAbrirLiquidacion.setVisible(true);
                 jButtonCerrarLiquidacion.setVisible(false);
@@ -288,6 +298,7 @@ public class VentanaLiquidacionClafer extends javax.swing.JFrame {
             Date fechaLiq = jDateChooserFecha.getDate();
             Reparto repartoLiq = (Reparto) jComboBoxReparto.getSelectedItem();
             liquidacion = sisLiquidaciones.devolverLiquidacion(fechaLiq, repartoLiq, chofer);
+            liquidacionClafer = sisLiquidaciones.devolverLiquidacionClafer(fechaLiq, repartoLiq);
             if(liquidacion.getCerrada()){ 
                 if(SistemaUsuarios.getInstance().tienePermisos(Constantes.ActividadVerLiquidacionCerrada)) {
                     List<Chofer> choferes = sisMantenimiento.devolverChoferes();
@@ -332,6 +343,9 @@ public class VentanaLiquidacionClafer extends javax.swing.JFrame {
                     jTextFieldAnep.setText(df.format(liquidacion.getAnep()).replace(',', '.'));
                     jTextFieldInventario.setText(df.format(liquidacion.getInventario()).replace(',', '.'));
                     jTextFieldRetenciones.setText(df.format(liquidacion.getRetenciones()).replace(',', '.'));
+                    jTextFieldPinchadasSuma.setText(""  + liquidacionClafer.getCantPinchadasCobradas() + " $ " + liquidacionClafer.getTotalPinchadasCobradas());
+                    jTextFieldCantPinchadasDia.setText("" + liquidacionClafer.getCantPichadasPagadas() + " $ " + liquidacionClafer.getTotalPinchadasPagadas());
+                    jTextFieldKilometros.setText(Integer.toString(liquidacionClafer.getKilometros()));
                     if(liquidacion.getCerrada()) {
                         jButtonAbrirLiquidacion.setVisible(true);
                         jButtonCerrarLiquidacion.setVisible(false);
@@ -386,6 +400,9 @@ public class VentanaLiquidacionClafer extends javax.swing.JFrame {
                     jTextFieldAnep.setText(df.format(liquidacion.getAnep()).replace(',', '.'));
                     jTextFieldInventario.setText(df.format(liquidacion.getInventario()).replace(',', '.'));
                     jTextFieldRetenciones.setText(df.format(liquidacion.getRetenciones()).replace(',', '.'));
+                    jTextFieldPinchadasSuma.setText("" + liquidacionClafer.getCantPinchadasCobradas() + " $ " + liquidacionClafer.getTotalPinchadasCobradas());
+                    jTextFieldCantPinchadasDia.setText("" + liquidacionClafer.getCantPichadasPagadas() + " $ " + liquidacionClafer.getTotalPinchadasPagadas());
+                    jTextFieldKilometros.setText(Integer.toString(liquidacionClafer.getKilometros()));
                     if(liquidacion.getCerrada()) {
                         jButtonAbrirLiquidacion.setVisible(true);
                         jButtonCerrarLiquidacion.setVisible(false);
@@ -420,7 +437,9 @@ public class VentanaLiquidacionClafer extends javax.swing.JFrame {
             if (jTextFieldCorrecionDeDiferencia.isVisible()) {
                 liquidacion.setCorrecionDeDiferencia(Double.parseDouble(jTextFieldCorrecionDeDiferencia.getText().trim()));
             }
-            sisLiquidaciones.calcularLiquidacion(liquidacion);
+            String[] pinchadas = jTextFieldCantPinchadasDia.getText().trim().split(" ");
+            liquidacionClafer.setCantPichadasPagadas(Integer.parseInt(pinchadas[0]));
+            sisLiquidaciones.calcularLiquidacion(liquidacion, liquidacionClafer);
             jTextFieldDeuda.setText(df.format(liquidacion.getDeuda()).replace(',', '.'));
             jTextFieldInventario.setText(df.format(liquidacion.getInventario()).replace(',', '.'));
             if (jTextFieldFiadoChofer.isVisible()) {
@@ -520,6 +539,12 @@ public class VentanaLiquidacionClafer extends javax.swing.JFrame {
         jLabel10 = new javax.swing.JLabel();
         jButtonAbrirLiquidacion = new javax.swing.JButton();
         jButtonCerrarLiquidacion = new javax.swing.JButton();
+        jTextFieldCantPinchadasDia = new javax.swing.JTextField();
+        jLabel11 = new javax.swing.JLabel();
+        jTextFieldPinchadasSuma = new javax.swing.JTextField();
+        jLabel13 = new javax.swing.JLabel();
+        jTextFieldKilometros = new javax.swing.JTextField();
+        jLabel14 = new javax.swing.JLabel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
         setTitle("Liquidación");
@@ -767,6 +792,27 @@ public class VentanaLiquidacionClafer extends javax.swing.JFrame {
             }
         });
 
+        jTextFieldCantPinchadasDia.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyPressed(java.awt.event.KeyEvent evt) {
+                jTextFieldCantPinchadasDiaKeyPressed(evt);
+            }
+        });
+
+        jLabel11.setText("Pinchadas:");
+
+        jTextFieldPinchadasSuma.setEditable(false);
+
+        jLabel13.setText("Pinchadas:");
+
+        jTextFieldKilometros.setText("0");
+        jTextFieldKilometros.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyPressed(java.awt.event.KeyEvent evt) {
+                jTextFieldKilometrosKeyPressed(evt);
+            }
+        });
+
+        jLabel14.setText("Km:");
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
@@ -779,18 +825,20 @@ public class VentanaLiquidacionClafer extends javax.swing.JFrame {
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
                         .addContainerGap()
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(jLabelDeuda, javax.swing.GroupLayout.Alignment.TRAILING)
-                            .addComponent(jLabel6, javax.swing.GroupLayout.Alignment.TRAILING)
                             .addComponent(jLabel5, javax.swing.GroupLayout.Alignment.TRAILING)
-                            .addComponent(jLabelFiadoChofer1, javax.swing.GroupLayout.Alignment.TRAILING))))
+                            .addComponent(jLabelFiadoChofer1, javax.swing.GroupLayout.Alignment.TRAILING)
+                            .addComponent(jLabel6, javax.swing.GroupLayout.Alignment.TRAILING)
+                            .addComponent(jLabelDeuda, javax.swing.GroupLayout.Alignment.TRAILING)
+                            .addComponent(jLabel13, javax.swing.GroupLayout.Alignment.TRAILING))))
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(layout.createSequentialGroup()
-                        .addGap(22, 22, 22)
+                        .addGap(21, 21, 21)
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
                             .addComponent(jLabel2)
                             .addComponent(jLabelCamion)
                             .addComponent(jLabel3)
-                            .addComponent(jLabel1))
+                            .addComponent(jLabel1)
+                            .addComponent(jLabel14))
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addGroup(layout.createSequentialGroup()
@@ -798,10 +846,11 @@ public class VentanaLiquidacionClafer extends javax.swing.JFrame {
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                                 .addComponent(jLabelFechaIncorrecta))
                             .addGroup(layout.createSequentialGroup()
-                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                                    .addComponent(jComboBoxReparto, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                                    .addComponent(jComboBoxChoferes, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                                    .addComponent(jComboBoxCamiones, javax.swing.GroupLayout.PREFERRED_SIZE, 215, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
+                                    .addComponent(jTextFieldKilometros, javax.swing.GroupLayout.Alignment.LEADING)
+                                    .addComponent(jComboBoxReparto, javax.swing.GroupLayout.Alignment.LEADING, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                    .addComponent(jComboBoxChoferes, javax.swing.GroupLayout.Alignment.LEADING, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                    .addComponent(jComboBoxCamiones, javax.swing.GroupLayout.Alignment.LEADING, 0, 215, Short.MAX_VALUE))
                                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                                     .addGroup(layout.createSequentialGroup()
                                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
@@ -815,20 +864,25 @@ public class VentanaLiquidacionClafer extends javax.swing.JFrame {
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
                             .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                                 .addGroup(layout.createSequentialGroup()
-                                    .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                    .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                                         .addGroup(layout.createSequentialGroup()
-                                            .addComponent(jTextFieldInventarioAnterior, javax.swing.GroupLayout.PREFERRED_SIZE, 185, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                            .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                            .addComponent(jButtonVerInventario1, javax.swing.GroupLayout.PREFERRED_SIZE, 157, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                            .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                                .addGroup(layout.createSequentialGroup()
+                                                    .addComponent(jTextFieldInventarioAnterior, javax.swing.GroupLayout.PREFERRED_SIZE, 185, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                                    .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                                    .addComponent(jButtonVerInventario1, javax.swing.GroupLayout.PREFERRED_SIZE, 157, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                                .addGroup(layout.createSequentialGroup()
+                                                    .addComponent(jTextFieldCompras, javax.swing.GroupLayout.PREFERRED_SIZE, 185, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                                    .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                                    .addComponent(jButtonVerCompras, javax.swing.GroupLayout.PREFERRED_SIZE, 157, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                                .addGroup(layout.createSequentialGroup()
+                                                    .addComponent(jTextFieldFiadoChoferAnterior, javax.swing.GroupLayout.PREFERRED_SIZE, 185, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                                    .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                                    .addComponent(jButtonVerFiadoChofer1, javax.swing.GroupLayout.PREFERRED_SIZE, 157, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                                            .addGap(18, 18, 18))
                                         .addGroup(layout.createSequentialGroup()
-                                            .addComponent(jTextFieldCompras, javax.swing.GroupLayout.PREFERRED_SIZE, 185, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                            .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                            .addComponent(jButtonVerCompras, javax.swing.GroupLayout.PREFERRED_SIZE, 157, javax.swing.GroupLayout.PREFERRED_SIZE))
-                                        .addGroup(layout.createSequentialGroup()
-                                            .addComponent(jTextFieldFiadoChoferAnterior, javax.swing.GroupLayout.PREFERRED_SIZE, 185, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                            .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                            .addComponent(jButtonVerFiadoChofer1, javax.swing.GroupLayout.PREFERRED_SIZE, 157, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                                    .addGap(18, 18, 18)
+                                            .addComponent(jTextFieldPinchadasSuma)
+                                            .addGap(181, 181, 181)))
                                     .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                                         .addComponent(jLabelRemitoPinchadas, javax.swing.GroupLayout.Alignment.TRAILING)
                                         .addComponent(jLabel7, javax.swing.GroupLayout.Alignment.TRAILING)
@@ -840,7 +894,8 @@ public class VentanaLiquidacionClafer extends javax.swing.JFrame {
                                         .addComponent(jLabelAnep, javax.swing.GroupLayout.Alignment.TRAILING)
                                         .addComponent(jLabelInau, javax.swing.GroupLayout.Alignment.TRAILING)
                                         .addComponent(jLabelEntregaCheques, javax.swing.GroupLayout.Alignment.TRAILING)
-                                        .addComponent(jLabel8, javax.swing.GroupLayout.Alignment.TRAILING)))
+                                        .addComponent(jLabel8, javax.swing.GroupLayout.Alignment.TRAILING)
+                                        .addComponent(jLabel11, javax.swing.GroupLayout.Alignment.TRAILING)))
                                 .addComponent(jTextFieldUtilidad, javax.swing.GroupLayout.PREFERRED_SIZE, 185, javax.swing.GroupLayout.PREFERRED_SIZE)
                                 .addGroup(layout.createSequentialGroup()
                                     .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
@@ -853,6 +908,7 @@ public class VentanaLiquidacionClafer extends javax.swing.JFrame {
                                 .addComponent(jButtonSalir, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                            .addComponent(jTextFieldCantPinchadasDia)
                             .addComponent(jTextFieldEntregaCheques, javax.swing.GroupLayout.DEFAULT_SIZE, 185, Short.MAX_VALUE)
                             .addComponent(jTextFieldRemitoPinchadas)
                             .addComponent(jTextFieldGastos)
@@ -913,86 +969,99 @@ public class VentanaLiquidacionClafer extends javax.swing.JFrame {
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabelCamion)
                     .addComponent(jComboBoxCamiones, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(27, 27, 27)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jLabel4)
-                    .addComponent(jLabel10))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jLabelRemitoPinchadas)
-                    .addComponent(jTextFieldRemitoPinchadas, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jTextFieldInventarioAnterior, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jLabel9)
-                    .addComponent(jButtonVerInventario1))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jLabel7)
-                    .addComponent(jTextFieldGastos, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jButtonVerGastos)
-                    .addComponent(jLabelFiadoChofer1)
-                    .addComponent(jTextFieldFiadoChoferAnterior, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jButtonVerFiadoChofer1))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jLabel8)
-                    .addComponent(jTextFieldEntregaEfectivo, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jLabel5)
-                    .addComponent(jTextFieldCompras, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jButtonVerCompras))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(layout.createSequentialGroup()
+                        .addComponent(jTextFieldKilometros, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(22, 22, 22)
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                            .addComponent(jTextFieldEntregaCheques, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(jButtonVerCheques)
-                            .addComponent(jLabelEntregaCheques))
+                            .addComponent(jLabel4)
+                            .addComponent(jLabel10))
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                            .addComponent(jTextFieldCorrecionDeDiferencia, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(jLabelCoreecionDeDiferencia))
+                            .addComponent(jLabelRemitoPinchadas)
+                            .addComponent(jTextFieldRemitoPinchadas, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(jTextFieldInventarioAnterior, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(jLabel9)
+                            .addComponent(jButtonVerInventario1))
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                            .addComponent(jTextFieldRetenciones, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(jButtonVerRetenciones)
-                            .addComponent(jLabelRetenciones))
+                            .addComponent(jLabel7)
+                            .addComponent(jTextFieldGastos, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(jButtonVerGastos)
+                            .addComponent(jLabelFiadoChofer1)
+                            .addComponent(jTextFieldFiadoChoferAnterior, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(jButtonVerFiadoChofer1))
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                            .addComponent(jTextFieldInventario, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(jButtonVerInventario)
-                            .addComponent(jLabel12))
+                            .addComponent(jLabel8)
+                            .addComponent(jTextFieldEntregaEfectivo, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(jLabel5)
+                            .addComponent(jTextFieldCompras, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(jButtonVerCompras))
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                            .addComponent(jTextFieldFiadoChofer, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(jButtonVerFiadoChofer)
-                            .addComponent(jLabelFiadoChofer))
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                            .addComponent(jTextFieldFiadoEmpresa, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(jButtonVerFiadoEmpresa)
-                            .addComponent(jLabelFiadoEmpresa))
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                            .addComponent(jTextFieldAnep, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(jLabelAnep)
-                            .addComponent(jButtonVerAnep))
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                            .addComponent(jLabelInau)
-                            .addComponent(jTextFieldInau, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(jButtonVerInau))
-                        .addGap(28, 28, 28)
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                            .addComponent(jTextFieldDiferencia, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(jLabelDiderencia)))
-                    .addGroup(layout.createSequentialGroup()
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                            .addComponent(jLabel6)
-                            .addComponent(jTextFieldUtilidad, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                            .addComponent(jLabelDeuda)
-                            .addComponent(jTextFieldDeuda, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))))
-                .addContainerGap(20, Short.MAX_VALUE))
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addGroup(layout.createSequentialGroup()
+                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                                    .addComponent(jTextFieldEntregaCheques, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                    .addComponent(jButtonVerCheques)
+                                    .addComponent(jLabelEntregaCheques))
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                                    .addComponent(jTextFieldCorrecionDeDiferencia, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                    .addComponent(jLabelCoreecionDeDiferencia))
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                                    .addComponent(jTextFieldRetenciones, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                    .addComponent(jButtonVerRetenciones)
+                                    .addComponent(jLabelRetenciones))
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                                    .addComponent(jTextFieldInventario, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                    .addComponent(jButtonVerInventario)
+                                    .addComponent(jLabel12))
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                                    .addComponent(jTextFieldFiadoChofer, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                    .addComponent(jButtonVerFiadoChofer)
+                                    .addComponent(jLabelFiadoChofer))
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                                    .addComponent(jTextFieldFiadoEmpresa, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                    .addComponent(jButtonVerFiadoEmpresa)
+                                    .addComponent(jLabelFiadoEmpresa))
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                                    .addComponent(jTextFieldAnep, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                    .addComponent(jLabelAnep)
+                                    .addComponent(jButtonVerAnep))
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                                    .addComponent(jLabelInau)
+                                    .addComponent(jTextFieldInau, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                    .addComponent(jButtonVerInau))
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                                    .addComponent(jTextFieldCantPinchadasDia, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                    .addComponent(jLabel11))
+                                .addGap(86, 86, 86)
+                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                                    .addComponent(jTextFieldDiferencia, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                    .addComponent(jLabelDiderencia)))
+                            .addGroup(layout.createSequentialGroup()
+                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                                    .addComponent(jLabel6)
+                                    .addComponent(jTextFieldUtilidad, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                                    .addComponent(jTextFieldPinchadasSuma, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                    .addComponent(jLabel13))
+                                .addGap(68, 68, 68)
+                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                                    .addComponent(jTextFieldDeuda, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                    .addComponent(jLabelDeuda)))))
+                    .addComponent(jLabel14))
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
         pack();
@@ -1019,8 +1088,10 @@ public class VentanaLiquidacionClafer extends javax.swing.JFrame {
                             JOptionPane.showMessageDialog(this, Constantes.MensajeDeErrorDePermisos, "Permisos", JOptionPane.INFORMATION_MESSAGE);
                             this.dispose();
                         }
-                        jTextFieldEntregaEfectivo.requestFocus();
-                        jTextFieldEntregaEfectivo.selectAll();
+                        jTextFieldKilometros.requestFocus();
+                        jTextFieldKilometros.selectAll();
+                        //jTextFieldEntregaEfectivo.requestFocus();
+                        //jTextFieldEntregaEfectivo.selectAll();
                     } else {
                         if (SistemaUsuarios.getInstance().tienePermisos(Constantes.ActividadVerLiquidacionVieja)) {
                             cargarLiquidacion();
@@ -1028,6 +1099,8 @@ public class VentanaLiquidacionClafer extends javax.swing.JFrame {
                             JOptionPane.showMessageDialog(this, Constantes.MensajeDeErrorDePermisos, "Permisos", JOptionPane.INFORMATION_MESSAGE);
                             this.dispose();
                         }
+                        jTextFieldKilometros.requestFocus();
+                        jTextFieldKilometros.selectAll();
                     }
                 } catch (ParseException ex) {
                     JOptionPane.showMessageDialog(this, "Error al cargar la liquidacion. " + "\n" + ex.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
@@ -1047,6 +1120,8 @@ public class VentanaLiquidacionClafer extends javax.swing.JFrame {
             // TODO add your handling code here:
             if(!liquidacion.getCerrada()) {
                 sisLiquidaciones.guardarLiquidacion(liquidacion);
+                liquidacionClafer.setKilometros(Integer.parseInt(jTextFieldKilometros.getText().trim()));
+                sisLiquidaciones.actualizarLiquidacionClafer(liquidacionClafer);
                 JOptionPane.showMessageDialog(this, "Liquidación Guardada", "Información", JOptionPane.INFORMATION_MESSAGE);
             }
             jDateChooserFecha.requestFocusInWindow();
@@ -1078,6 +1153,11 @@ public class VentanaLiquidacionClafer extends javax.swing.JFrame {
         jTextFieldRetenciones.setText("0");
         //jTextFieldSaldoAnterior.setText("");
         jTextFieldUtilidad.setText("");
+        jTextFieldInventario.setText("");
+        jTextFieldFiadoChoferAnterior.setText("");
+        jTextFieldInventarioAnterior.setText("");
+        jTextFieldCantPinchadasDia.setText("");
+        jTextFieldPinchadasSuma.setText("");
 
     }
 
@@ -1200,7 +1280,7 @@ public class VentanaLiquidacionClafer extends javax.swing.JFrame {
 
     private void formWindowActivated(java.awt.event.WindowEvent evt) {//GEN-FIRST:event_formWindowActivated
         // TODO add your handling code here:
-        if (tocoVerCheques || tocoVerGastos || tocoVerInventario || tocoVerFiadoChofer || tocoVerRetenciones || tocoVerFiadoEmpresa || tocoVerInau || tocoVerAnep) {
+        if (tocoVerCheques || tocoVerGastos || tocoVerInventario || tocoVerFiadoChofer || tocoVerRetenciones || tocoVerFiadoEmpresa || tocoVerInau || tocoVerAnep || tocoVerCompras) {
             try {
                 calcularLiquidacion();
                 sisLiquidaciones.guardarLiquidacion(liquidacion);
@@ -1212,6 +1292,7 @@ public class VentanaLiquidacionClafer extends javax.swing.JFrame {
                 tocoVerFiadoEmpresa = false;
                 tocoVerInau = false;
                 tocoVerAnep = false;
+                tocoVerCompras = false;
             } catch (ParseException | NumberFormatException ex) {
 
             } catch (Exception ex) {
@@ -1512,6 +1593,50 @@ public class VentanaLiquidacionClafer extends javax.swing.JFrame {
         }
     }//GEN-LAST:event_jButtonAbrirLiquidacionActionPerformed
 
+    private void jTextFieldCantPinchadasDiaKeyPressed(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_jTextFieldCantPinchadasDiaKeyPressed
+        // TODO add your handling code here:
+        if (evt.getKeyCode() == KeyEvent.VK_ENTER) {
+            try {
+                    String[] pinchadas = jTextFieldCantPinchadasDia.getText().trim().split(" ");
+                    liquidacionClafer.setCantPichadasPagadas(Integer.parseInt(pinchadas[0]));
+                    calcularLiquidacion();
+                    sisLiquidaciones.guardarLiquidacion(liquidacion);
+                    jButtonGuardar.requestFocus();
+                } catch (ParseException ex) {
+                    JOptionPane.showMessageDialog(this, "Error al calcular la liquidacion. " + "\n" + ex.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+                } catch (NumberFormatException ne) {
+                    JOptionPane.showMessageDialog(this, "Los campos para la cuenta de la liquidacion deben ser numericos. " + "\n" + ne.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+                    jTextFieldEntregaEfectivo.requestFocus();
+                    jTextFieldEntregaEfectivo.selectAll();
+                } catch (Exception ex) {
+                    String stakTrace = util.Util.obtenerStackTraceEnString(ex);
+                    SistemaUsuarios.getInstance().registrarExcepcion(ex.toString(), stakTrace);
+                    JOptionPane.showMessageDialog(this, Constantes.MensajeDeErrorGenerico, "Error", JOptionPane.ERROR_MESSAGE);
+                }
+        }
+    }//GEN-LAST:event_jTextFieldCantPinchadasDiaKeyPressed
+
+    private void jTextFieldKilometrosKeyPressed(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_jTextFieldKilometrosKeyPressed
+        // TODO add your handling code here:
+        if (evt.getKeyCode() == KeyEvent.VK_ENTER) {
+            try {
+                int km = Integer.parseInt(jTextFieldKilometros.getText().trim());
+                liquidacionClafer.setKilometros(km);
+                try {
+                    sisLiquidaciones.actualizarLiquidacionClafer(liquidacionClafer);
+                } catch (Exception ex) {
+                    Logger.getLogger(VentanaLiquidacionClafer.class.getName()).log(Level.SEVERE, null, ex);
+                }
+                jTextFieldEntregaEfectivo.requestFocus();
+                jTextFieldEntregaEfectivo.selectAll();
+            } catch (NumberFormatException ne) {
+                JOptionPane.showMessageDialog(this, "El campo kilometros debe ser numerico. " + "\n" + ne.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+                jTextFieldKilometros.requestFocus();
+                jTextFieldKilometros.selectAll();
+            }
+        }
+    }//GEN-LAST:event_jTextFieldKilometrosKeyPressed
+
     private void habilitarEdicionCamposEntrega() {
         jTextFieldEntregaEfectivo.setEditable(true);
         if (jTextFieldCorrecionDeDiferencia.isVisible()) {
@@ -1590,7 +1715,10 @@ public class VentanaLiquidacionClafer extends javax.swing.JFrame {
     private com.toedter.calendar.JDateChooser jDateChooserFecha;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel10;
+    private javax.swing.JLabel jLabel11;
     private javax.swing.JLabel jLabel12;
+    private javax.swing.JLabel jLabel13;
+    private javax.swing.JLabel jLabel14;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel4;
@@ -1615,6 +1743,7 @@ public class VentanaLiquidacionClafer extends javax.swing.JFrame {
     private javax.swing.JLabel jLabelRetenciones;
     private javax.swing.JLabel jLabelTitulo;
     private javax.swing.JTextField jTextFieldAnep;
+    private javax.swing.JTextField jTextFieldCantPinchadasDia;
     private javax.swing.JTextField jTextFieldCompras;
     private javax.swing.JTextField jTextFieldCorrecionDeDiferencia;
     private javax.swing.JTextField jTextFieldDeuda;
@@ -1628,6 +1757,8 @@ public class VentanaLiquidacionClafer extends javax.swing.JFrame {
     private javax.swing.JTextField jTextFieldInau;
     private javax.swing.JTextField jTextFieldInventario;
     private javax.swing.JTextField jTextFieldInventarioAnterior;
+    private javax.swing.JTextField jTextFieldKilometros;
+    private javax.swing.JTextField jTextFieldPinchadasSuma;
     private javax.swing.JTextField jTextFieldRemitoPinchadas;
     private javax.swing.JTextField jTextFieldRetenciones;
     private javax.swing.JTextField jTextFieldUtilidad;

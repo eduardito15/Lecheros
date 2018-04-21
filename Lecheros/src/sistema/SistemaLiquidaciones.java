@@ -78,7 +78,7 @@ public class SistemaLiquidaciones {
         impresionInventario = aImpresionInventario;
     }
 
-    private SistemaLiquidaciones() {
+    protected SistemaLiquidaciones() {
 
     }
     
@@ -360,7 +360,7 @@ public class SistemaLiquidaciones {
         double totalPrecioVenta = 0;
         double utilidadGiamo = 0;
         for (Compra c : compras) {
-            if (!"Remito Devolución".equals(c.getTipoDocumento().getTipoDocumento())) {
+            if (!"Remito Devolución".equals(c.getTipoDocumento().getTipoDocumento())) { 
                 if (c.getTipoDocumento().isSuma()) {
                     total = total + c.getTotal();
                     totalPrecioVenta = totalPrecioVenta + c.getTotalAPrecioDeVentaConIva();
@@ -636,7 +636,7 @@ public class SistemaLiquidaciones {
         double valorAnep = this.devolverValorAnepParaFechaYReparto(l.getFecha(), l.getReparto());
         l.setAnep(valorAnep);
         if (SistemaMantenimiento.getInstance().devolverConfiguracionLiquidacion().isMostrarFiadoClientesCobraEmpresa()) {
-            double fiadoCobraEmpresa = this.devolverFiadoEmpresa(l.getFecha(), l.getReparto());
+            double fiadoCobraEmpresa = this.devolverFiadoEmpresaTomandoEnCuentaNotasDeCredito(l.getFecha(), l.getReparto());
             l.setFiadoEmpresa(fiadoCobraEmpresa);
         }
         if (SistemaMantenimiento.getInstance().devolverConfiguracionLiquidacion().isMostrarEntregaCheques()) {
@@ -697,6 +697,7 @@ public class SistemaLiquidaciones {
         retorno = (FiadoChofer) consulta.uniqueResult();
         session.getTransaction().commit();
         session.close();
+        SistemaLiquidacionesClafer.getInstance().recalcularFiafoChofer(retorno);
         return retorno;
     }
 
@@ -729,6 +730,8 @@ public class SistemaLiquidaciones {
                 fcrnuevo.setCliente(fcr.getCliente());
                 fcrnuevo.setFiadoChofer(fc);
                 fcrnuevo.setTotal(fcr.getTotal());
+                fcrnuevo.setEnvases(fcr.getEnvases());
+                fcrnuevo.setFechaRenglon(fcr.getFechaRenglon());
                 fc.getRenglones().add(fcrnuevo);
             }
             fc.setTotal(fiadoChoferDiaAnterior.getTotal());
@@ -770,6 +773,36 @@ public class SistemaLiquidaciones {
         } catch (NullPointerException exp) {
             retorno = 0;
         }
+        session.getTransaction().commit();
+        session.close();
+        return retorno;
+    }
+    
+    public double devolverFiadoEmpresaTomandoEnCuentaNotasDeCredito(Date fecha, Reparto r) throws Exception {
+        double retorno = 0;
+        SimpleDateFormat formatter;
+        formatter = new SimpleDateFormat("yyyy-MM-dd");
+        String f = formatter.format(fecha);
+        Session session = GenericDAO.getGenericDAO().getSessionFactory().openSession();
+        session.beginTransaction();
+        Query consulta = session.createQuery("SELECT f FROM Factura f where f.estaPaga = :estaPaga and f.fecha = :fechaBusqueda and f.reparto = :r and f.cliente in (SELECT cli FROM Cliente cli where cli.reparto = :r and cobraChofer = :cobraChofer)");
+        consulta.setBoolean("estaPaga", false);
+        consulta.setBoolean("cobraChofer", false);
+        consulta.setEntity("r", r);
+        consulta.setDate("fechaBusqueda", formatter.parse(f));
+        List<Factura> facturas = consulta.list();
+        for(Factura fact : facturas) {
+            if(fact.getTipoDocumento().isSuma()) {
+                retorno += fact.getTotal();
+            } else {
+                retorno -= fact.getTotal();
+            }
+        }
+        /*try {
+            retorno = (double) consulta.uniqueResult();
+        } catch (NullPointerException exp) {
+            retorno = 0;
+        }*/
         session.getTransaction().commit();
         session.close();
         return retorno;
@@ -1145,5 +1178,12 @@ public class SistemaLiquidaciones {
             }
         }
         return retorno;
+    }
+    
+    public double devolverTotalEnPlataEnvases(int cant) throws Exception {
+        Articulo art = SistemaMantenimientoArticulos.getInstance().devolverArticuloPorCodigo(320009);
+        Precio p = SistemaMantenimientoArticulos.getInstance().devolverPrecioParaFechaPorArticulo(art, new Date());
+        double iva = ((cant * p.getPrecioVenta()) * art.getIva().getPorcentaje() / 100);
+        return  cant * p.getPrecioVenta() + iva;
     }
 }

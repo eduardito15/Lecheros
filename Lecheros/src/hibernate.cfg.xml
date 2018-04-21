@@ -52,5 +52,6 @@
     <mapping class="dominio.Jornales"/>
     <mapping class="dominio.JornalRenglon"/>
     <mapping class="dominio.CoeficienteUtilidadCompras"/>
+    <mapping class="dominio.LiquidacionClafer"/>
   </session-factory>
 </hibernate-configuration>

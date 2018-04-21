@@ -888,6 +888,9 @@ public class IngresarCompras extends javax.swing.JFrame {
                 }
             }
         }
+        if(evt.getKeyCode() == KeyEvent.VK_ESCAPE) {
+            this.dispose();
+        }
     }//GEN-LAST:event_jTextFieldNumeroKeyPressed
 
     private void jComboBoxRepartoKeyPressed(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_jComboBoxRepartoKeyPressed
@@ -956,6 +959,9 @@ public class IngresarCompras extends javax.swing.JFrame {
             if(jTableRenglones.getSelectedRow() < jTableRenglones.getRowCount()-1){
                 jTableRenglones.changeSelection(jTableRenglones.getSelectedRow()+1, 0, false, false);
             }
+        }
+        if (evt.getKeyCode() == KeyEvent.VK_ESCAPE) {
+            this.dispose();
         }
     }//GEN-LAST:event_jTextFieldCodigoArticuloKeyPressed
 
@@ -1307,6 +1313,9 @@ public class IngresarCompras extends javax.swing.JFrame {
         // TODO add your handling code here:
         if (evt.getKeyCode() == KeyEvent.VK_ENTER) {
             jButtonSalir.doClick();
+        }
+        if (evt.getKeyCode() == KeyEvent.VK_ESCAPE) {
+            this.dispose();
         }
     }//GEN-LAST:event_jButtonSalirKeyPressed
 

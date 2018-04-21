@@ -12,6 +12,7 @@ import dominio.Liquidacion;
 import dominio.Reparto;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.KeyEvent;
 import java.text.DecimalFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -300,6 +301,11 @@ public class VerComprasDeLiquidacion extends javax.swing.JFrame {
                 "Tipo", "Numero", "Total", "Total a Precio de Venta", "Utilidad"
             }
         ));
+        jTableCompras.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyPressed(java.awt.event.KeyEvent evt) {
+                jTableComprasKeyPressed(evt);
+            }
+        });
         jScrollPane1.setViewportView(jTableCompras);
 
         jLabelFecha.setFont(new java.awt.Font("Lucida Grande", 1, 15)); // NOI18N
@@ -432,6 +438,13 @@ public class VerComprasDeLiquidacion extends javax.swing.JFrame {
         worker.start();
         
     }//GEN-LAST:event_formWindowActivated
+
+    private void jTableComprasKeyPressed(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_jTableComprasKeyPressed
+        // TODO add your handling code here:
+        if (evt.getKeyCode() == KeyEvent.VK_ESCAPE) {
+            this.dispose();
+        }
+    }//GEN-LAST:event_jTableComprasKeyPressed
 
     public void cargarCompraEnTabla(Compra c){
         Object[] object = new Object[5];

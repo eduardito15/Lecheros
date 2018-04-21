@@ -20,6 +20,7 @@ import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.text.DecimalFormat;
 import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
@@ -33,7 +34,9 @@ import javax.swing.JOptionPane;
 import javax.swing.JPopupMenu;
 import javax.swing.JTextField;
 import javax.swing.table.DefaultTableModel;
+import javax.swing.table.TableColumn;
 import sistema.SistemaLiquidaciones;
+import sistema.SistemaLiquidacionesClafer;
 import sistema.SistemaMantenimiento;
 import sistema.SistemaUsuarios;
 import ui.compras.IngresarCompras;
@@ -172,16 +175,27 @@ public class IngresoFiadoChofer extends javax.swing.JFrame {
         modelo = new DefaultTableModel() {
             @Override
             public boolean isCellEditable(int row, int column) {
-                if(column == 1 || column == 2){
+                if(column == 2 || column == 3){
                     return true;
                 }
                 return false;
             }
         };
         modelo.addColumn("Cliente");
+        modelo.addColumn("Fecha");
         modelo.addColumn("Fiado");
         modelo.addColumn("Envases");
         jTableRenglones.setModel(modelo);
+        
+        TableColumn column = null;
+        for (int i = 0; i < 4; i++) {
+            column = jTableRenglones.getColumnModel().getColumn(i);
+            if (i == 0) {
+                column.setPreferredWidth(200); //articulo column is bigger
+            } else {
+                column.setPreferredWidth(50);
+            }
+        }
         
         final JPopupMenu popupMenu = new JPopupMenu();
         JMenuItem deleteItem = new JMenuItem("Eliminar");
@@ -211,24 +225,37 @@ public class IngresoFiadoChofer extends javax.swing.JFrame {
                 //System.out.println("Column: " + tcl.getColumn());
                 FiadoChoferRenglon fcr = fiadoChofer.getRenglones().get(tcl.getRow());
                 try{
-                    if(tcl.getColumn() == 1){
+                    if(tcl.getColumn() == 2){
                         double valorAnterior = Double.parseDouble((String) tcl.getOldValue());
                         double valorNuevo = Double.parseDouble((String) tcl.getNewValue());
                         if (valorAnterior != valorNuevo && fcr.getTotal() != valorNuevo) {
                             fiadoChofer.setTotal(fiadoChofer.getTotal() - valorAnterior + valorNuevo);
+                            SistemaLiquidacionesClafer sisLiqClafer = SistemaLiquidacionesClafer.getInstance();
+                            sisLiqClafer.recalcularFiafoChofer(fiadoChofer);
                             jLabelTotal.setText(df.format(fiadoChofer.getTotal()).replace(',', '.'));
                             fcr.setTotal(valorNuevo);
                             modelo.setValueAt(df.format(fcr.getTotal()).replace(',', '.'), tcl.getRow(), tcl.getColumn());
+                            jTextFieldCliente.requestFocus();
                         }
                     }
-                    if (tcl.getColumn() == 2) {
-                        int valorAnteriorEnvases = Integer.parseInt((String) tcl.getOldValue());
-                        int valorNuevoEnvases = Integer.parseInt((String) tcl.getNewValue());
+                    if (tcl.getColumn() == 3) {
+                        String[] stringValorAnterior = ((String)tcl.getOldValue()).split(" ");
+                        String[] stringValorNuevo = ((String)tcl.getNewValue()).split(" ");
+                        int valorAnteriorEnvases = Integer.parseInt(stringValorAnterior[0]);
+                        int valorNuevoEnvases = Integer.parseInt(stringValorNuevo[0]);
                         if (valorAnteriorEnvases != valorNuevoEnvases) {
-                            //fiadoChofer.setTotal(fiadoChofer.getTotal() - valorAnterior + valorNuevo);
-                            //jLabelTotal.setText(df.format(fiadoChofer.getTotal()).replace(',', '.'));
-                            fcr.setEnvases(valorNuevoEnvases);
-                            modelo.setValueAt(Integer.toString(fcr.getEnvases()), tcl.getRow(), tcl.getColumn());
+                            //Como son envases tengo que multiplicar por el precio de los envases.
+                            if(fiadoChofer.getRenglones().get(tcl.getRow()).getEnvases() != valorNuevoEnvases) {
+                                double totalAnteriorEnvases = sis.devolverTotalEnPlataEnvases(valorAnteriorEnvases);
+                                double totalNuevoEnvases = sis.devolverTotalEnPlataEnvases(valorNuevoEnvases);
+                                fiadoChofer.setTotal(fiadoChofer.getTotal() - totalAnteriorEnvases + totalNuevoEnvases);
+                                SistemaLiquidacionesClafer sisLiqClafer = SistemaLiquidacionesClafer.getInstance();
+                                sisLiqClafer.recalcularFiafoChofer(fiadoChofer);
+                                jLabelTotal.setText(df.format(fiadoChofer.getTotal()).replace(',', '.'));
+                                fcr.setEnvases(valorNuevoEnvases);
+                                modelo.setValueAt(Integer.toString(fcr.getEnvases()) + "  $ " + totalNuevoEnvases, tcl.getRow(), tcl.getColumn());
+                                jTextFieldCliente.requestFocus();
+                            }
                         }
                     }
                 } catch (NumberFormatException ne) {
@@ -367,21 +394,28 @@ public class IngresoFiadoChofer extends javax.swing.JFrame {
 
         jTableRenglones.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
-                {null, null, null},
-                {null, null, null},
-                {null, null, null},
-                {null, null, null}
+                {null, null, null, null},
+                {null, null, null, null},
+                {null, null, null, null},
+                {null, null, null, null}
             },
             new String [] {
-                "Cliente", "Fiado", "Envases"
+                "Cliente", "Fecha", "Fiado", "Envases"
             }
         ) {
             Class[] types = new Class [] {
-                java.lang.Object.class, java.lang.Object.class, java.lang.Integer.class
+                java.lang.Object.class, java.lang.Object.class, java.lang.Object.class, java.lang.Integer.class
+            };
+            boolean[] canEdit = new boolean [] {
+                false, false, false, true
             };
 
             public Class getColumnClass(int columnIndex) {
                 return types [columnIndex];
+            }
+
+            public boolean isCellEditable(int rowIndex, int columnIndex) {
+                return canEdit [columnIndex];
             }
         });
         jScrollPane2.setViewportView(jTableRenglones);
@@ -408,11 +442,6 @@ public class IngresoFiadoChofer extends javax.swing.JFrame {
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(layout.createSequentialGroup()
-                        .addContainerGap()
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(jSeparator2)
-                            .addComponent(jSeparator3)))
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addGroup(layout.createSequentialGroup()
@@ -455,20 +484,23 @@ public class IngresoFiadoChofer extends javax.swing.JFrame {
                                                 .addComponent(jButtonSalir, javax.swing.GroupLayout.PREFERRED_SIZE, 132, javax.swing.GroupLayout.PREFERRED_SIZE)))
                                         .addComponent(jLabelFechaIncorrecta)))
                                 .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                                    .addContainerGap()
-                                    .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                        .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                                            .addComponent(jLabel6)
-                                            .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                            .addComponent(jLabelTotal)
-                                            .addGap(30, 30, 30))
-                                        .addComponent(jScrollPane2, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 469, javax.swing.GroupLayout.PREFERRED_SIZE))))
+                                    .addGap(355, 355, 355)
+                                    .addComponent(jLabel6)
+                                    .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                    .addComponent(jLabelTotal)
+                                    .addGap(30, 30, 30)))
                             .addGroup(layout.createSequentialGroup()
                                 .addContainerGap()
                                 .addComponent(jButtonRefrescar)
                                 .addGap(91, 91, 91)
                                 .addComponent(jLabelTitulo)))
-                        .addGap(0, 52, Short.MAX_VALUE)))
+                        .addGap(0, 273, Short.MAX_VALUE))
+                    .addGroup(layout.createSequentialGroup()
+                        .addContainerGap()
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(jScrollPane2, javax.swing.GroupLayout.Alignment.TRAILING)
+                            .addComponent(jSeparator2)
+                            .addComponent(jSeparator3))))
                 .addContainerGap())
         );
         layout.setVerticalGroup(
@@ -537,10 +569,13 @@ public class IngresoFiadoChofer extends javax.swing.JFrame {
                 if (cli != null) {
                     fiadoChofer.getRenglones().add(fcr);
                     //Cargo la tabla de la interfaz
-                    Object[] object = new Object[3];
+                    Object[] object = new Object[4];
                     object[0] = fcr.getCliente().getNombre();
-                    object[1] = df.format(fcr.getTotal()).replace(',', '.');
-                    object[2] = Integer.toString(fcr.getEnvases());
+                    SimpleDateFormat formatter;
+                    formatter = new SimpleDateFormat("dd-MM-yyyy");
+                    object[1] = formatter.format(fechaDeHoy);
+                    object[2] = df.format(fcr.getTotal()).replace(',', '.');
+                    object[3] = Integer.toString(fcr.getEnvases());
                     modelo.addRow(object);
                     //Borro los campos de codigo y cantidad y hago foco en codigo para el nuevo ingreso
                     jTextFieldCliente.setText("");
@@ -726,7 +761,7 @@ public class IngresoFiadoChofer extends javax.swing.JFrame {
     private void jButtonGuardarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonGuardarActionPerformed
         // TODO add your handling code here:
         try {
-            if (SistemaUsuarios.getInstance().tienePermisos(Constantes.ActividadIngresarCompras)) { 
+            if (SistemaUsuarios.getInstance().tienePermisos(Constantes.ActividadIngresarFiadoChofer)) { 
                 if(!esNuevo){
                 //compra.setReparto((Reparto)jComboBoxReparto.getSelectedItem());
                 //compra.setNumero(Long.parseLong(jTextFieldNumero.getText().trim()));
@@ -789,12 +824,21 @@ public class IngresoFiadoChofer extends javax.swing.JFrame {
         this.dispose();
     }//GEN-LAST:event_jButtonRefrescarActionPerformed
 
-    public void cargarRenglonesFiadoChofer(){
+    public void cargarRenglonesFiadoChofer() {
         for(FiadoChoferRenglon fcr : this.fiadoChofer.getRenglones()){
-            Object[] object = new Object[3];
+            Object[] object = new Object[4];
             object[0] = fcr.getCliente().getNombre();
-            object[1] = df.format(fcr.getTotal()).replace(',', '.');
-            object[2] = Integer.toString(fcr.getEnvases());
+            SimpleDateFormat formatter;
+            formatter = new SimpleDateFormat("dd-MM-yyyy");
+            object[1] = formatter.format(fcr.getFechaRenglon());
+            object[2] = df.format(fcr.getTotal()).replace(',', '.');
+            double totalEnvases = 0;
+            try {
+                totalEnvases = sis.devolverTotalEnPlataEnvases(fcr.getEnvases());
+            } catch (Exception ex) {
+                Logger.getLogger(IngresoFiadoChofer.class.getName()).log(Level.SEVERE, null, ex);
+            }
+            object[3] = Integer.toString(fcr.getEnvases()) + ((totalEnvases == 0) ? "" : "  $ " + df.format(totalEnvases));
             modelo.addRow(object);
         }
     }

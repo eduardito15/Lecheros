@@ -50,6 +50,22 @@ public class Util {
         return retorno;
     }
     
+    public static boolean esLecheParaFacturas(Articulo a) {
+        boolean retorno = false;
+        //GrupoDeArticulos grupoLeche = SistemaMantenimientoArticulos.getInstance().devolverGrupoDeArticuloPorNombre("Leche");
+        GrupoDeArticulos grupoLecheComun = SistemaMantenimientoArticulos.getInstance().devolverGrupoDeArticuloPorNombre("Leche Común");
+        GrupoDeArticulos grupoLecheUtra = SistemaMantenimientoArticulos.getInstance().devolverGrupoDeArticuloPorNombre("Leche Ultra");
+        GrupoDeArticulos grupoLecheUltraDiferenciada = SistemaMantenimientoArticulos.getInstance().devolverGrupoDeArticuloPorNombre("Leche Ultra Diferenciada");
+        GrupoDeArticulos grupoLecheDeslactosada = SistemaMantenimientoArticulos.getInstance().devolverGrupoDeArticuloPorNombre("Leche Deslactosada");
+        GrupoDeArticulos grupoLecheBlancaNube = SistemaMantenimientoArticulos.getInstance().devolverGrupoDeArticuloPorNombre("Leche Blanca Nube");
+        GrupoDeArticulos grupoLecheOmega = SistemaMantenimientoArticulos.getInstance().devolverGrupoDeArticuloPorNombre("Leche Omega");
+        //if(grupoLeche.getArticulos().contains(a) || grupoLecheComun.getArticulos().contains(a) || grupoLecheDeslactosada.getArticulos().contains(a) || grupoLecheUltraDiferenciada.getArticulos().contains(a) || grupoLecheUtra.getArticulos().contains(a)) {
+        if(grupoLecheComun.getArticulos().contains(a) || grupoLecheDeslactosada.getArticulos().contains(a) || grupoLecheUltraDiferenciada.getArticulos().contains(a) || grupoLecheUtra.getArticulos().contains(a) || grupoLecheBlancaNube.getArticulos().contains(a) || (grupoLecheOmega != null ? grupoLecheOmega.getArticulos().contains(a):false)) {
+            retorno = true;
+        }
+        return retorno;
+    }
+    
     public static boolean esEnvase(Articulo a) {
         boolean retorno = false;
         GrupoDeArticulos grupoEnvases = SistemaMantenimientoArticulos.getInstance().devolverGrupoDeArticuloPorNombre("Envases");
