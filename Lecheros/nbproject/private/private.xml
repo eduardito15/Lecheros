@@ -5,32 +5,19 @@
             <url>src/sistema/SistemaLiquidaciones.java</url>
             <bookmark id="1">
                 <name/>
-                <line>599</line>
+                <line>600</line>
                 <key/>
             </bookmark>
         </file>
     </editor-bookmarks>
     <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
         <group>
-            <file>file:/Users/Edu1/Git/Lecheros/Lecheros/src/ui/liquidaciones/VerComprasDeLiquidacion.java</file>
-            <file>file:/Users/Edu1/Git/Lecheros/Lecheros/src/ui/usuarios/Login.java</file>
-            <file>file:/Users/Edu1/Git/Lecheros/Lecheros/src/sistema/SistemaFacturas.java</file>
-            <file>file:/Users/Edu1/Git/Lecheros/Lecheros/src/ui/liquidaciones/VentanaLiquidacion.java</file>
-            <file>file:/Users/Edu1/Git/Lecheros/Lecheros/src/sistema/SistemaLiquidacionesClafer.java</file>
-            <file>file:/Users/Edu1/Git/Lecheros/Lecheros/src/hibernate.cfg.xml</file>
-            <file>file:/Users/Edu1/Git/Lecheros/Lecheros/src/ui/liquidaciones/VentanaLiquidacionClafer.java</file>
-            <file>file:/Users/Edu1/Git/Lecheros/Lecheros/src/config.properties</file>
-            <file>file:/Users/Edu1/Git/Lecheros/Lecheros/src/ui/facturas/IngresarFacturasMovil.java</file>
-            <file>file:/Users/Edu1/Git/Lecheros/Lecheros/src/dominio/LiquidacionClafer.java</file>
-            <file>file:/Users/Edu1/Git/Lecheros/Lecheros/src/ui/compras/IngresarComprasDesdeArchivo.java</file>
             <file>file:/Users/Edu1/Git/Lecheros/Lecheros/src/sistema/SistemaCompras.java</file>
             <file>file:/Users/Edu1/Git/Lecheros/Lecheros/src/hibernate.properties</file>
-            <file>file:/Users/Edu1/Git/Lecheros/Lecheros/src/ui/liquidaciones/IngresoFiadoChofer.java</file>
-            <file>file:/Users/Edu1/Git/Lecheros/Lecheros/src/dominio/Liquidacion.java</file>
-            <file>file:/Users/Edu1/Git/Lecheros/Lecheros/src/dao/GenericDAO.java</file>
-            <file>file:/Users/Edu1/Git/Lecheros/Lecheros/src/ui/liquidaciones/VerFiadoEmpresaDeLiquidacion.java</file>
-            <file>file:/Users/Edu1/Git/Lecheros/Lecheros/src/sistema/SistemaLiquidaciones.java</file>
-            <file>file:/Users/Edu1/Git/Lecheros/Lecheros/src/ui/facturas/IngresoFacturas.java</file>
+            <file>file:/Users/Edu1/Git/Lecheros/Lecheros/src/sistema/SistemaFacturas.java</file>
+            <file>file:/Users/Edu1/Git/Lecheros/Lecheros/src/hibernate.cfg.xml</file>
+            <file>file:/Users/Edu1/Git/Lecheros/Lecheros/src/sistema/SistemaInformes.java</file>
+            <file>file:/Users/Edu1/Git/Lecheros/Lecheros/src/config.properties</file>
         </group>
     </open-files>
 </project-private>

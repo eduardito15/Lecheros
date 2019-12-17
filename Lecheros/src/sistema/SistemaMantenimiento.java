@@ -6,6 +6,7 @@
 package sistema;
 
 import dao.GenericDAO;
+import dominio.Banco;
 import dominio.Camion;
 import dominio.Reparto;
 import dominio.Chofer;
@@ -1175,5 +1176,33 @@ public class SistemaMantenimiento {
             java.util.logging.Logger.getLogger(SistemaMantenimiento.class.getName()).log(Level.SEVERE, null, ex);
         } 
 
+    }
+    
+    public boolean agregarBanco(String nombre, String sucursal, String direccion) throws Exception {
+
+        Banco b = new Banco();
+        b.setName(nombre);
+        b.setBranchOffice(sucursal);
+        b.setAddress(direccion);
+        return GenericDAO.getGenericDAO().guardar(b);
+    }
+
+    public List<Banco> devolverBancos() {
+        List<Banco> retorno;
+        Session session = GenericDAO.getGenericDAO().getSessionFactory().openSession();
+        session.beginTransaction();
+        Query consulta = session.createQuery("FROM Banco");
+        retorno = consulta.list();
+        session.getTransaction().commit();
+        session.close();
+        return retorno;
+    }
+
+    public boolean actualizarBanco(Banco b) throws Exception {
+        return GenericDAO.getGenericDAO().actualizar(b);
+    }
+
+    public boolean eliminarBanco(Banco b) throws Exception {
+        return GenericDAO.getGenericDAO().borrar(b);
     }
 }

@@ -956,7 +956,7 @@ public class VentanaLiquidacion extends javax.swing.JFrame {
         } catch (Exception exp) {
             String stakTrace = util.Util.obtenerStackTraceEnString(exp);
             SistemaUsuarios.getInstance().registrarExcepcion(exp.toString(), stakTrace);
-            JOptionPane.showMessageDialog(VentanaLiquidacion.this, Constantes.MensajeDeErrorGenerico, "Error", JOptionPane.ERROR_MESSAGE);
+            JOptionPane.showMessageDialog(VentanaLiquidacion.this, Constantes.MensajeDeErrorGenerico + "\n\n" + exp.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
         }
     }//GEN-LAST:event_jButtonGuardarActionPerformed
 

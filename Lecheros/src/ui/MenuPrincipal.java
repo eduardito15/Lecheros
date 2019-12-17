@@ -99,6 +99,7 @@ import ui.liquidaciones.IngresoJornales;
 import ui.liquidaciones.VentanaLiquidacionClafer;
 import ui.liquidaciones.VentanaLiquidacionGiamo;
 import ui.mantenimiento.IngresoAutomaticoDePreciosDePromociones;
+import ui.mantenimiento.MantenimientoBancos;
 import ui.mantenimiento.MantenimientoCoeficientesUtilidadCompras;
 import ui.mantenimiento.MantenimientoGruposDeArticulos;
 import ui.mantenimiento.MantenimientoRepartosCompuestos;
@@ -168,6 +169,7 @@ public class MenuPrincipal extends javax.swing.JFrame {
         jMenuItem41 = new javax.swing.JMenuItem();
         jMenuItemCoeficientes = new javax.swing.JMenuItem();
         jMenuItem40 = new javax.swing.JMenuItem();
+        jMenuItem48 = new javax.swing.JMenuItem();
         jMenu2 = new javax.swing.JMenu();
         jMenuItem8 = new javax.swing.JMenuItem();
         jMenuItem10 = new javax.swing.JMenuItem();
@@ -441,6 +443,14 @@ public class MenuPrincipal extends javax.swing.JFrame {
             }
         });
         jMenu1.add(jMenuItem40);
+
+        jMenuItem48.setText("Bancos");
+        jMenuItem48.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jMenuItem48ActionPerformed(evt);
+            }
+        });
+        jMenu1.add(jMenuItem48);
 
         jMenuBar1.add(jMenu1);
 
@@ -1942,6 +1952,12 @@ public class MenuPrincipal extends javax.swing.JFrame {
         vvcca.setVisible(true);
     }//GEN-LAST:event_jMenuItem47ActionPerformed
 
+    private void jMenuItem48ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem48ActionPerformed
+        // TODO add your handling code here:
+        MantenimientoBancos vmb = new MantenimientoBancos(this, false);
+        vmb.setVisible(true);
+    }//GEN-LAST:event_jMenuItem48ActionPerformed
+
     private void cargarMenuCompras() {
         //jMenuItem1 = new javax.swing.JMenuItem();
         List<DocumentoDeCompra> tiposDocs;
@@ -2210,6 +2226,7 @@ public class MenuPrincipal extends javax.swing.JFrame {
     private javax.swing.JMenuItem jMenuItem45;
     private javax.swing.JMenuItem jMenuItem46;
     private javax.swing.JMenuItem jMenuItem47;
+    private javax.swing.JMenuItem jMenuItem48;
     private javax.swing.JMenuItem jMenuItem5;
     private javax.swing.JMenuItem jMenuItem6;
     private javax.swing.JMenuItem jMenuItem7;

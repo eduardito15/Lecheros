@@ -10,14 +10,18 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.ManyToOne;
+import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
+import javax.persistence.UniqueConstraint;
 
 /**
  *
  * @author Edu
  */
 @Entity
+@Table(uniqueConstraints=
+        @UniqueConstraint(columnNames={"fecha", "reparto_id"}))
 public class Liquidacion extends ObjetoPersistente {
     
     @Temporal(TemporalType.DATE)

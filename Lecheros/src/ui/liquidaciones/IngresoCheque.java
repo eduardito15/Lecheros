@@ -5,6 +5,7 @@
  */
 package ui.liquidaciones;
 
+import dominio.Banco;
 import dominio.Cheque;
 import dominio.Cliente;
 import dominio.Reparto;
@@ -33,6 +34,7 @@ import ui.usuarios.Constantes;
 public class IngresoCheque extends javax.swing.JFrame {
 
     private Cliente cliente;
+    private Banco banco;
     
     private String accion;
     private Cheque cheque;
@@ -41,6 +43,7 @@ public class IngresoCheque extends javax.swing.JFrame {
     private final SistemaLiquidaciones sisLiquidaciones;
     
     List<Reparto> repartos;
+    List<Banco> bancos;
     
     
     private boolean mostrarMensajeFechaIncorrecta;
@@ -59,6 +62,11 @@ public class IngresoCheque extends javax.swing.JFrame {
         repartos = sisMantenimiento.devolverRepartos();
         for (Reparto c : repartos) {
             jComboBoxReparto.addItem(c);
+        }
+        jComboBoxBancos.addItem("");
+        bancos = sisMantenimiento.devolverBancos();
+        for(Banco b : bancos) {
+            jComboBoxBancos.addItem(b);
         }
         jComboBoxReparto.requestFocus();
         //jTextFieldCliente.requestFocus();
@@ -273,6 +281,10 @@ public class IngresoCheque extends javax.swing.JFrame {
         jLabelFechaIncorrecta = new javax.swing.JLabel();
         jComboBoxReparto = new javax.swing.JComboBox();
         jLabel6 = new javax.swing.JLabel();
+        jComboBoxBancos = new javax.swing.JComboBox();
+        jTextFieldNumero = new javax.swing.JTextField();
+        jLabel7 = new javax.swing.JLabel();
+        jLabel8 = new javax.swing.JLabel();
 
         jLabel2.setText("jLabel2");
 
@@ -354,6 +366,27 @@ public class IngresoCheque extends javax.swing.JFrame {
 
         jLabel6.setText("Reparto:");
 
+        jComboBoxBancos.addFocusListener(new java.awt.event.FocusAdapter() {
+            public void focusLost(java.awt.event.FocusEvent evt) {
+                jComboBoxBancosFocusLost(evt);
+            }
+        });
+        jComboBoxBancos.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyPressed(java.awt.event.KeyEvent evt) {
+                jComboBoxBancosKeyPressed(evt);
+            }
+        });
+
+        jTextFieldNumero.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyPressed(java.awt.event.KeyEvent evt) {
+                jTextFieldNumeroKeyPressed(evt);
+            }
+        });
+
+        jLabel7.setText("Banco:");
+
+        jLabel8.setText("Numero:");
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
@@ -386,13 +419,17 @@ public class IngresoCheque extends javax.swing.JFrame {
                                     .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
                                         .addComponent(jLabel4)
                                         .addComponent(jLabel1)
-                                        .addComponent(jLabel6))
+                                        .addComponent(jLabel6)
+                                        .addComponent(jLabel7)
+                                        .addComponent(jLabel8))
                                     .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                                     .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                                        .addComponent(jTextFieldNumero)
+                                        .addComponent(jComboBoxBancos, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                                         .addComponent(jDateChooserFecha, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                                         .addComponent(jTextFieldCliente)
-                                        .addComponent(jComboBoxReparto, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 258, javax.swing.GroupLayout.PREFERRED_SIZE)))))))
-                .addContainerGap(26, Short.MAX_VALUE))
+                                        .addComponent(jComboBoxReparto, 0, 258, Short.MAX_VALUE)))))))
+                .addContainerGap(146, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -408,12 +445,20 @@ public class IngresoCheque extends javax.swing.JFrame {
                     .addComponent(jLabel1)
                     .addComponent(jTextFieldCliente, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jComboBoxBancos, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jLabel7))
+                .addGap(9, 9, 9)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jTextFieldNumero, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jLabel8))
+                .addGap(18, 18, 18)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(jLabel4)
                     .addComponent(jDateChooserFecha, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jLabelFechaIncorrecta, javax.swing.GroupLayout.PREFERRED_SIZE, 16, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 7, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(jLabel3)
                     .addComponent(jDateChooserFechaVto, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
@@ -450,14 +495,16 @@ public class IngresoCheque extends javax.swing.JFrame {
                 this.cliente = vbc.getCliente();
                 jTextFieldCliente.setText(cliente.getNombre());
                 jTextFieldCliente.setEditable(false);
-                jDateChooserFecha.requestFocusInWindow();
+                jComboBoxBancos.requestFocus();
+                //jDateChooserFecha.requestFocusInWindow();
             } else {
                 //No es vacio. Busco la cadena en los rut de cliente, si conincide la muestro si no pregunto si quiere volver a ingresarlo o abrir el buscador de clientes.
                 if(cliente != null){
                     if(cliente.getNombre().equals(jTextFieldCliente.getText().trim())){
                         jTextFieldCliente.setText(cliente.getNombre());
                         jTextFieldCliente.setEditable(false);
-                        jDateChooserFecha.requestFocusInWindow();
+                        //jDateChooserFecha.requestFocusInWindow();
+                        jComboBoxBancos.requestFocus();
                     }
                 } else {
                     String fraccionDelRut = jTextFieldCliente.getText().trim();
@@ -465,7 +512,8 @@ public class IngresoCheque extends javax.swing.JFrame {
                     if (cliente != null) {
                         jTextFieldCliente.setText(cliente.getNombre());
                         jTextFieldCliente.setEditable(false);
-                        jDateChooserFecha.requestFocusInWindow();
+                        //jDateChooserFecha.requestFocusInWindow();
+                        jComboBoxBancos.requestFocus();
                     } else {
                         int resp = JOptionPane.showConfirmDialog(this, "No existe un cliente que contenga en el rut: " + fraccionDelRut + " . Desea abrir el buscador de clientes?  ", "Pregunta", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE);
                         if (resp == JOptionPane.YES_OPTION) {
@@ -476,7 +524,8 @@ public class IngresoCheque extends javax.swing.JFrame {
                             this.cliente = vbc.getCliente();
                             jTextFieldCliente.setText(cliente.getNombre());
                             jTextFieldCliente.setEditable(false);
-                            jDateChooserFecha.requestFocusInWindow();
+                            //jDateChooserFecha.requestFocusInWindow();
+                            jComboBoxBancos.requestFocus();
                         } else if (resp == JOptionPane.NO_OPTION) {
                             jTextFieldCliente.requestFocus();
                             jTextFieldCliente.selectAll();
@@ -507,10 +556,11 @@ public class IngresoCheque extends javax.swing.JFrame {
         try{
             if(cheque == null){
                 double importe = Double.parseDouble(jTextFieldImporte.getText().trim());
+                long numero = Long.parseLong(jTextFieldNumero.getText().trim());
                 Date fecha = jDateChooserFecha.getDate();
                 Date fechaVto = jDateChooserFechaVto.getDate();
                 if (cliente != null) {
-                    if (sisLiquidaciones.guardarCheque(cliente, fecha, fechaVto, importe)) {
+                    if (sisLiquidaciones.guardarCheque(cliente, fecha, fechaVto, importe, banco, numero)) {
                         JOptionPane.showMessageDialog(this, "Cheque guardado correctamente.", "Información", JOptionPane.INFORMATION_MESSAGE);
                         IngresoCheque vic = new IngresoCheque(this, false);
                         vic.setVisible(true);
@@ -616,6 +666,48 @@ public class IngresoCheque extends javax.swing.JFrame {
         }
     }//GEN-LAST:event_jComboBoxRepartoKeyPressed
 
+    private void jComboBoxBancosKeyPressed(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_jComboBoxBancosKeyPressed
+        // TODO add your handling code here:
+        if (evt.getKeyCode() == KeyEvent.VK_ENTER) {
+            if(jComboBoxBancos.getSelectedIndex() == 0) {
+                JOptionPane.showMessageDialog(this, "Debe seleccionar un banco.", "Información", JOptionPane.INFORMATION_MESSAGE);
+                jComboBoxBancos.requestFocus();
+            } else {
+                banco = (Banco)jComboBoxBancos.getSelectedItem();
+                jTextFieldNumero.requestFocus();
+                jTextFieldNumero.selectAll();
+            }
+        }
+    }//GEN-LAST:event_jComboBoxBancosKeyPressed
+
+    private void jTextFieldNumeroKeyPressed(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_jTextFieldNumeroKeyPressed
+        // TODO add your handling code here:
+        if (evt.getKeyCode() == KeyEvent.VK_ENTER) {
+            try {
+                Long.parseLong(jTextFieldNumero.getText().trim());
+                jDateChooserFecha.requestFocusInWindow();
+            } catch(NumberFormatException ne){
+                JOptionPane.showMessageDialog(this, "El numero debe ser numerico.","Información", JOptionPane.INFORMATION_MESSAGE);
+            } catch (Exception ex) {
+                String stakTrace = util.Util.obtenerStackTraceEnString(ex);
+                SistemaUsuarios.getInstance().registrarExcepcion(ex.toString(), stakTrace);
+                JOptionPane.showMessageDialog(this, Constantes.MensajeDeErrorGenerico, "Error", JOptionPane.ERROR_MESSAGE);
+            }
+        }
+    }//GEN-LAST:event_jTextFieldNumeroKeyPressed
+
+    private void jComboBoxBancosFocusLost(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_jComboBoxBancosFocusLost
+        // TODO add your handling code here:
+        if(jComboBoxBancos.getSelectedIndex() == 0) {
+                JOptionPane.showMessageDialog(this, "Debe seleccionar un banco.", "Información", JOptionPane.INFORMATION_MESSAGE);
+                jComboBoxBancos.requestFocus();
+            } else {
+                banco = (Banco)jComboBoxBancos.getSelectedItem();
+                jTextFieldNumero.requestFocus();
+                jTextFieldNumero.selectAll();
+            }
+    }//GEN-LAST:event_jComboBoxBancosFocusLost
+
     /**
      * @param args the command line arguments
      */
@@ -661,6 +753,7 @@ public class IngresoCheque extends javax.swing.JFrame {
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton jButtonGuardar;
     private javax.swing.JButton jButtonSalir;
+    private javax.swing.JComboBox jComboBoxBancos;
     private javax.swing.JComboBox jComboBoxReparto;
     private com.toedter.calendar.JDateChooser jDateChooserFecha;
     private com.toedter.calendar.JDateChooser jDateChooserFechaVto;
@@ -670,11 +763,14 @@ public class IngresoCheque extends javax.swing.JFrame {
     private javax.swing.JLabel jLabel4;
     private javax.swing.JLabel jLabel5;
     private javax.swing.JLabel jLabel6;
+    private javax.swing.JLabel jLabel7;
+    private javax.swing.JLabel jLabel8;
     private javax.swing.JLabel jLabelFechaIncorrecta;
     private javax.swing.JLabel jLabelFechaVtoIncorrecta;
     private javax.swing.JLabel jLabelTitulo1;
     private javax.swing.JTextField jTextFieldCliente;
     private javax.swing.JTextField jTextFieldImporte;
+    private javax.swing.JTextField jTextFieldNumero;
     // End of variables declaration//GEN-END:variables
 
     /**

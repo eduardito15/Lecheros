@@ -8,6 +8,7 @@ package sistema;
 import dao.GenericDAO;
 import dominio.Anep;
 import dominio.Articulo;
+import dominio.Banco;
 import dominio.Cheque;
 import dominio.Chofer;
 import dominio.Cliente;
@@ -474,7 +475,7 @@ public class SistemaLiquidaciones {
         } else {
             for (Compra c : compras) {
                 if ("Remito Devolución".equals(c.getTipoDocumento().getTipoDocumento())) {
-                    retorno = retorno + c.getTotal();
+                    retorno = retorno + c.getTotalAPrecioDeVentaSinIva();
                 }
             }
         }
@@ -1057,13 +1058,15 @@ public class SistemaLiquidaciones {
         return retorno;
     }
 
-    public boolean guardarCheque(Cliente cli, Date fecha, Date fechaVencimiento, double importe) throws Exception {
+    public boolean guardarCheque(Cliente cli, Date fecha, Date fechaVencimiento, double importe, Banco b, long numero) throws Exception {
 
         Cheque cheque = new Cheque();
         cheque.setCliente(cli);
         cheque.setFecha(fecha);
         cheque.setFechaVencimiento(fechaVencimiento);
         cheque.setImporte(importe);
+        cheque.setBanco(b);
+        cheque.setNumero(numero);
         SistemaUsuarios.getInstance().registrarOperacion(Constantes.ActividadIngresarCheque, "Ingreo un cheque del cliente :  " + cli );
         return GenericDAO.getGenericDAO().guardar(cheque);
     }

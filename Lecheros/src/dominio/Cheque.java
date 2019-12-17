@@ -31,6 +31,12 @@ public class Cheque extends ObjetoPersistente {
     
     @Column
     private double importe;
+    
+    @ManyToOne(fetch = FetchType.EAGER)
+    private Banco banco;
+    
+    @Column
+    private Long numero;
 
     /**
      * @return the cliente
@@ -91,6 +97,34 @@ public class Cheque extends ObjetoPersistente {
     @Override
     public String toString() {
         return this.cliente + " " + Double.toString(importe); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    /**
+     * @return the banco
+     */
+    public Banco getBanco() {
+        return banco;
+    }
+
+    /**
+     * @param banco the banco to set
+     */
+    public void setBanco(Banco banco) {
+        this.banco = banco;
+    }
+
+    /**
+     * @return the numero
+     */
+    public Long getNumero() {
+        return numero;
+    }
+
+    /**
+     * @param numero the numero to set
+     */
+    public void setNumero(Long numero) {
+        this.numero = numero;
     }
     
     
